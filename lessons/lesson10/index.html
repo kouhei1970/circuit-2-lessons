@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>正弦波の複素数表示</title>
+<!-- interactive-lecture deck template — assemble.py が SLIDES と HOOKS の差し込み口に中身を挿入する。
+     外部依存ゼロ・単一HTML。詳細は reference/framework.md。 -->
+<style>
+  :root{
+    --bg:#faf9f5; --surface:#ffffff; --surface2:#f1efe8; --panel:#ece9e0;
+    --ink:#1f1e1c; --mut:#6b6a64; --grd:rgba(0,0,0,0.10); --line:rgba(0,0,0,0.14);
+    --ref:#378ADD; --act:#D85A30; --thr:#639922;
+    --sin:#7E57C2; --cos:#2E9E6B; --z1:#3FA34D; --z2:#D85A30; --zr:#7E57C2; --ax:#46443e;
+    --re:#C0392B; --im:#2E6FB0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1a1915; --surface:#23221d; --surface2:#2b2a24; --panel:#201f1a;
+      --ink:#ecebe4; --mut:#a3a299; --grd:rgba(255,255,255,0.12); --line:rgba(255,255,255,0.16);
+      --ref:#85B7EB; --act:#F0997B; --thr:#97C459;
+      --sin:#B39DDB; --cos:#7BD0A3; --z1:#7BD0A3; --z2:#F0997B; --zr:#B39DDB; --ax:#c9c7bd;
+      --re:#F08A7A; --im:#7FB2E8;
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%; overflow:hidden;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Yu Gothic UI",sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;}
+  i{font-family:Georgia,"Times New Roman",serif;}
+  .deck{position:fixed; inset:0; bottom:52px;}
+  .slide{position:absolute; inset:0; display:flex; flex-direction:column; justify-content:safe center;
+    overflow-y:auto; padding:2vh clamp(16px,4vw,70px); opacity:0; visibility:hidden; transition:opacity .2s;}
+  .slide.active{opacity:1; visibility:visible;}
+  /* master scale + 型スケール（フォント共通ルール）。全体拡縮は .inner、相対比は --fs-* を変更 */
+  .inner{ font-size:clamp(16px, 2.05vh, 32px); width:100%; max-width:62em; margin:0 auto; line-height:1.6;}
+  :root{
+    --fs-display:2.4em; --fs-h1:1.5em; --fs-lead:1.22em; --fs-body:1.32em; --fs-eq:1.38em; --fs-eq-lg:1.7em;
+    --fs-note:1.13em; --fs-table:1.15em; --fs-ui:.85em; --fs-label:.68em; --fs-tag:.6em; --fs-micro:.72em;
+  }
+  .tag2{display:inline-block; font-size:var(--fs-tag); font-weight:700; letter-spacing:.04em; padding:.15em .6em; border-radius:999px; margin:0 .3em .5em 0;}
+  .tag-ex{color:var(--thr); border:1px solid var(--thr);} .tag-do{color:var(--act); border:1px solid var(--act);} .tag-fig{color:var(--ref); border:1px solid var(--ref);}
+  .kicker{font-size:var(--fs-label); letter-spacing:.06em; color:var(--act); font-weight:700; margin:0 0 .25em;}
+  h1.tt{font-size:var(--fs-h1); font-weight:700; margin:0 0 .15em; line-height:1.2;}
+  .desc{font-size:var(--fs-lead); color:var(--mut); margin:.35em 0 .8em;}
+  canvas{width:100%; display:block; background:var(--surface); border:1px solid var(--line); border-radius:12px;}
+  .plot{height:clamp(150px,33vh,330px);} .plane{height:clamp(180px,42vh,400px);} .figc{height:clamp(150px,32vh,300px);}
+  .titlewave{height:clamp(96px,16vh,180px)!important;} .confirm .plane{height:clamp(150px,30vh,290px);}
+  .row{display:flex; align-items:center; gap:.7em; margin:.5em 0;}
+  .row label{font-size:var(--fs-ui); color:var(--mut); width:7.4em; flex:none;}
+  .row .val{font-size:var(--fs-ui); font-weight:700; min-width:3.6em; text-align:right; font-variant-numeric:tabular-nums;}
+  input[type=range]{flex:1; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px; background:var(--line); outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:1.1em; height:1.1em; border-radius:50%; background:var(--act); cursor:pointer; border:2px solid var(--surface);}
+  input[type=range]::-moz-range-thumb{width:1.1em; height:1.1em; border-radius:50%; background:var(--act); cursor:pointer; border:2px solid var(--surface);}
+  .grid2{display:grid; grid-template-columns:1fr; gap:1em;} @media(min-width:760px){ .grid2{grid-template-columns:1.05fr .95fr;} }
+  .twocol{display:grid; grid-template-columns:1fr; gap:.9em; align-items:center;} @media(min-width:720px){ .twocol{grid-template-columns:.9fr 1.1fr;} }
+  .eq{background:var(--surface2); border-radius:10px; padding:.6em .8em; font-size:var(--fs-eq); margin:.55em 0; line-height:1.85;}
+  .eq.big{font-size:var(--fs-eq-lg);}
+  .steps{font-size:var(--fs-body); line-height:1.95; margin:.4em 0;} .steps .lead2{color:var(--mut); font-size:.85em;}
+  .ex{font-size:var(--fs-body); color:var(--mut); background:var(--surface2); border-left:3px solid var(--act); border-radius:0 8px 8px 0; padding:.5em .75em; margin:.55em 0;}
+  .note{font-size:var(--fs-note); color:var(--mut); margin-top:.7em; line-height:1.65;}
+  .re{color:var(--re); font-weight:700;} .im{color:var(--im); font-weight:700;}
+  .deftbl{width:100%; border-collapse:collapse; font-size:var(--fs-table); margin:.5em 0;}
+  .deftbl th,.deftbl td{border:1px solid var(--line); padding:.4em .65em; text-align:left;} .deftbl th{background:var(--surface2); font-weight:700; white-space:nowrap;}
+  .figbox{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:.8em; text-align:center;}
+  .figcap{font-size:var(--fs-micro); color:var(--mut); margin-top:.4em;}
+  .fig{display:block; width:100%; max-width:20em; height:auto; margin:0 auto;}
+  .fig .w{fill:none; stroke:var(--ink); stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+  .fig .cur{fill:none; stroke:var(--ref); stroke-width:2.4;} .fig .curf{fill:var(--ref); stroke:none;}
+  .fig text{fill:var(--ink); font-family:Georgia,serif; font-style:italic; font-size:15px;}
+  .seg{display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; margin:.4em 0;}
+  .seg button{border:none; background:transparent; color:var(--mut); font-size:var(--fs-ui); padding:.45em .9em; cursor:pointer;} .seg button.on{background:var(--act); color:#fff;}
+  .legend{display:flex; gap:1em; flex-wrap:wrap; font-size:var(--fs-ui); color:var(--mut); margin:.5em 0 0;}
+  .sw{display:inline-block; width:.8em; height:.8em; border-radius:3px; vertical-align:-1px; margin-right:.3em;}
+  .btn{border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:9px; padding:.5em .9em; font-size:var(--fs-ui); cursor:pointer;} .btn:hover{background:var(--surface2);}
+  .reveal{margin-top:.7em; padding:.7em .9em; border-radius:10px; background:var(--surface2); font-size:var(--fs-body); display:none; line-height:1.85;} .reveal.show{display:block;}
+  ul.lead{font-size:var(--fs-body); padding-left:1.2em; margin:.3em 0;} ul.lead li{margin:.4em 0;}
+  .hero{justify-content:center;}
+  .back{display:inline-block; font-size:var(--fs-micro); color:var(--mut); text-decoration:none; margin-bottom:.6em;} .back:hover{color:var(--ink);}
+  .confirm{margin-top:.7em; padding-top:.6em; border-top:1px dashed var(--line);} .confirm .lab{font-size:var(--fs-micro); font-weight:700; color:var(--act); letter-spacing:.04em;}
+  /* 採点つき練習 */
+  .prfields{display:flex; flex-direction:column; gap:.5em; margin:.7em 0;}
+  .prf{display:flex; align-items:center; gap:.6em; font-size:var(--fs-note);} .prf>span:first-child{min-width:9.5em; color:var(--mut);}
+  .prf input{width:8.5em; height:2.1em; font-size:1em; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); padding:0 .55em;} .prf input:focus{outline:none; border-color:var(--act);}
+  .prmark{font-weight:700; font-size:1.3em; min-width:1em;} .prmark.good{color:var(--thr);} .prmark.bad{color:var(--act);}
+  .prbtns{display:flex; gap:.5em; flex-wrap:wrap; margin:.8em 0 .3em;}
+  .pr-primary{background:var(--act); color:#fff; border-color:var(--act); font-weight:700;}
+  .prresult{font-weight:700; font-size:var(--fs-note); min-height:1.5em; margin:.3em 0;} .prresult.good{color:var(--thr);} .prresult.bad{color:var(--act);}
+  /* nav / 解説ボタン */
+  .nav{position:fixed; left:0; right:0; bottom:0; height:52px; background:var(--surface); border-top:1px solid var(--line); display:flex; align-items:center; gap:10px; padding:0 12px; z-index:20;}
+  .nav button.arw{width:38px; height:34px; border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:8px; cursor:pointer; font-size:15px;} .nav button.arw:hover{background:var(--surface2);} .nav button.arw:disabled{opacity:.35; cursor:default;}
+  .nav select{flex:1; min-width:0; height:34px; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:8px; padding:0 10px; font-size:13px;}
+  .nav .count{font-size:12.5px; color:var(--mut); font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .prog{position:fixed; left:0; bottom:52px; height:3px; background:var(--act); width:0; z-index:21; transition:width .2s;}
+  .narrbtn{position:fixed; top:max(10px,1.4vh); right:max(12px,1.2vw); z-index:25; display:inline-flex; align-items:center; gap:.4em;
+    border:1px solid var(--act); background:var(--surface); color:var(--act); border-radius:999px; padding:.4em .9em; font-size:clamp(13px,1.7vh,22px); font-weight:700; cursor:pointer; box-shadow:0 1px 5px rgba(0,0,0,.10);} .narrbtn:hover{background:var(--surface2);} .narrbtn.playing{background:var(--act); color:#fff;}
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+<div class="deck" id="deck">
+  <!-- SLIDES:START -->
+<section class="slide" id="sl-title" data-title="正弦波の複素数表示"><div class="inner hero"><p class="kicker">電気回路Ⅱ 第10回</p><h1 class="tt" style="font-size:var(--fs-display);">正弦波の複素数表示</h1><p class="desc">8.7 正弦波の複素数表示 — 回転する複素ベクトルと位相</p><canvas id="cv-title" class="titlewave"></canvas><p class="note">→／Space で進みます。右上の <strong>🔊 解説</strong> で各ページの音声、右下 ⛶ で全画面。</p></div></section>
+
+<section class="slide" id="sl-agenda" data-title="この回のねらいと前提知識"><div class="inner"><span class="tag2 tag-ex">解説</span><p class="kicker">8.7 正弦波の複素数表示</p><h1 class="tt">この回のねらいと前提知識</h1><p class="desc">正弦波を「回転する複素ベクトル <i>|z|e</i><sup><i>j</i>(<i>ωt</i>+<i>θ</i>)</sup>」で表し、振幅と位相だけで扱えるようにする。</p><ul class="lead"><li>正弦波と回転する複素ベクトルの対応</li><li>実部が正弦波を表すこと</li><li>位相の意味と極形式（フェーザ）</li></ul><p class="ex">本日の新しい知識は多くない。理解の鍵は先週の複素数（極形式・オイラーの公式・複素数の計算）。不安なら複素数を十分に復習すること。</p></div></section>
+
+<section class="slide" id="sl-phase-read" data-title="交流波形の読み方（位相の進み・遅れ）"><div class="inner"><span class="tag2 tag-fig">図</span><p class="kicker">8.7 正弦波の複素数表示</p><h1 class="tt">交流波形の読み方（位相の進み・遅れ）</h1><canvas id="cv-phr" class="plot"></canvas><div class="legend"><span><span class="sw" style="background:var(--zr);"></span>cos <i>t</i>（基準）</span><span><span class="sw" style="background:var(--cos);"></span>cos(<i>t</i>+π/2)：進む</span><span><span class="sw" style="background:var(--ref);"></span>cos(<i>t</i>−π/2)：遅れる</span></div><p class="note">+π/2 は位相が π/2 進む（波が左へ）、−π/2 は遅れる（右へ）。1周期は 2π 秒、角周波数 <i>ω</i> なら 2π/<i>ω</i> 秒。</p></div></section>
+
+<section class="slide" id="sl-phase-do" data-title="位相を動かして進み・遅れを体感"><div class="inner"><span class="tag2 tag-do">操作</span><p class="kicker">確認</p><h1 class="tt">位相を動かして進み・遅れを体感</h1><div class="grid2"><div><canvas id="cv-phd" class="plot"></canvas></div><div><div class="row"><label>位相 φ (rad)</label><input type="range" id="s-phi" min="-3.14" max="3.14" step="0.05" value="0"><span class="val" id="v-phi">0.00</span></div><div class="eq" id="eq-phd"></div></div></div></div></section>
+
+<section class="slide" id="sl-rotvec" data-title="複素ベクトルの回転"><div class="inner">
+  <span class="tag2 tag-fig">図</span>
+  <p class="kicker">8.7 正弦波の複素数表示</p>
+  <h1 class="tt">複素ベクトルの回転</h1>
+  <div class="twocol">
+    <div><canvas id="cv-rv" class="plane"></canvas></div>
+    <div>
+      <div class="eq big">角度 = <i>&omega; t</i> + <i>&theta;</i></div>
+      <table class="deftbl">
+        <tr><th>角周波数（角速度） <i>&omega;</i></th><td>[rad/s]</td></tr>
+        <tr><th>位相 <i>&theta;</i></th><td>[rad]</td></tr>
+        <tr><th>1周期 2&pi;/<i>&omega;</i></th><td>[s]</td></tr>
+        <tr><th>振幅 |<i>z</i>|</th><td>矢印の長さ</td></tr>
+      </table>
+      <p class="note">前ページのグラフは、この実部を時間で図示したものとみなせる。</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="slide" id="sl-rotvec-do" data-title="回転する複素ベクトル"><div class="inner">
+  <span class="tag2 tag-do">操作</span>
+  <p class="kicker">確認</p>
+  <h1 class="tt">回転する複素ベクトル</h1>
+  <div class="grid2">
+    <div><canvas id="cv-rvd" class="plane"></canvas></div>
+    <div>
+      <div class="row"><label>初期位相 <i>&theta;</i> (rad)</label><input type="range" id="s-th0" min="-3.14" max="3.14" step="0.05" value="0.5"><span class="val" id="v-th0">0.50</span></div>
+      <div class="eq" id="eq-rvd"></div>
+      <p class="note"><span class="re">赤の点</span>＝実部、<span class="im">青の点</span>＝虚部。矢印が回るにつれ、両者が周期的に振動する。</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="slide" id="sl-time-conv" data-title="位相の時間換算"><div class="inner">
+  <span class="tag2 tag-ex">解説</span>
+  <p class="kicker">8.7 正弦波の複素数表示</p>
+  <h1 class="tt">位相の時間換算</h1>
+  <p class="steps">
+    1周期は <b>2&pi;/<i>&omega;</i></b> 秒。<br>
+    位相 <i>&theta;</i> は 1周（2&pi;）のうち <b><i>&theta;</i>/2&pi;</b> の割合。<br>
+    だから時間に直すと（1周の時間）&times;（割合）。
+  </p>
+  <div class="eq big"><i>t<sub>&theta;</sub></i> = (2&pi;/<i>&omega;</i>) &middot; (<i>&theta;</i>/2&pi;) = <i>&theta;</i>/<i>&omega;</i> &nbsp;[s]</div>
+  <div class="ex">50 Hz の交流（<i>&omega;</i> = 2&pi;<i>f</i> = 100&pi; rad/s）で、位相 &pi;/3 rad は<br><i>t</i> = (&pi;/3) / (100&pi;) = 1/300 &approx; 3.33 ms に相当する。</div>
+</div></section>
+
+<section class="slide" id="sl-zform" data-title="正弦波と複素ベクトルの対応式"><div class="inner">
+  <span class="tag2 tag-ex">解説</span>
+  <p class="kicker">8.7 正弦波の複素数表示</p>
+  <h1 class="tt">正弦波と複素ベクトルの対応式</h1>
+  <div class="eq big"><i>z</i> = |<i>z</i>| cos(<i>&omega;t</i>+<i>&theta;</i>) + |<i>z</i>| <i>j</i> sin(<i>&omega;t</i>+<i>&theta;</i>) = |<i>z</i>| e<sup><i>j</i>(<i>&omega;t</i>+<i>&theta;</i>)</sup></div>
+  <table class="deftbl">
+    <tr><th>|<i>z</i>|</th><td>振幅</td></tr>
+    <tr><th><i>&omega;</i></th><td>角周波数 [rad/s]</td></tr>
+    <tr><th><i>&theta;</i></th><td>位相 [rad]</td></tr>
+    <tr><th><i>f</i></th><td>周波数 [Hz]</td></tr>
+    <tr><th>関係</th><td><i>&omega;</i> = 2&pi;<i>f</i></td></tr>
+  </table>
+  <p class="note">この極形式が今日の主役。次は「実部が正弦波を表す」ことを確かめる。</p>
+</div></section>
+
+<section class="slide" id="sl-realpart" data-title="実部は正弦波を表す"><div class="inner">
+  <span class="tag2 tag-fig">図</span><span class="tag2 tag-ex">解説</span>
+  <p class="kicker">8.7 正弦波の複素数表示</p>
+  <h1 class="tt">実部は正弦波を表す</h1>
+  <div class="eq"><i>z</i> = |<i>z</i>| cos(<i>ωt</i>+<i>θ</i>) + |<i>z</i>| <i>j</i> sin(<i>ωt</i>+<i>θ</i>) = |<i>z</i>| <i>e</i><sup><i>j</i>(<i>ωt</i>+<i>θ</i>)</sup></div>
+  <div class="eq big">Re <i>z</i> = <span class="re">|<i>z</i>| cos(<i>ωt</i>+<i>θ</i>)</span></div>
+  <div class="twocol">
+    <div><canvas id="cv-rp1" class="plane"></canvas></div>
+    <div>
+      <p class="steps">複素数の極形式 |<i>z</i>|<i>e</i><sup><i>j</i>(<i>ωt</i>+<i>θ</i>)</sup> は、その<span class="re">実部 |<i>z</i>| cos(<i>ωt</i>+<i>θ</i>)</span> が表す正弦波を表すと考える。</p>
+      <p class="note">矢印 <i>z</i> を実軸（Re 軸）へ下ろした<span class="re">赤い影</span>が実部。これがコサイン波の値になる。虚軸への<span class="im">青い影</span>は虚部（サイン波）。</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="slide" id="sl-realpart-do" data-title="回転ベクトルの実部がcos波を描く"><div class="inner">
+  <span class="tag2 tag-do">操作</span>
+  <p class="kicker">確認</p>
+  <h1 class="tt">回転ベクトルの実部が cos 波を描く</h1>
+  <div class="grid2">
+    <div><canvas id="cv-rp-pl" class="plane"></canvas></div>
+    <div>
+      <canvas id="cv-rp-wave" class="plot"></canvas>
+      <div class="note">回る矢印の実部（Re 軸への影＝<span class="re">赤</span>）が、右の<span style="color:var(--cos);font-weight:700;">コサイン波</span>になります。波の左端 <i>t</i>=0 の赤い点が、いまの実部の値です。</div>
+    </div>
+  </div>
+</div></section>
+
+<section class="slide" id="sl-phase-mean" data-title="θは位相＝波を横にずらす"><div class="inner">
+  <span class="tag2 tag-fig">図</span>
+  <p class="kicker">正弦波と位相</p>
+  <h1 class="tt"><i>θ</i> は位相＝波を横にずらす</h1>
+  <canvas id="cv-pm" class="plot"></canvas>
+  <div class="legend">
+    <span><span class="sw" style="background:var(--zr);"></span>cos <i>x</i>（基準）</span>
+    <span><span class="sw" style="background:var(--cos);"></span>cos(<i>x</i>+0.6)</span>
+    <span><span class="sw" style="background:var(--ref);"></span>cos(<i>x</i>+1.2)</span>
+  </div>
+  <p class="note">位相のみ違う正弦波は形が相似で、横方向にスライドしているだけ。位相 <i>θ</i> が大きいほど波は左へずれる。振幅が同じなら、波の違いは位相の情報だけが意味を持つ。</p>
+</div></section>
+
+<section class="slide" id="sl-phase-mean-do" data-title="位相だけ違う正弦波を重ねる"><div class="inner">
+  <span class="tag2 tag-do">操作</span>
+  <p class="kicker">確認</p>
+  <h1 class="tt">位相だけ違う正弦波を重ねる</h1>
+  <div class="grid2">
+    <div><canvas id="cv-pmd" class="plot"></canvas></div>
+    <div>
+      <div class="row"><label>位相ステップ Δφ (rad)</label><input type="range" id="s-dphi" min="0" max="1.57" step="0.05" value="0.6"><span class="val" id="v-dphi">0.60</span></div>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--zr);"></span>cos <i>x</i></span>
+        <span><span class="sw" style="background:var(--cos);"></span>cos(<i>x</i>+Δφ)</span>
+        <span><span class="sw" style="background:var(--ref);"></span>cos(<i>x</i>+2Δφ)</span>
+      </div>
+      <div class="eq" id="eq-pmd"></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="slide" id="sl-drop-omega" data-title="ωtを省略してθだけで表す"><div class="inner">
+  <span class="tag2 tag-ex">解説</span>
+  <p class="kicker">複素数で表した正弦波</p>
+  <h1 class="tt"><i>ωt</i> を省略して <i>θ</i> だけで表す</h1>
+  <div class="eq big">|<i>z</i>| cos(<i>ωt</i>+<i>θ</i>) = |<i>z</i>| <i>e</i><sup><i>j</i>(<i>ωt</i>+<i>θ</i>)</sup></div>
+  <p class="steps" style="text-align:center;color:var(--act);font-weight:700;">↕ <i>ωt</i> を省略（周波数共通）</p>
+  <div class="eq big">|<i>z</i>| cos <i>θ</i> = |<i>z</i>| <i>e</i><sup><i>jθ</i></sup></div>
+  <p class="steps">周波数が混ざらない交流回路の解析では、共通の <i>ωt</i> を省いて、振幅 |<i>z</i>| と位相 <i>θ</i> だけで表してよい。これが<strong>フェーザ（複素振幅）表示</strong>。以降はすべて cos に統一して、|<i>z</i>|<i>e</i><sup><i>jθ</i></sup> と書く。</p>
+</div></section>
+
+<section class="slide" id="sl-sincos" data-title="cosはsinに対して−90度"><div class="inner">
+      <span class="tag2 tag-fig">図</span>
+      <p class="kicker">8.7 正弦波の複素数表示</p>
+      <h1 class="tt">cos は sin に対して −90 度ずれている</h1>
+      <canvas id="cv-sc" class="plot"></canvas>
+      <div class="eq big">sin <i>α</i> = cos( <i>α</i> − π/2 )</div>
+      <p class="note">この講義では波を <strong>すべて cos で表す</strong>のがルールです。だから sin が出てきたら cos に直す。やり方は簡単で、<strong>位相を −90度（−π/2）ずらす</strong>だけ。グラフでも cos の山は sin の山より 90度ぶん左にあります。</p>
+      <div class="legend"><span><span class="sw" style="background:var(--sin);"></span>sin <i>x</i></span><span><span class="sw" style="background:var(--cos);"></span>cos <i>x</i></span></div>
+    </div></section>
+
+<section class="slide" id="sl-ex88" data-title="例題8.8 5sin(ωt−30°)を極形式に"><div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">例題</p>
+      <h1 class="tt">例題8.8　5 sin(<i>ωt</i> − 30°) を極形式に</h1>
+      <div class="twocol">
+        <div>
+          <div class="steps">
+            <div>① 5 sin(<i>ωt</i> − 30°) = 5 sin( <i>ωt</i> − π/6 )</div>
+            <div><span class="lead2">② sin <i>α</i> = cos( <i>α</i> − π/2 ) より</span></div>
+            <div>③ = 5 cos( <i>ωt</i> − π/6 − π/2 )</div>
+            <div>&nbsp;&nbsp;&nbsp;= 5 cos( <i>ωt</i> − 2π/3 )</div>
+          </div>
+          <div class="eq big">∴ <i>z</i> = 5 <i>e</i><sup>−j(2/3)π</sup> = 5 <i>e</i><sup>−j120°</sup></div>
+          <p class="note">（式 8.33）　大きさ 5、偏角 −120° の複素数。実部 <span class="re">−2.5</span>、虚部 <span class="im">−4.33</span> で第3象限。</p>
+        </div>
+        <div><canvas id="cv-ex88" class="plane"></canvas></div>
+      </div>
+    </div></section>
+
+<section class="slide" id="sl-ex88-do" data-title="5e^{−j120°}を複素平面で確認"><div class="inner">
+      <span class="tag2 tag-do">操作</span>
+      <p class="kicker">確認</p>
+      <h1 class="tt">5 <i>e</i><sup>−j120°</sup> を複素平面で確認</h1>
+      <div class="grid2">
+        <div><canvas id="cv-ex88d" class="plane"></canvas></div>
+        <div>
+          <div class="row"><label>偏角 <i>θ</i> (度)</label><input type="range" id="s-th88" min="-180" max="180" step="5" value="-120"><span class="val" id="v-th88">-120</span></div>
+          <div class="eq" id="eq-ex88d"></div>
+          <p class="note">大きさ |<i>z</i>| = 5 は固定。スライダーで偏角 <i>θ</i> を動かすと、実部 5cos<i>θ</i>（<span class="re">赤</span>）と虚部 5sin<i>θ</i>（<span class="im">青</span>）が変わります。<strong>θ = −120°</strong> で例題8.8 の答えに一致。</p>
+        </div>
+      </div>
+    </div></section>
+
+<section class="slide" id="sl-ex89" data-title="例題8.9 4cosωt+3sinωtを合成"><div class="inner">
+  <span class="tag2 tag-ex">解説</span>
+  <p class="kicker">8.7 正弦波の複素数表示</p>
+  <h1 class="tt">例題8.9　4 cos <i>ωt</i> + 3 sin <i>ωt</i> を合成</h1>
+  <div class="twocol">
+    <div>
+      <p class="steps"><span class="lead2">① 全て cos に統一（sin α = cos(α − π/2)）</span><br>3 sin <i>ωt</i> = 3 cos(<i>ωt</i> − <span style="white-space:nowrap;">π/2</span>)</p>
+      <div class="eq">4 cos <i>ωt</i> + 3 sin <i>ωt</i><br>&nbsp;&nbsp;= 4 <i>e</i><sup><i>j</i>0</sup> + 3 <i>e</i><sup>−<i>j</i>π/2</sup> = <span class="re">4</span> − <span class="im">3<i>j</i></span></div>
+      <div class="eq"><i>r</i> = √(4² + 3²) = <strong>5</strong><br><i>θ</i> = tan⁻¹(−3/4) = − tan⁻¹(3/4)</div>
+      <div class="eq big">∴ 5 cos(<i>ωt</i> − tan⁻¹(3/4))<span class="note" style="display:inline;margin-left:.4em;">(8.36)</span></div>
+    </div>
+    <div><canvas id="cv-ex89" class="plane"></canvas><p class="note" style="text-align:center;margin-top:.3em;">第4象限の合成ベクトル <span class="re"><i>z</i></span> = 4 − 3<i>j</i></p></div>
+  </div>
+</div></section>
+
+<section class="slide" id="sl-ex89-do" data-title="ベクトル加算 4e^{j0}+3e^{−jπ/2}"><div class="inner">
+  <span class="tag2 tag-do">操作</span>
+  <p class="kicker">確認</p>
+  <h1 class="tt">ベクトル加算　4 <i>e</i><sup><i>j</i>0</sup> + 3 <i>e</i><sup>−<i>j</i>π/2</sup></h1>
+  <div class="grid2">
+    <div><canvas id="cv-ex89d" class="plane"></canvas></div>
+    <div>
+      <div class="row"><label><i>a</i>（<i>a</i> cos <i>ωt</i>）</label><input type="range" id="s-a89" min="0" max="6" step="0.5" value="4"><span class="val" id="v-a89">4.0</span></div>
+      <div class="row"><label><i>b</i>（<i>b</i> sin <i>ωt</i>）</label><input type="range" id="s-b89" min="0" max="6" step="0.5" value="3"><span class="val" id="v-b89">3.0</span></div>
+      <div class="eq" id="eq-ex89d"></div>
+      <p class="legend"><span><span class="sw" style="background:var(--ref);"></span>成分ベクトル <i>a</i>, −<i>b</i></span><span><span class="sw" style="background:var(--act);"></span>合成 <i>R</i></span></p>
+    </div>
+  </div>
+</div></section>
+
+<section class="slide" id="sl-practice" data-title="練習問題（課題1〜4・採点つき）"><div class="inner"><span class="tag2 tag-do">操作</span><p class="kicker">8.7 正弦波の複素数表示</p><h1 class="tt">練習問題</h1><p class="desc">課題1〜4を順に解こう。数値を入力して<strong>採点</strong>を押すと、各欄に ○／✕ が付く。困ったら<strong>答えを見る</strong>。</p><div class="seg" id="pr-seg"><button type="button" class="on" data-p="pr-p1">課題1</button><button type="button" data-p="pr-p2">課題2</button><button type="button" data-p="pr-p3">課題3</button><button type="button" data-p="pr-p4">課題4</button></div><div class="pr-panel" id="pr-p1"><p class="steps"><strong>課題1</strong>　50Hz の交流について以下に答えなさい。<br>（1）周波数 50Hz の交流の角周波数は何 rad/s か。<br>（2）位相 <i>π</i>/3 (rad) は何 (s) に相当するか。</p><div class="prfields"><div class="prf"><span>(1) <i>ω</i> = ［　］ × <i>π</i>　[rad/s]</span><input type="number" id="pr-q1a" step="any" inputmode="decimal"><span class="prmark" id="pr-q1a-m"></span></div><div class="prf"><span>(2) <i>t</i> = ［　］　ms（小数第2位まで）</span><input type="number" id="pr-q1b" step="any" inputmode="decimal"><span class="prmark" id="pr-q1b-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g1">採点</button><button type="button" class="btn" id="pr-r1">答えを見る</button><button type="button" class="btn" id="pr-t1">やり直す</button></div><div class="prresult" id="pr-res1"></div><div class="reveal" id="pr-rev1"><i>ω</i> = 2<i>πf</i> = 2<i>π</i>·50 = 100<i>π</i> ≈ 314.2 rad/s。位相の時間換算 <i>t</i> = <i>θ</i>/<i>ω</i> = (<i>π</i>/3)/(100<i>π</i>) = 1/300 s ≈ 3.33×10⁻³ s ＝ 3.33 ms。</div></div><div class="pr-panel" id="pr-p2" style="display:none;"><p class="steps"><strong>課題2（復習）</strong>　次の複素数を有理化（複素数の除算）し、<span class="re">実部</span>・<span class="im">虚部</span>を答えなさい。</p><div class="prfields"><div class="prf"><span>(1) 1/<i>j</i>　実部</span><input type="number" id="pr-q2-1r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-1r-m"></span></div><div class="prf"><span>(1) 1/<i>j</i>　虚部</span><input type="number" id="pr-q2-1i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-1i-m"></span></div><div class="prf"><span>(2) 1/(2+3<i>j</i>)　実部</span><input type="number" id="pr-q2-2r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-2r-m"></span></div><div class="prf"><span>(2) 1/(2+3<i>j</i>)　虚部</span><input type="number" id="pr-q2-2i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-2i-m"></span></div><div class="prf"><span>(3) 1/(3−<i>j</i>)　実部</span><input type="number" id="pr-q2-3r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-3r-m"></span></div><div class="prf"><span>(3) 1/(3−<i>j</i>)　虚部</span><input type="number" id="pr-q2-3i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-3i-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g2">採点</button><button type="button" class="btn" id="pr-r2">答えを見る</button><button type="button" class="btn" id="pr-t2">やり直す</button></div><div class="prresult" id="pr-res2"></div><div class="reveal" id="pr-rev2">分母の共役を分母・分子に掛けて実数化する。<br>(1) 1/<i>j</i> = (1·(−<i>j</i>))/(<i>j</i>·(−<i>j</i>)) = −<i>j</i>　→ 実部 0、虚部 −1。<br>(2) 1/(2+3<i>j</i>) = (2−3<i>j</i>)/(2²+3²) = (2−3<i>j</i>)/13　→ 実部 2/13 ≈ 0.15、虚部 −3/13 ≈ −0.23。<br>(3) 1/(3−<i>j</i>) = (3+<i>j</i>)/(3²+1²) = (3+<i>j</i>)/10　→ 実部 3/10 = 0.30、虚部 1/10 = 0.10。</div></div><div class="pr-panel" id="pr-p3" style="display:none;"><p class="steps"><strong>課題3</strong>　次の正弦波を複素交流（極形式 <i>A</i> e<sup><i>jθ</i></sup>）にしなさい。振幅 <i>A</i> と位相 <i>θ</i>（度）を答えよ。</p><div class="prfields"><div class="prf"><span>(1) cos(<i>ωt</i>+<i>π</i>/3)　振幅 <i>A</i></span><input type="number" id="pr-q3-1a" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-1a-m"></span></div><div class="prf"><span>(1) 位相 <i>θ</i>　[度]</span><input type="number" id="pr-q3-1t" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-1t-m"></span></div><div class="prf"><span>(2) sin(<i>ωt</i>+<i>π</i>/3)　振幅 <i>A</i></span><input type="number" id="pr-q3-2a" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-2a-m"></span></div><div class="prf"><span>(2) 位相 <i>θ</i>　[度]</span><input type="number" id="pr-q3-2t" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-2t-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g3">採点</button><button type="button" class="btn" id="pr-r3">答えを見る</button><button type="button" class="btn" id="pr-t3">やり直す</button></div><div class="prresult" id="pr-res3"></div><div class="reveal" id="pr-rev3">複素交流の基準は cos。すべて cos に統一して位相を読み取る。<br>(1) cos(<i>ωt</i>+<i>π</i>/3) はそのまま 1·e<sup><i>j</i>60°</sup>（= e<sup><i>jπ</i>/3</sup>）。よって <i>A</i>=1、<i>θ</i>=60°。<br>(2) sin → cos へは −90度：sin(<i>ωt</i>+<i>π</i>/3) = cos(<i>ωt</i>+<i>π</i>/3−<i>π</i>/2) = cos(<i>ωt</i>−<i>π</i>/6) = 1·e<sup>−<i>j</i>30°</sup>（= e<sup>−<i>jπ</i>/6</sup>）。よって <i>A</i>=1、<i>θ</i>=−30°。</div></div><div class="pr-panel" id="pr-p4" style="display:none;"><p class="steps"><strong>課題4</strong>　次の複素交流（極形式 <i>A</i> e<sup><i>jθ</i></sup>）を正弦波にしなさい（角周波数は <i>ω</i> とする）。<br><span class="eq big" style="display:inline-block;margin:.3em 0;">4 e<sup><i>j</i>(<i>π</i>/3)</sup></span><br>振幅と位相（度）を答えよ。</p><div class="prfields"><div class="prf"><span>振幅 <i>A</i></span><input type="number" id="pr-q4a" step="any" inputmode="decimal"><span class="prmark" id="pr-q4a-m"></span></div><div class="prf"><span>位相 <i>θ</i>　[度]</span><input type="number" id="pr-q4t" step="any" inputmode="decimal"><span class="prmark" id="pr-q4t-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g4">採点</button><button type="button" class="btn" id="pr-r4">答えを見る</button><button type="button" class="btn" id="pr-t4">やり直す</button></div><div class="prresult" id="pr-res4"></div><div class="reveal" id="pr-rev4">複素交流の実部をとって正弦波（cos）に戻す。4 e<sup><i>j</i>(<i>π</i>/3)</sup> → 4 cos(<i>ωt</i> + <i>π</i>/3)。よって振幅 4、位相 +<i>π</i>/3（= 60°）。</div></div></div></section>
+
+<section class="slide" id="sl-summary" data-title="まとめ"><div class="inner">
+  <span class="tag2 tag-ex">解説</span>
+  <p class="kicker">8.7 正弦波の複素数表示</p>
+  <h1 class="tt">まとめ</h1>
+  <ul class="lead">
+    <li>正弦波 ↔ 回転する複素ベクトル <span style="white-space:nowrap;">|<i>z</i>| <i>e</i><sup><i>j</i>(<i>ωt</i>+<i>θ</i>)</sup></span>。</li>
+    <li>その実部 <span style="white-space:nowrap;">|<i>z</i>| cos(<i>ωt</i>+<i>θ</i>)</span> が正弦波（極形式は、その実部が表す正弦波を表す）。</li>
+    <li><i>θ</i> は位相＝波の横スライド。同じ周波数なら<strong>振幅と位相だけ</strong>が意味を持つ。</li>
+    <li>周波数共通なら <i>ωt</i> を省き <span style="white-space:nowrap;">|<i>z</i>| <i>e</i><sup><i>jθ</i></sup></span>（<strong>フェーザ＝複素振幅</strong>）で扱う。</li>
+    <li>sin は sin α = cos(α − π/2) で cos に統一。和は<strong>ベクトル加算</strong>（例題8.9）。</li>
+  </ul>
+  <p class="note">次回（第11回）は正弦波交流回路へ。</p>
+</div></section>
+  <!-- SLIDES:END -->
+</div>
+
+<audio id="narr" preload="none"></audio>
+<button id="narrbtn" class="narrbtn" aria-label="解説音声" style="display:none;">🔊 解説</button>
+
+<nav class="nav">
+  <button class="arw" id="prev" aria-label="前へ">◀</button>
+  <select id="jump" aria-label="スライド選択"></select>
+  <span class="count" id="count">1 / 1</span>
+  <button class="arw" id="fs" aria-label="全画面" title="全画面">⛶</button>
+  <button class="arw" id="next" aria-label="次へ">▶</button>
+</nav>
+
+<script>
+(function(){
+  "use strict";
+  var TAU=Math.PI*2;
+  function $(s,r){return (r||document).querySelector(s);}
+  function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function fmt(v,d){d=d==null?2:d; return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function roundTo(v,dp){var f=Math.pow(10,dp); return Math.round(v*f)/f;}            // 採点: 四捨五入
+  function decimals(s){s=String(s).trim(); if(s.indexOf('.')<0)return 0; s=s.replace(/0+$/,''); var i=s.indexOf('.'); return i<0?0:(s.length-i-1);} // 採点: 小数桁
+  function vbnd(pl){var m=14/pl.s; return {x:(pl.W/2)/pl.s-m, y:(pl.H/2)/pl.s-m};}    // ドラッグ可動域（表示端まで）
+
+  // ---- スライドエンジン ----
+  var slides=[].slice.call(document.querySelectorAll('.slide')), N=slides.length, cur=0;
+  var hooks=slides.map(function(){return {};});
+  function idx(id){for(var i=0;i<slides.length;i++){if(slides[i].id===id)return i;} return -1;}
+  function reg(id,h){var i=idx(id); if(i>=0)hooks[i]=h;}
+  function goId(id){go(idx(id));}
+  var jump=$('#jump');
+  slides.forEach(function(s,i){var o=document.createElement('option'); o.value=i; o.textContent=(i+1)+'. '+(s.getAttribute('data-title')||s.id); jump.appendChild(o);});
+  $('#count').textContent='1 / '+N;
+  function go(i){
+    i=clamp(i,0,N-1); if(i===cur && slides[cur].classList.contains('active'))return;
+    if(hooks[cur].hide)hooks[cur].hide();
+    stopNarr();
+    slides[cur].classList.remove('active'); cur=i; slides[cur].classList.add('active');
+    jump.value=cur; $('#count').textContent=(cur+1)+' / '+N;
+    $('#prev').disabled=cur===0; $('#next').disabled=cur===N-1;
+    $('#prog').style.width=(cur/(N-1||1)*100)+'%'; slides[cur].scrollTop=0;
+    try{history.replaceState(null,'','#'+(cur+1));}catch(e){}
+    if(hooks[cur].show)hooks[cur].show();
+    syncNarrBtn();
+  }
+  $('#prev').onclick=function(){go(cur-1);}; $('#next').onclick=function(){go(cur+1);};
+  jump.onchange=function(){go(+jump.value);};
+  $('#fs').onclick=function(){ if(!document.fullscreenElement){ if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen(); } else { if(document.exitFullscreen)document.exitFullscreen(); } };
+  document.addEventListener('keydown',function(e){
+    if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+    if(e.target.tagName==='BUTTON'&&(e.key===' '||e.key==='Enter'))return;
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){go(cur+1);e.preventDefault();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){go(cur-1);e.preventDefault();}
+    else if(e.key==='Home'){go(0);} else if(e.key==='End'){go(N-1);}
+    else if(e.key==='f'||e.key==='F'){$('#fs').click();}
+  });
+  window.addEventListener('resize',function(){var h=hooks[cur]; if(h&&h.redraw)h.redraw();});
+
+  function anim(draw){var run=false;function loop(){if(!run)return;draw();requestAnimationFrame(loop);}return{start:function(){if(!run){run=true;loop();}},stop:function(){run=false;}};}
+
+  // ---- 解説ナレーション音声（単一プレーヤを使い回す） ----
+  var NARR_DIR='audio/';
+  var NARR=new Set(slides.map(function(s){return s.id;}));
+  var _audio=$('#narr'), _narrBtn=$('#narrbtn'), _playing=null;
+  function syncNarrBtn(){ var id=slides[cur].id, on=(_playing===id && !_audio.paused);
+    if(NARR.has(id)){ _narrBtn.style.display='inline-flex'; _narrBtn.textContent=on?'⏸ 停止':'🔊 解説'; _narrBtn.classList.toggle('playing',on);} else _narrBtn.style.display='none'; }
+  function stopNarr(){ try{_audio.pause(); _audio.currentTime=0;}catch(e){} _playing=null; }
+  function playNarr(id){ if(!NARR.has(id))return; stopNarr(); _audio.src=NARR_DIR+id+'.mp3'; _playing=id;
+    var p=_audio.play(); if(p&&p.catch)p.catch(function(){ NARR.delete(id); _playing=null; syncNarrBtn(); }); syncNarrBtn(); }
+  _narrBtn.onclick=function(e){ e.stopPropagation(); this.blur(); var id=slides[cur].id; if(_playing===id&&!_audio.paused){stopNarr();}else{playNarr(id);} syncNarrBtn(); };
+  _audio.addEventListener('ended',function(){_playing=null;syncNarrBtn();});
+  _audio.addEventListener('pause',function(){syncNarrBtn();});
+
+  // ---- 複素平面ヘルパー ----
+  function makePlane(cv, spanX, spanY){
+    var ctx=cv.getContext('2d'), dpr=window.devicePixelRatio||1, W=0,H=0,s=1,cx=0,cy=0, sx=spanX, sy=spanY;
+    function setSpan(a,b){sx=a; sy=(b==null?a:b);}
+    function fit(){var w=cv.clientWidth,h=cv.clientHeight; cv.width=w*dpr; cv.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); W=w;H=h; s=Math.min(w/sx,h/sy); cx=w/2; cy=h/2;}
+    function PX(x,y){return [cx+x*s, cy-y*s];} function UN(px,py){return [(px-cx)/s,(cy-py)/s];}
+    function clear(){ctx.clearRect(0,0,W,H);}
+    function axes(opt){opt=opt||{}; var xr=(W/2)/s, yr=(H/2)/s, i,p;
+      ctx.strokeStyle=cssv('--grd'); ctx.lineWidth=1; ctx.font='11px sans-serif'; ctx.fillStyle=cssv('--mut');
+      for(i=Math.ceil(-xr);i<=xr;i++){if(i===0)continue; p=PX(i,0); ctx.globalAlpha=.55; ctx.beginPath(); ctx.moveTo(p[0],0); ctx.lineTo(p[0],H); ctx.stroke();}
+      for(i=Math.ceil(-yr);i<=yr;i++){if(i===0)continue; p=PX(0,i); ctx.globalAlpha=.55; ctx.beginPath(); ctx.moveTo(0,p[1]); ctx.lineTo(W,p[1]); ctx.stroke();}
+      ctx.globalAlpha=1; ctx.strokeStyle=cssv('--ax'); ctx.lineWidth=1.5; var o=PX(0,0);
+      ctx.beginPath(); ctx.moveTo(0,o[1]); ctx.lineTo(W,o[1]); ctx.stroke(); ctx.beginPath(); ctx.moveTo(o[0],H); ctx.lineTo(o[0],0); ctx.stroke();
+      ctx.fillStyle=cssv('--mut'); ctx.fillText(opt.reLabel||'Re', W-26, o[1]-7); ctx.fillText(opt.imLabel||'Im', o[0]+7, 14);}
+    function head(x1,y1,x2,y2,color,L){L=L||10; var a=Math.atan2(y2-y1,x2-x1); ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-L*Math.cos(a-.42),y2-L*Math.sin(a-.42)); ctx.lineTo(x2-L*Math.cos(a+.42),y2-L*Math.sin(a+.42)); ctx.closePath(); ctx.fill();}
+    function arrow(ux1,uy1,ux2,uy2,color,w){var a=PX(ux1,uy1),b=PX(ux2,uy2); ctx.strokeStyle=color; ctx.lineWidth=w||3; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); head(a[0],a[1],b[0],b[1],color);}
+    function vec(x,y,color,opt){opt=opt||{}; arrow(0,0,x,y,color,opt.w||3.2);
+      if(opt.proj){var t=PX(x,y),ax=PX(x,0),ay=PX(0,y); ctx.save(); ctx.strokeStyle=color; ctx.globalAlpha=.5; ctx.setLineDash([4,4]); ctx.lineWidth=1.2;
+        ctx.beginPath(); ctx.moveTo(t[0],t[1]); ctx.lineTo(ax[0],ax[1]); ctx.stroke(); ctx.beginPath(); ctx.moveTo(t[0],t[1]); ctx.lineTo(ay[0],ay[1]); ctx.stroke(); ctx.restore();}
+      if(opt.label){var t2=PX(x,y); ctx.fillStyle=color; ctx.font='bold 14px Georgia,serif'; ctx.fillText(opt.label, t2[0]+8, t2[1]-6);}}
+    function dot(x,y,color,r){var p=PX(x,y); ctx.fillStyle=color; ctx.beginPath(); ctx.arc(p[0],p[1],r||4,0,TAU); ctx.fill();}
+    function handle(x,y,color){var p=PX(x,y); ctx.save(); ctx.globalAlpha=.16; ctx.fillStyle=color;
+      ctx.beginPath(); ctx.arc(p[0],p[1],17,0,TAU); ctx.arc(p[0],p[1],11,0,TAU,true); ctx.fill(); ctx.globalAlpha=1;
+      ctx.strokeStyle=color; ctx.lineWidth=1.6; ctx.setLineDash([3.5,3.5]); ctx.beginPath(); ctx.arc(p[0],p[1],15,0,TAU); ctx.stroke(); ctx.restore();}
+    return {ctx:ctx, fit:fit, setSpan:setSpan, PX:PX, UN:UN, clear:clear, axes:axes, arrow:arrow, vec:vec, dot:dot, handle:handle, get s(){return s;}, get W(){return W;}, get H(){return H;}};
+  }
+  function dragger(cv, plane, getPts, onMove){
+    var ix=-1;
+    function rel(e){var r=cv.getBoundingClientRect(); return plane.UN(e.clientX-r.left, e.clientY-r.top);}
+    function pick(u){var pts=getPts(),best=-1,bd=1e9; for(var i=0;i<pts.length;i++){var a=plane.PX(pts[i].x,pts[i].y),b=plane.PX(u[0],u[1]); var d=Math.hypot(a[0]-b[0],a[1]-b[1]); if(d<bd){bd=d;best=i;}} return bd<34?best:-1;}
+    cv.style.touchAction='none';
+    cv.addEventListener('pointerdown',function(e){var u=rel(e); ix=pick(u); if(ix>=0){cv.setPointerCapture(e.pointerId); onMove(ix,u[0],u[1]); e.preventDefault();}});
+    cv.addEventListener('pointermove',function(e){if(ix<0)return; var u=rel(e); onMove(ix,u[0],u[1]); e.preventDefault();});
+    function end(){ix=-1;} cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+  }
+
+  // ---- 時間波形ヘルパー ----
+  function timeCtx(cv){var ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1,W=0,H=0;
+    function fit(){var w=cv.clientWidth,h=cv.clientHeight;cv.width=w*dpr;cv.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);W=w;H=h;}
+    return {ctx:ctx,fit:fit,get W(){return W;},get H(){return H;}};}
+  function drawTimeAxes(c,ymax){var ctx=c.ctx,W=c.W,H=c.H,padL=34,padB=20,padT=10,padR=10;
+    function X(t){return padL+t/c._tmax*(W-padL-padR);} function Y(v){return padT+(ymax-v)/(2*ymax)*(H-padT-padB);}
+    ctx.clearRect(0,0,W,H); ctx.strokeStyle=cssv('--grd'); ctx.fillStyle=cssv('--mut'); ctx.font='10px sans-serif'; ctx.lineWidth=1;
+    for(var g=-ymax;g<=ymax+1e-9;g+=ymax/2){ctx.globalAlpha=g===0?.85:.4; ctx.beginPath(); ctx.moveTo(padL,Y(g)); ctx.lineTo(W-padR,Y(g)); ctx.stroke(); ctx.globalAlpha=1; ctx.fillText(fmt(g,g%1?1:0),4,Y(g)+3);}
+    return {X:X,Y:Y};}
+  function plotFn(c,m,fn,color,w){var ctx=c.ctx,W=c.W; ctx.strokeStyle=color; ctx.lineWidth=w||2.4; ctx.lineJoin='round'; ctx.beginPath(); var first=true;
+    for(var px=34;px<=W-10;px+=2){var t=(px-34)/(W-44)*c._tmax; var y=fn(t); var X=m.X(t),Y=m.Y(y); if(first){ctx.moveTo(X,Y);first=false;}else ctx.lineTo(X,Y);} ctx.stroke();}
+
+  /* HOOKS:START */
+(function(){var cv=$('#cv-title'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI; var A=anim(function(){c.fit(); var m=drawTimeAxes(c,1.2); var ph=performance.now()/700; plotFn(c,m,function(t){return Math.cos(t-ph);},cssv('--zr'),3); plotFn(c,m,function(t){return Math.cos(t-ph+Math.PI/2);},cssv('--cos'),2);}); reg('sl-title',{show:A.start,hide:A.stop});})();
+
+(function(){var cv=$('#cv-phr'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI; function draw(){c.fit(); var m=drawTimeAxes(c,1.15); plotFn(c,m,function(t){return Math.cos(t+Math.PI/2);},cssv('--cos'),2.4); plotFn(c,m,function(t){return Math.cos(t-Math.PI/2);},cssv('--ref'),2.4); plotFn(c,m,function(t){return Math.cos(t);},cssv('--zr'),3);} reg('sl-phase-read',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-phd'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI; var phi=0; var el=$('#s-phi'),o=$('#v-phi'); function upd(){o.textContent=fmt(phi,2); var st; if(phi>0.02)st='φ>0: 位相が進む（左へ）'; else if(phi<-0.02)st='φ<0: 遅れる（右へ）'; else st='φ=0: 同相'; $('#eq-phd').innerHTML='<span class="big">cos( <i>t</i> + φ )</span><br>φ = '+fmt(phi,2)+' rad<br>'+st;} function draw(){c.fit(); var m=drawTimeAxes(c,1.15); plotFn(c,m,function(t){return Math.cos(t);},cssv('--zr'),1.8); plotFn(c,m,function(t){return Math.cos(t+phi);},cssv('--act'),3);} if(el)el.addEventListener('input',function(){phi=parseFloat(el.value); upd(); draw();}); upd(); reg('sl-phase-do',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-rv'); if(!cv)return; var pl=makePlane(cv,7,7); var R=2.6, ang=35*Math.PI/180;
+  function draw(){pl.fit(); pl.clear(); pl.axes();
+    var ctx=pl.ctx, o=pl.PX(0,0);
+    ctx.beginPath(); ctx.arc(o[0],o[1],R*pl.s,0,Math.PI*2); ctx.strokeStyle=cssv('--ref'); ctx.lineWidth=1.5; ctx.globalAlpha=.7; ctx.stroke(); ctx.globalAlpha=1;
+    var x=R*Math.cos(ang), y=R*Math.sin(ang);
+    ctx.beginPath(); ctx.arc(o[0],o[1],0.95*pl.s,0,-ang,true); ctx.strokeStyle=cssv('--act'); ctx.lineWidth=2.4; ctx.stroke();
+    pl.vec(x,y,cssv('--z1'),{proj:true,label:'z',w:3.4});
+    ctx.fillStyle=cssv('--act'); ctx.font='bold 13px Georgia,serif'; var lp=pl.PX(1.3*Math.cos(ang/2),1.3*Math.sin(ang/2)); ctx.fillText('ωt+θ', lp[0], lp[1]);
+    ctx.fillStyle=cssv('--re'); ctx.font='12px Georgia,serif'; var rp=pl.PX(x*0.5,-0.0); ctx.fillText('|z|cos', rp[0]-18, rp[1]+16);
+    ctx.fillStyle=cssv('--im'); var ip=pl.PX(0,y*0.5); ctx.fillText('|z|sin', ip[0]+6, ip[1]);
+  }
+  reg('sl-rotvec',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-rvd'); if(!cv)return; var pl=makePlane(cv,6,6); var R=2.4; var th0=0.5;
+  var el=$('#s-th0'),ov=$('#v-th0');
+  if(el)el.addEventListener('input',function(){th0=parseFloat(el.value); ov.textContent=fmt(th0,2);});
+  var A=anim(function(){pl.fit(); pl.clear(); pl.axes();
+    var ctx=pl.ctx, o=pl.PX(0,0);
+    ctx.beginPath(); ctx.arc(o[0],o[1],R*pl.s,0,Math.PI*2); ctx.strokeStyle=cssv('--ref'); ctx.lineWidth=1.5; ctx.globalAlpha=.6; ctx.stroke(); ctx.globalAlpha=1;
+    var ang=performance.now()/900 + th0;
+    var x=R*Math.cos(ang), y=R*Math.sin(ang);
+    pl.vec(x,y,cssv('--z1'),{proj:true,w:3.4});
+    pl.dot(x,0,cssv('--re'),5);
+    pl.dot(0,y,cssv('--im'),5);
+    $('#eq-rvd').innerHTML='<i>z</i> = |<i>z</i>| e<sup><i>j</i>(ωt+θ)</sup><br>θ = '+fmt(th0,2)+' rad<br>実部 = |<i>z</i>| cos(ωt+θ)';
+  });
+  reg('sl-rotvec-do',{show:A.start,hide:A.stop});})();
+
+(function(){var cv=$('#cv-rp1'); if(!cv)return; var pl=makePlane(cv,7,7);
+  var R=2.6, ang=40*Math.PI/180, x=R*Math.cos(ang), y=R*Math.sin(ang);
+  function draw(){pl.fit(); pl.clear(); pl.axes();
+    var ctx=pl.ctx, o=pl.PX(0,0);
+    ctx.save(); ctx.strokeStyle=cssv('--mut'); ctx.globalAlpha=.4; ctx.lineWidth=1.2; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.arc(o[0],o[1],R*pl.s,0,Math.PI*2); ctx.stroke(); ctx.restore();
+    var tip=pl.PX(x,y), ax=pl.PX(x,0), ay=pl.PX(0,y);
+    ctx.save(); ctx.strokeStyle=cssv('--im'); ctx.globalAlpha=.7; ctx.lineWidth=1.4; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(tip[0],tip[1]); ctx.lineTo(ay[0],ay[1]); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=cssv('--re'); ctx.lineWidth=3; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(tip[0],tip[1]); ctx.lineTo(ax[0],ax[1]); ctx.stroke(); ctx.restore();
+    ctx.save(); ctx.strokeStyle=cssv('--re'); ctx.lineWidth=5; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(o[0],o[1]); ctx.lineTo(ax[0],ax[1]); ctx.stroke(); ctx.restore();
+    pl.vec(x,y,cssv('--z1'),{label:'z'});
+    pl.dot(x,0,cssv('--re'),6); pl.dot(0,y,cssv('--im'),4.5);
+    ctx.fillStyle=cssv('--re'); ctx.font='bold 13px Georgia,serif'; ctx.fillText('Re z', ax[0]-18, ax[1]+20);}
+  reg('sl-realpart',{show:draw,redraw:draw});})();
+
+(function(){var cv1=$('#cv-rp-pl'), cv2=$('#cv-rp-wave'); if(!cv1||!cv2)return;
+  var pl=makePlane(cv1,3.0,3.0); var c=timeCtx(cv2); c._tmax=4*Math.PI;
+  var A=anim(function(){
+    var ang=performance.now()/900; var xr=Math.cos(ang), yi=Math.sin(ang);
+    pl.fit(); pl.clear(); pl.axes();
+    var ctx=pl.ctx, o=pl.PX(0,0);
+    ctx.save(); ctx.strokeStyle=cssv('--mut'); ctx.globalAlpha=.4; ctx.lineWidth=1.2; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.arc(o[0],o[1],1.0*pl.s,0,Math.PI*2); ctx.stroke(); ctx.restore();
+    var tip=pl.PX(xr,yi), ax=pl.PX(xr,0);
+    ctx.save(); ctx.strokeStyle=cssv('--re'); ctx.lineWidth=2.4; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(tip[0],tip[1]); ctx.lineTo(ax[0],ax[1]); ctx.stroke(); ctx.restore();
+    pl.vec(xr,yi,cssv('--z1'),{}); pl.dot(xr,0,cssv('--re'),6);
+    c.fit(); var m=drawTimeAxes(c,1.15);
+    plotFn(c,m,function(t){return Math.cos(ang - t);}, cssv('--cos'),3);
+    var c2=c.ctx; c2.fillStyle=cssv('--re'); c2.beginPath(); c2.arc(m.X(0),m.Y(Math.cos(ang)),5,0,Math.PI*2); c2.fill();
+  });
+  reg('sl-realpart-do',{show:A.start,hide:A.stop});})();
+
+(function(){var cv=$('#cv-pm'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI;
+  function draw(){c.fit(); var m=drawTimeAxes(c,1.1);
+    plotFn(c,m,function(t){return Math.cos(t);}, cssv('--zr'),3);
+    plotFn(c,m,function(t){return Math.cos(t+0.6);}, cssv('--cos'),3);
+    plotFn(c,m,function(t){return Math.cos(t+1.2);}, cssv('--ref'),3);}
+  reg('sl-phase-mean',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-pmd'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI; var dphi=0.6;
+  var el=$('#s-dphi'), o=$('#v-dphi');
+  function draw(){c.fit(); var m=drawTimeAxes(c,1.1);
+    plotFn(c,m,function(t){return Math.cos(t);}, cssv('--zr'),3);
+    plotFn(c,m,function(t){return Math.cos(t+dphi);}, cssv('--cos'),3);
+    plotFn(c,m,function(t){return Math.cos(t+2*dphi);}, cssv('--ref'),3);
+    $('#eq-pmd').innerHTML='Δφ = '+fmt(dphi,2)+' rad ずつ位相が進む＝波が等間隔で左にスライド。振幅は不変。';}
+  if(el)el.addEventListener('input',function(){dphi=parseFloat(el.value); o.textContent=fmt(dphi,2); draw();});
+  reg('sl-phase-mean-do',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-sc'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI;
+    function draw(){c.fit(); var ymax=1.15; var m=drawTimeAxes(c,ymax);
+      plotFn(c,m,function(t){return Math.sin(t);},cssv('--sin'),3);
+      plotFn(c,m,function(t){return Math.cos(t);},cssv('--cos'),3);
+      var ctx=c.ctx; ctx.font='bold 13px Georgia,serif';
+      ctx.fillStyle=cssv('--sin'); ctx.fillText('sin x', m.X(Math.PI/2+0.15), m.Y(1.05));
+      ctx.fillStyle=cssv('--cos'); ctx.fillText('cos x', m.X(2*Math.PI+0.15), m.Y(1.05));}
+    reg('sl-sincos',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-ex88'); if(!cv)return; var pl=makePlane(cv,14,14);
+    var th=-120*Math.PI/180, R=5; var zx=R*Math.cos(th), zy=R*Math.sin(th);
+    function draw(){pl.fit(); pl.clear(); pl.axes();
+      pl.vec(zx,zy,cssv('--act'),{proj:true,label:'z'});
+      pl.dot(zx,0,cssv('--re'),5); pl.dot(0,zy,cssv('--im'),5);
+      var ctx=pl.ctx; ctx.font='bold 12px Georgia,serif';
+      ctx.fillStyle=cssv('--re'); var pr=pl.PX(zx,0); ctx.fillText('−2.5', pr[0]-4, pr[1]+16);
+      ctx.fillStyle=cssv('--im'); var pi=pl.PX(0,zy); ctx.fillText('−4.33', pi[0]+8, pi[1]+4);}
+    reg('sl-ex88',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-ex88d'); if(!cv)return; var pl=makePlane(cv,14,14); var R=5;
+    var sl=$('#s-th88'), vo=$('#v-th88'), eq=$('#eq-ex88d');
+    function draw(){var thd=sl?parseFloat(sl.value):-120; var th=thd*Math.PI/180;
+      var zx=R*Math.cos(th), zy=R*Math.sin(th);
+      pl.fit(); pl.clear(); pl.axes();
+      pl.vec(zx,zy,cssv('--act'),{proj:true,label:'z'});
+      pl.dot(zx,0,cssv('--re'),5); pl.dot(0,zy,cssv('--im'),5);
+      var hit=Math.abs(thd-(-120))<=3;
+      if(eq){
+        eq.innerHTML='<i>z</i> = 5 <i>e</i><sup>j'+fmt(thd,0)+'°</sup>　　実部 = 5cos<i>θ</i> ≈ <span class="re">'+fmt(zx,2)+'</span>、　虚部 = 5sin<i>θ</i> ≈ <span class="im">'+fmt(zy,2)+'</span>'
+          + (hit?'<br><span style="color:var(--thr);font-weight:700;">✓ これが 5 sin(ωt − 30°)：実部 −2.5、虚部 −4.33</span>':'');
+      }
+      if(vo)vo.textContent=fmt(thd,0);}
+    if(sl)sl.addEventListener('input',draw);
+    reg('sl-ex88-do',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-ex89'); if(!cv)return; var pl=makePlane(cv,12,12);
+  function draw(){pl.fit(); pl.clear(); pl.axes();
+    pl.vec(4,0,cssv('--ref'),{label:'4e^{j0}'});
+    pl.vec(0,-3,cssv('--ref'),{label:'3e^{-jπ/2}'});
+    pl.vec(4,-3,cssv('--act'),{proj:true,label:'z=4-3j'});
+  }
+  reg('sl-ex89',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-ex89d'); if(!cv)return; var pl=makePlane(cv,12,12); var a=4,b=3;
+  var sa=$('#s-a89'),sb=$('#s-b89'),va=$('#v-a89'),vb=$('#v-b89');
+  function draw(){pl.fit(); pl.clear(); pl.axes();
+    if(a>0)pl.vec(a,0,cssv('--ref'),{label:'a'});
+    if(b>0)pl.vec(0,-b,cssv('--ref'),{label:'-b'});
+    pl.vec(a,-b,cssv('--act'),{proj:true,label:'R'});
+    var r=Math.sqrt(a*a+b*b);
+    var phr=(a===0&&b===0)?0:-Math.atan2(b,a);
+    var phd=phr*180/Math.PI;
+    $('#eq-ex89d').innerHTML='振幅 √(a²+b²) = <strong>'+fmt(r,2)+'</strong><br>位相 −tan⁻¹(b/a) = <strong>'+fmt(phr,3)+'</strong> rad（'+fmt(phd,2)+'°）<br><span class="big" style="display:inline-block;margin-top:.3em;"><i>a</i> cos <i>ωt</i> + <i>b</i> sin <i>ωt</i> = '+fmt(r,2)+' cos(<i>ωt</i> '+(phr<=0?'−':'+')+' '+fmt(Math.abs(phr),3)+')</span>';
+  }
+  function upd(){a=parseFloat(sa.value); b=parseFloat(sb.value); va.textContent=fmt(a,1); vb.textContent=fmt(b,1); draw();}
+  sa.addEventListener('input',upd); sb.addEventListener('input',upd);
+  reg('sl-ex89-do',{show:draw,redraw:draw});})();
+
+(function(){var root=$('#sl-practice'); if(!root)return;
+  var seg=$('#pr-seg'), panels=['pr-p1','pr-p2','pr-p3','pr-p4'];
+  if(seg){ seg.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b)return;
+    [].slice.call(seg.querySelectorAll('button')).forEach(function(x){x.classList.toggle('on',x===b);});
+    panels.forEach(function(id){ var el=$('#'+id); if(el) el.style.display=(id===b.getAttribute('data-p'))?'':'none'; }); }); }
+  function judge(inputId, ans, dp){ var inp=$('#'+inputId), mk=$('#'+inputId+'-m'); if(!inp||!mk)return null;
+    mk.className='prmark'; var raw=inp.value.trim();
+    if(raw===''){ mk.textContent=''; return null; }
+    var v=parseFloat(raw); if(isNaN(v)){ mk.textContent='✕'; mk.classList.add('bad'); return false; }
+    var ok=(roundTo(v,dp)===roundTo(ans,dp));
+    mk.textContent=ok?'○':'✕'; mk.classList.add(ok?'good':'bad'); return ok; }
+  function digitHint(fields){ for(var i=0;i<fields.length;i++){ var inp=$('#'+fields[i][0]); if(inp&&inp.value.trim()!==''&&decimals(inp.value)>fields[i][2]) return true; } return false; }
+  function summary(resId, marks, fields){ var res=$('#'+resId); if(!res)return;
+    var done=marks.filter(function(m){return m!==null;}).length;
+    if(done===0){ res.className='prresult'; res.textContent='数値を入力してから採点してください。'; return; }
+    var good=marks.filter(function(m){return m===true;}).length, all=marks.length;
+    var hint=digitHint(fields)?'（指定の桁数に四捨五入して入力しよう）':'';
+    if(good===all){ res.className='prresult good'; res.textContent='全問正解！ '+good+' / '+all; }
+    else { res.className='prresult bad'; res.textContent='正解 '+good+' / '+all+'　もう一度確かめよう。'+hint; } }
+  function bindReveal(btnId, revId){ var b=$('#'+btnId), r=$('#'+revId); if(b&&r) b.addEventListener('click',function(){ r.classList.toggle('show'); b.textContent=r.classList.contains('show')?'答えを隠す':'答えを見る'; }); }
+  function bindRetry(btnId, panelId, resId, revId, revBtnId){ var b=$('#'+btnId); if(!b)return;
+    b.addEventListener('click',function(){
+      var panel=$('#'+panelId); if(panel){
+        [].slice.call(panel.querySelectorAll('input')).forEach(function(inp){inp.value='';});
+        [].slice.call(panel.querySelectorAll('.prmark')).forEach(function(mk){mk.textContent=''; mk.className='prmark';}); }
+      var res=$('#'+resId); if(res){res.textContent=''; res.className='prresult';}
+      var rev=$('#'+revId); if(rev) rev.classList.remove('show');
+      var rb=$('#'+revBtnId); if(rb) rb.textContent='答えを見る'; }); }
+  (function(){ var F=[['pr-q1a',100,0],['pr-q1b',3.33,2]];
+    var g=$('#pr-g1'); if(g) g.addEventListener('click',function(){ var m=F.map(function(f){return judge(f[0],f[1],f[2]);}); summary('pr-res1',m,F); });
+    bindReveal('pr-r1','pr-rev1'); bindRetry('pr-t1','pr-p1','pr-res1','pr-rev1','pr-r1'); })();
+  (function(){ var F=[['pr-q2-1r',0,0],['pr-q2-1i',-1,0],['pr-q2-2r',2/13,2],['pr-q2-2i',-3/13,2],['pr-q2-3r',3/10,2],['pr-q2-3i',1/10,2]];
+    var g=$('#pr-g2'); if(g) g.addEventListener('click',function(){ var m=F.map(function(f){return judge(f[0],f[1],f[2]);}); summary('pr-res2',m,F); });
+    bindReveal('pr-r2','pr-rev2'); bindRetry('pr-t2','pr-p2','pr-res2','pr-rev2','pr-r2'); })();
+  (function(){ var F=[['pr-q3-1a',1,0],['pr-q3-1t',60,0],['pr-q3-2a',1,0],['pr-q3-2t',-30,0]];
+    var g=$('#pr-g3'); if(g) g.addEventListener('click',function(){ var m=F.map(function(f){return judge(f[0],f[1],f[2]);}); summary('pr-res3',m,F); });
+    bindReveal('pr-r3','pr-rev3'); bindRetry('pr-t3','pr-p3','pr-res3','pr-rev3','pr-r3'); })();
+  (function(){ var F=[['pr-q4a',4,0],['pr-q4t',60,0]];
+    var g=$('#pr-g4'); if(g) g.addEventListener('click',function(){ var m=F.map(function(f){return judge(f[0],f[1],f[2]);}); summary('pr-res4',m,F); });
+    bindReveal('pr-r4','pr-rev4'); bindRetry('pr-t4','pr-p4','pr-res4','pr-rev4','pr-r4'); })();
+  reg('sl-practice',{show:function(){},redraw:function(){}});
+})();
+  /* HOOKS:END */
+
+  // ---- 起動 ----
+  var start=0, h=parseInt((location.hash||'').replace('#',''),10); if(h>=1&&h<=N)start=h-1;
+  go(start);
+})();
+</script>
+</body>
+</html>

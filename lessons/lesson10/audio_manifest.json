@@ -1,0 +1,102 @@
+[
+  {
+    "id": "sl-title",
+    "file": "audio/sl-title.mp3",
+    "duration": 29.14
+  },
+  {
+    "id": "sl-agenda",
+    "file": "audio/sl-agenda.mp3",
+    "duration": 45.98
+  },
+  {
+    "id": "sl-phase-read",
+    "file": "audio/sl-phase-read.mp3",
+    "duration": 37.06
+  },
+  {
+    "id": "sl-phase-do",
+    "file": "audio/sl-phase-do.mp3",
+    "duration": 31.87
+  },
+  {
+    "id": "sl-rotvec",
+    "file": "audio/sl-rotvec.mp3",
+    "duration": 34.18
+  },
+  {
+    "id": "sl-rotvec-do",
+    "file": "audio/sl-rotvec-do.mp3",
+    "duration": 34.1
+  },
+  {
+    "id": "sl-time-conv",
+    "file": "audio/sl-time-conv.mp3",
+    "duration": 39.79
+  },
+  {
+    "id": "sl-zform",
+    "file": "audio/sl-zform.mp3",
+    "duration": 42.89
+  },
+  {
+    "id": "sl-realpart",
+    "file": "audio/sl-realpart.mp3",
+    "duration": 28.42
+  },
+  {
+    "id": "sl-realpart-do",
+    "file": "audio/sl-realpart-do.mp3",
+    "duration": 30.6
+  },
+  {
+    "id": "sl-phase-mean",
+    "file": "audio/sl-phase-mean.mp3",
+    "duration": 28.15
+  },
+  {
+    "id": "sl-phase-mean-do",
+    "file": "audio/sl-phase-mean-do.mp3",
+    "duration": 28.99
+  },
+  {
+    "id": "sl-drop-omega",
+    "file": "audio/sl-drop-omega.mp3",
+    "duration": 36.46
+  },
+  {
+    "id": "sl-sincos",
+    "file": "audio/sl-sincos.mp3",
+    "duration": 30.53
+  },
+  {
+    "id": "sl-ex88",
+    "file": "audio/sl-ex88.mp3",
+    "duration": 40.97
+  },
+  {
+    "id": "sl-ex88-do",
+    "file": "audio/sl-ex88-do.mp3",
+    "duration": 31.3
+  },
+  {
+    "id": "sl-ex89",
+    "file": "audio/sl-ex89.mp3",
+    "duration": 43.94
+  },
+  {
+    "id": "sl-ex89-do",
+    "file": "audio/sl-ex89-do.mp3",
+    "duration": 32.3
+  },
+  {
+    "id": "sl-practice",
+    "file": "audio/sl-practice.mp3",
+    "duration": 43.66
+  },
+  {
+    "id": "sl-summary",
+    "file": "audio/sl-summary.mp3",
+    "duration": 50.69
+  }
+]

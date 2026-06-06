@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>電気回路Ⅱ — 触って学べるインタラクティブ授業資料</title>
+<meta name="description" content="電気回路Ⅱの授業を、読むだけでなく「自分で動かして確かめられる」インタラクティブ教材に。複素平面のドラッグ・波形スライダー・採点つき練習をブラウザだけで。各ページに音声解説つき。" />
+
+<!-- Open Graph / SNS -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://kouhei1970.github.io/circuit-2-lessons/" />
+<meta property="og:title" content="電気回路Ⅱ — 触って学べる授業資料" />
+<meta property="og:description" content="複素平面をドラッグし、波形スライダーを動かすと結果がその場で変わる。音声解説つきのインタラクティブ講義。" />
+<meta property="og:site_name" content="電気回路Ⅱ インタラクティブ授業資料" />
+<meta property="og:locale" content="ja_JP" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="電気回路Ⅱ — 触って学べる授業資料" />
+<meta name="twitter:description" content="複素平面をドラッグし、波形スライダーを動かすと結果がその場で変わる。音声解説つきのインタラクティブ講義。" />
+<style>
+  :root{
+    --bg:#faf9f5; --surface:#ffffff; --surface2:#f1efe8;
+    --ink:#1f1e1c; --mut:#6b6a64; --grd:rgba(0,0,0,0.12); --line:rgba(0,0,0,0.14);
+    --ref:#378ADD; --act:#D85A30; --thr:#639922;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1a1915; --surface:#23221d; --surface2:#2b2a24;
+      --ink:#ecebe4; --mut:#a3a299; --grd:rgba(255,255,255,0.14); --line:rgba(255,255,255,0.16);
+      --ref:#85B7EB; --act:#F0997B; --thr:#97C459;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Yu Gothic UI",sans-serif;
+    line-height:1.7; -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:720px; margin:0 auto; padding:48px 20px 56px;}
+  .eyebrow{font-size:13px; letter-spacing:.08em; color:var(--act); font-weight:600; margin:0 0 10px;}
+  h1{font-size:28px; font-weight:700; margin:0 0 10px; line-height:1.3;}
+  .lead{font-size:16px; color:var(--mut); margin:0 0 36px;}
+  h2{font-size:16px; font-weight:600; margin:40px 0 12px;}
+  p{margin:0 0 14px;}
+  .why{background:var(--surface2); border-radius:12px; padding:20px 22px; margin:0 0 8px;}
+  .why p{font-size:14.5px; margin:0 0 12px;}
+  .why p:last-child{margin-bottom:0;}
+  .why .em{color:var(--ink); font-weight:600;}
+  .lessons{display:grid; gap:14px; margin:8px 0 0;}
+  .lcard{display:block; text-decoration:none; color:inherit;
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:20px 22px; transition:transform .08s, border-color .12s, box-shadow .12s;}
+  .lcard:hover{transform:translateY(-2px); border-color:var(--act); box-shadow:0 6px 20px rgba(0,0,0,.06);}
+  .lcard .tag{display:inline-block; font-size:12px; color:var(--thr); font-weight:600; margin:0 0 6px;}
+  .lcard h3{font-size:18px; font-weight:600; margin:0 0 6px;}
+  .lcard .d{font-size:14px; color:var(--mut); margin:0;}
+  .lcard .go{font-size:14px; color:var(--act); font-weight:600; margin-top:12px; display:inline-block;}
+  .soon{background:transparent; border:1px dashed var(--line); border-radius:12px;
+    padding:18px 22px; color:var(--mut); font-size:14px;}
+  footer{margin-top:48px; padding-top:20px; border-top:1px solid var(--line);
+    font-size:13px; color:var(--mut); line-height:1.8;}
+  footer a{color:var(--mut);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">電気回路Ⅱ · INTERACTIVE LESSON</p>
+  <h1>触って学べる、電気回路Ⅱ</h1>
+  <p class="lead">教科書の内容を、読むだけでなく「自分で動かして確かめられる」教材へ。複素平面をドラッグし、波形のスライダーを動かすと、結果がその場で返ってきます。各ページに音声解説つき。インストール不要、ブラウザだけで動きます。</p>
+
+  <div class="why">
+    <p><span class="em">使い方。</span> 各教材を開き、→／Space でページを送ります。右上の <span class="em">🔊 解説</span> でそのページの音声解説、右下の ⛶ でプロジェクタ向けの全画面表示になります。</p>
+    <p>「解説（定義・図・式変形）→ 操作（その場で確かめる）」の二段構成です。スライダーや複素平面をぜひ自分で動かしてみてください。練習問題は数値を入力すると自動で採点されます。</p>
+  </div>
+
+  <h2>教材一覧</h2>
+  <div class="lessons">
+    <a class="lcard" href="lessons/lesson10/">
+      <span class="tag">第10回 · 8.7</span>
+      <h3>正弦波の複素数表示 — 回転する複素ベクトルと位相</h3>
+      <p class="d">正弦波を「回転する複素ベクトル（極形式）」で表す回。回転ベクトルの実部がコサイン波を描く同期アニメ、位相の進み・遅れ、sin→cos の変換、ベクトル加算による合成、例題8.8／8.9 を操作で確認。全20ページ＋採点つき練習（課題1〜4）。</p>
+      <span class="go">教材を開く &rarr;</span>
+    </a>
+    <a class="lcard" href="lessons/lesson08/">
+      <span class="tag">第8回 · 8.1〜8.4</span>
+      <h3>正弦波の表現 — 複素数とオイラーの公式</h3>
+      <p class="d">この資料だけで1コマが完結するインタラクティブ講義。SVGで描いた回路図（抵抗のみ・LR）、実部／虚部の色分け定義、オイラーの公式＝単位円の回転、複素平面のドラッグ・極形式変換などを交互に配置。全32ページ＋練習4問。</p>
+      <span class="go">教材を開く &rarr;</span>
+    </a>
+    <div class="soon">第11回以降（正弦波交流回路・ベクトル図と電力 など）も順次追加予定です。</div>
+  </div>
+
+  <footer>
+    AIエージェント（Claude Code）との協業で作成・公開。<br>
+    ソースは <a href="https://github.com/kouhei1970/circuit-2-lessons">GitHub リポジトリ</a> を参照。<br>
+    &copy; 2026 Kouhei Ito — MIT License
+  </footer>
+</div>
+</body>
+</html>

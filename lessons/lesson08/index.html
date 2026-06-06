@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>正弦波の表現 — 触って学ぶ複素数とオイラーの公式（電気回路Ⅱ 第8回）</title>
+<meta name="description" content="電気回路Ⅱ第8回「正弦波の表現」を、解説（定義・回路図・式）と操作（インタラクティブ）の二段構成で。これ一つで1コマの授業が完結する。" />
+
+<!-- Open Graph / SNS card -->
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://kouhei1970.github.io/pid-drone-lesson/lessons/sinusoid-complex/" />
+<meta property="og:title" content="正弦波の表現 — 触って学ぶ複素数とオイラーの公式" />
+<meta property="og:description" content="複素平面のベクトルをドラッグし、オイラーの公式を単位円の回転として体感する。電気回路Ⅱ第8回をインタラクティブ・スライド化。" />
+<meta property="og:image" content="https://kouhei1970.github.io/pid-drone-lesson/assets/og-sinusoid.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="複素平面の単位円上のベクトル e^jθ と cos θ・sin θ 射影、オイラーの公式" />
+<meta property="og:site_name" content="インタラクティブ授業資料の実験室" />
+<meta property="og:locale" content="ja_JP" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://kouhei1970.github.io/pid-drone-lesson/assets/og-sinusoid.png" />
+<style>
+  :root{
+    --bg:#faf9f5; --surface:#ffffff; --surface2:#f1efe8; --panel:#ece9e0;
+    --ink:#1f1e1c; --mut:#6b6a64; --grd:rgba(0,0,0,0.10); --line:rgba(0,0,0,0.14);
+    --ref:#378ADD; --act:#D85A30; --thr:#639922;
+    --sin:#7E57C2; --cos:#2E9E6B; --z1:#3FA34D; --z2:#D85A30; --zr:#7E57C2; --ax:#46443e;
+    --re:#C0392B; --im:#2E6FB0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1a1915; --surface:#23221d; --surface2:#2b2a24; --panel:#201f1a;
+      --ink:#ecebe4; --mut:#a3a299; --grd:rgba(255,255,255,0.12); --line:rgba(255,255,255,0.16);
+      --ref:#85B7EB; --act:#F0997B; --thr:#97C459;
+      --sin:#B39DDB; --cos:#7BD0A3; --z1:#7BD0A3; --z2:#F0997B; --zr:#B39DDB; --ax:#c9c7bd;
+      --re:#F08A7A; --im:#7FB2E8;
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%; overflow:hidden;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Yu Gothic UI",sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;}
+  i{font-family:Georgia,"Times New Roman",serif;}
+  .deck{position:fixed; inset:0; bottom:52px;}
+  .slide{position:absolute; inset:0; display:flex; flex-direction:column; justify-content:safe center;
+    overflow-y:auto; padding:2vh clamp(16px,4vw,70px);
+    opacity:0; visibility:hidden; transition:opacity .2s;}
+  .slide.active{opacity:1; visibility:visible;}
+  /* master scale: everything below is in em relative to this — scales to fill a projector */
+  .inner{ font-size:clamp(16px, 2.05vh, 32px); width:100%; max-width:62em; margin:0 auto; line-height:1.6;}
+  /* ===== フォント共通ルール（type scale）=====
+     文字サイズはすべて下のトークンに集約。値は .inner の基準サイズ（上の clamp）に対する倍率。
+       ・全体を拡大/縮小したい  → .inner の clamp を変更
+       ・要素間の相対バランス調整 → 下の変数だけを変更（個々のクラスは編集不要）
+     各クラスは font-size:var(--fs-…) でこのスケールを参照する。 */
+  :root{
+    --fs-display:2.4em;  /* 表紙の特大タイトル */
+    --fs-h1:1.5em;       /* スライド見出し h1 */
+    --fs-lead:1.22em;    /* 導入文 .desc */
+    --fs-body:1.32em;    /* 本文・箇条書き・手順・解答 .steps/.ex/ul.lead/.reveal */
+    --fs-eq:1.38em;      /* 数式ボックス .eq */
+    --fs-eq-lg:1.7em;    /* 強調する数式 .eq.big */
+    --fs-note:1.13em;    /* 補足・注記 .note */
+    --fs-table:1.15em;   /* 表・スケジュール .deftbl/.schrow */
+    --fs-ui:.85em;       /* 操作UI（スライダー名・ボタン・凡例） */
+    --fs-label:.68em;    /* キッカー等の小ラベル */
+    --fs-tag:.6em;       /* バッジ .tag2 */
+    --fs-micro:.72em;    /* 図キャプション・戻りリンク */
+  }
+  .tag2{display:inline-block; font-size:var(--fs-tag); font-weight:700; letter-spacing:.04em; padding:.15em .6em; border-radius:999px; margin:0 .3em .5em 0;}
+  .tag-ex{color:var(--thr); border:1px solid var(--thr);}
+  .tag-do{color:var(--act); border:1px solid var(--act);}
+  .tag-fig{color:var(--ref); border:1px solid var(--ref);}
+  .kicker{font-size:var(--fs-label); letter-spacing:.06em; color:var(--act); font-weight:700; margin:0 0 .25em;}
+  h1.tt{font-size:var(--fs-h1); font-weight:700; margin:0 0 .15em; line-height:1.2;}
+  .desc{font-size:var(--fs-lead); color:var(--mut); margin:.35em 0 .8em;}
+  canvas{width:100%; display:block; background:var(--surface); border:1px solid var(--line); border-radius:12px;}
+  .plot{height:clamp(150px,33vh,330px);}
+  .plane{height:clamp(180px,42vh,400px);}
+  .figc{height:clamp(150px,32vh,300px);}
+  .titlewave{height:clamp(96px,16vh,180px)!important;}
+  .confirm .plane{height:clamp(150px,30vh,290px);}
+  .row{display:flex; align-items:center; gap:.7em; margin:.5em 0;}
+  .row label{font-size:var(--fs-ui); color:var(--mut); width:7.4em; flex:none;}
+  .row .val{font-size:var(--fs-ui); font-weight:700; min-width:3.6em; text-align:right; font-variant-numeric:tabular-nums;}
+  input[type=range]{flex:1; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px; background:var(--line); outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:1.1em; height:1.1em; border-radius:50%; background:var(--act); cursor:pointer; border:2px solid var(--surface);}
+  input[type=range]::-moz-range-thumb{width:1.1em; height:1.1em; border-radius:50%; background:var(--act); cursor:pointer; border:2px solid var(--surface);}
+  .grid2{display:grid; grid-template-columns:1fr; gap:1em;}
+  @media(min-width:760px){ .grid2{grid-template-columns:1.05fr .95fr;} }
+  .twocol{display:grid; grid-template-columns:1fr; gap:.9em; align-items:center;}
+  @media(min-width:720px){ .twocol{grid-template-columns:.9fr 1.1fr;} }
+  .eq{background:var(--surface2); border-radius:10px; padding:.6em .8em; font-size:var(--fs-eq); margin:.55em 0; line-height:1.85;}
+  .eq.big{font-size:var(--fs-eq-lg);}
+  .steps{font-size:var(--fs-body); line-height:1.95; margin:.4em 0;}
+  .steps .lead2{color:var(--mut); font-size:.85em;}
+  .ex{font-size:var(--fs-body); color:var(--mut); background:var(--surface2); border-left:3px solid var(--act); border-radius:0 8px 8px 0; padding:.5em .75em; margin:.55em 0;}
+  .note{font-size:var(--fs-note); color:var(--mut); margin-top:.7em; line-height:1.65;}
+  .re{color:var(--re); font-weight:700;} .im{color:var(--im); font-weight:700;}
+  .deftbl{width:100%; border-collapse:collapse; font-size:var(--fs-table); margin:.5em 0;}
+  .deftbl th,.deftbl td{border:1px solid var(--line); padding:.4em .65em; text-align:left;}
+  .deftbl th{background:var(--surface2); font-weight:700; white-space:nowrap;}
+  .figbox{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:.8em; text-align:center;}
+  .figcap{font-size:var(--fs-micro); color:var(--mut); margin-top:.4em;}
+  .fig{display:block; width:100%; max-width:20em; height:auto; margin:0 auto;}
+  .fig .w{fill:none; stroke:var(--ink); stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+  .fig .cur{fill:none; stroke:var(--ref); stroke-width:2.4;}
+  .fig .curf{fill:var(--ref); stroke:none;}
+  .fig text{fill:var(--ink); font-family:Georgia,serif; font-style:italic; font-size:15px;}
+  .seg{display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; margin:.4em 0;}
+  .seg button{border:none; background:transparent; color:var(--mut); font-size:var(--fs-ui); padding:.45em .9em; cursor:pointer;}
+  .seg button.on{background:var(--act); color:#fff;}
+  .legend{display:flex; gap:1em; flex-wrap:wrap; font-size:var(--fs-ui); color:var(--mut); margin:.5em 0 0;}
+  .sw{display:inline-block; width:.8em; height:.8em; border-radius:3px; vertical-align:-1px; margin-right:.3em;}
+  .btn{border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:9px; padding:.5em .9em; font-size:var(--fs-ui); cursor:pointer;}
+  .btn:hover{background:var(--surface2);}
+  .reveal{margin-top:.7em; padding:.7em .9em; border-radius:10px; background:var(--surface2); font-size:var(--fs-body); display:none; line-height:1.85;}
+  .reveal.show{display:block;}
+  ul.lead{font-size:var(--fs-body); padding-left:1.2em; margin:.3em 0;} ul.lead li{margin:.4em 0;}
+  .agenda{display:grid; gap:.6em; margin-top:.5em;}
+  .agenda button{text-align:left; border:1px solid var(--line); background:var(--surface); border-radius:11px; padding:.95em 1.2em; cursor:pointer; color:inherit; transition:border-color .12s, transform .06s;}
+  .agenda button:hover{border-color:var(--act); transform:translateX(2px);}
+  .agenda .n{color:var(--act); font-weight:700; font-size:var(--fs-ui);} .agenda .t{font-size:var(--fs-body); font-weight:600; margin:.05em 0;} .agenda .s{font-size:var(--fs-note); color:var(--mut);}
+  .hero{justify-content:center;}
+  .back{display:inline-block; font-size:var(--fs-micro); color:var(--mut); text-decoration:none; margin-bottom:.6em;}
+  .back:hover{color:var(--ink);}
+  .confirm{margin-top:.7em; padding-top:.6em; border-top:1px dashed var(--line);}
+  .confirm .lab{font-size:var(--fs-micro); font-weight:700; color:var(--act); letter-spacing:.04em;}
+  /* practice */
+  .prfields{display:flex; flex-direction:column; gap:.5em; margin:.7em 0;}
+  .prf{display:flex; align-items:center; gap:.6em; font-size:var(--fs-note);}
+  .prf>span:first-child{min-width:9.5em; color:var(--mut);}
+  .prf input{width:8.5em; height:2.1em; font-size:1em; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); padding:0 .55em;}
+  .prf input:focus{outline:none; border-color:var(--act);}
+  .prmark{font-weight:700; font-size:1.3em; min-width:1em;}
+  .prmark.good{color:var(--thr);} .prmark.bad{color:var(--act);}
+  .prbtns{display:flex; gap:.5em; flex-wrap:wrap; margin:.8em 0 .3em;}
+  .pr-primary{background:var(--act); color:#fff; border-color:var(--act); font-weight:700;}
+  .pr-primary:hover{background:var(--act); filter:brightness(1.06);}
+  .prresult{font-weight:700; font-size:var(--fs-note); min-height:1.5em; margin:.3em 0;}
+  .prresult.good{color:var(--thr);} .prresult.bad{color:var(--act);}
+  /* schedule */
+  .schnote{color:var(--act); font-size:var(--fs-note); margin:.3em 0 .7em;}
+  .sched{display:grid; grid-template-columns:1fr; gap:.3em 3em; max-width:56em; margin:.3em auto 0;}
+  @media(min-width:640px){ .sched{grid-template-columns:1fr 1fr;} }
+  .schcol{display:flex; flex-direction:column;}
+  .schrow{display:grid; grid-template-columns:2em 7em 1fr; gap:.5em; align-items:baseline; font-size:var(--fs-table); padding:.34em .5em; border-radius:6px;}
+  .schrow .sn{color:var(--mut); text-align:right;} .schrow .sd{font-variant-numeric:tabular-nums;}
+  .schrow.exam{color:var(--act); font-weight:600;}
+  .schrow.cur{background:var(--surface2); font-weight:700; box-shadow:inset 0 0 0 1.5px var(--act);}
+
+  .nav{position:fixed; left:0; right:0; bottom:0; height:52px; background:var(--surface);
+    border-top:1px solid var(--line); display:flex; align-items:center; gap:10px; padding:0 12px; z-index:20;}
+  .nav button.arw{width:38px; height:34px; border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:8px; cursor:pointer; font-size:15px;}
+  .nav button.arw:hover{background:var(--surface2);} .nav button.arw:disabled{opacity:.35; cursor:default;}
+  .nav select{flex:1; min-width:0; height:34px; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:8px; padding:0 10px; font-size:13px;}
+  .nav .count{font-size:12.5px; color:var(--mut); font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .prog{position:fixed; left:0; bottom:52px; height:3px; background:var(--act); width:0; z-index:21; transition:width .2s;}
+  /* 解説（ナレーション音声）ボタン */
+  .narrbtn{position:fixed; top:max(10px,1.4vh); right:max(12px,1.2vw); z-index:25; display:inline-flex; align-items:center; gap:.4em;
+    border:1px solid var(--act); background:var(--surface); color:var(--act); border-radius:999px;
+    padding:.4em .9em; font-size:clamp(13px,1.7vh,22px); font-weight:700; cursor:pointer; box-shadow:0 1px 5px rgba(0,0,0,.10);}
+  .narrbtn:hover{background:var(--surface2);}
+  .narrbtn.playing{background:var(--act); color:#fff;}
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide" id="sl-title" data-title="表紙 — 正弦波の表現">
+    <div class="inner hero">
+      <a class="back" href="../../">&larr; 教材一覧へ戻る</a>
+      <p class="kicker">電気回路Ⅱ　第8回</p>
+      <h1 class="tt" style="font-size:var(--fs-display);">正弦波の表現</h1>
+      <p class="desc" style="font-size:.95em;">過渡現象（前半）を終え、ここから交流回路へ。正弦波を複素数で表し、面倒な微分方程式を“掛け算・割り算”に変える道具を身につける回です。</p>
+      <canvas id="cv-title" class="titlewave"></canvas>
+      <div class="eq" style="margin-top:.7em;"><strong>この回の到達目標</strong>
+        <ul class="lead" style="margin:.4em 0 0;">
+          <li>正弦波を <i>A</i> cos(<i>ωt</i>+<i>φ</i>) の形で読み書きできる。</li>
+          <li>複素数 <i>z</i>=<span class="re">x</span>+<span class="im">jy</span> を複素平面の矢印として捉え、四則演算ができる。</li>
+          <li>オイラーの公式 e<sup>±jθ</sup>=cosθ±j sinθ と極形式を説明できる。</li>
+          <li>「複素数を掛ける＝回転（位相をずらす）」を理解する。</li>
+        </ul>
+      </div>
+      <p class="note">各ページ左上：<span class="tag2 tag-ex">解説</span>定義・図・式／<span class="tag2 tag-fig">図</span>回路図など／<span class="tag2 tag-do">操作</span>触って確認。→／Space で進みます。全32ページ。右上の <strong>🔊 解説</strong> で各ページの音声解説、右下の ⛶ で全画面（プロジェクタ向け）。</p>
+    </div>
+  </section>
+
+  <!-- 2 SCHEDULE -->
+  <section class="slide" id="sl-schedule" data-title="スケジュール">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">スケジュール</p>
+      <h1 class="tt">電気回路Ⅱ 全15回（<span id="sch-year"></span>年度）</h1>
+      <p class="schnote" id="sch-note"></p>
+      <div class="sched" id="sched"></div>
+      <p class="note">本日は第8回（枠）。<span style="color:var(--act)">赤</span>は試験。日程は進捗に合わせて変更する可能性があります。</p>
+    </div>
+  </section>
+
+  <!-- 3 AGENDA -->
+  <section class="slide" id="sl-agenda" data-title="この回の地図（8.1〜8.4）">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">第8章のながれ</p>
+      <h1 class="tt">この回でたどる4つの節</h1>
+      <p class="desc">「正弦波 → 複素数 → 複素数の計算 → オイラーの公式」と進みます。クリックでジャンプできます。</p>
+      <div class="agenda" id="agenda"></div>
+    </div>
+  </section>
+
+  <!-- 4 DC vs AC -->
+  <section class="slide" id="sl-dcac" data-title="8.1 直流と交流">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">8.1　直流と交流</p>
+      <h1 class="tt">変わらない電気と、振動する電気</h1>
+      <div class="twocol">
+        <div class="figbox"><canvas id="cv-dcac" class="figc"></canvas><div class="figcap">上：直流（一定）／下：交流（正弦波状に振動）</div></div>
+        <div>
+          <p class="steps"><strong>直流 (DC)</strong>：電圧・電流が時間によらず一定。乾電池などが代表例。<br>
+          <strong>交流 (AC)</strong>：時間とともに規則正しく振動する。家庭のコンセントの電気がこれ。</p>
+          <div class="eq">交流電圧の一般形：<br><span class="big"><i>v</i>(<i>t</i>) = <i>V</i><sub>0</sub> cos(<i>ωt</i> + <i>φ</i>)</span></div>
+          <p class="note">後半（第8回〜）では、この交流を扱う「交流回路」を学びます。まずは交流の正体＝正弦波を詳しく見ていきましょう。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 SIN/COS graph -->
+  <section class="slide" id="sl-sincos" data-title="8.2 正弦波と余弦波">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">8.2　正弦波交流</p>
+      <h1 class="tt">正弦波 sin と 余弦波 cos</h1>
+      <div class="twocol">
+        <div class="figbox"><canvas id="cv-sincos" class="figc"></canvas>
+          <div class="figcap"><span style="color:var(--sin)">sin x</span> と <span style="color:var(--cos)">cos x</span></div></div>
+        <div>
+          <p class="steps">どちらも山と谷をなめらかに繰り返す、同じ形の波。値は <strong>+1 〜 −1</strong> の範囲を行き来します。</p>
+          <ul class="lead">
+            <li>sin x は x=0 で <strong>0</strong> から始まる。</li>
+            <li>cos x は x=0 で <strong>1</strong> から始まる。</li>
+            <li>2つは横方向にずれて並ぶ（位相のずれ）。cos x = sin(x+90°)。</li>
+            <li>一定間隔で同じ波形を繰り返す＝周期的な波。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 SINE equation -->
+  <section class="slide" id="sl-sine-eq" data-title="正弦波を表す数式">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">8.2　正弦波交流</p>
+      <h1 class="tt">正弦波を表す数式</h1>
+      <p class="desc">正弦波は、次のどちらの式でも書き表せます。</p>
+      <div class="eq big" style="text-align:center;"><i>y</i> = <i>A</i> sin(<i>ωt</i> + <i>φ</i>)　／　<i>y</i> = <i>A</i> cos(<i>ωt</i> + <i>φ</i>)</div>
+      <table class="deftbl">
+        <tr><th>記号</th><th>名称</th><th>意味</th><th>単位</th></tr>
+        <tr><td><i>A</i></td><td>振幅</td><td>波の高さ。電圧・電流の大きさ</td><td>V, A</td></tr>
+        <tr><td><i>ω</i></td><td>角振動数（角周波数）</td><td>振動の速さ</td><td>rad/s</td></tr>
+        <tr><td><i>t</i></td><td>時刻</td><td>時間</td><td>s</td></tr>
+        <tr><td><i>φ</i></td><td>位相</td><td>波の横方向のずれ</td><td>rad</td></tr>
+      </table>
+      <p class="note">周期 <i>T</i> = 2π/<i>ω</i>、周波数 <i>f</i> = <i>ω</i>/2π = 1/<i>T</i>。次のページで実際に動かして確かめます。</p>
+    </div>
+  </section>
+
+  <!-- 7 SINE explorer -->
+  <section class="slide" id="sl-sine" data-title="（操作）正弦波を体感する">
+    <div class="inner">
+      <span class="tag2 tag-do">操作</span>
+      <p class="kicker">8.2　確認</p>
+      <h1 class="tt">正弦波を3つの量で操る</h1>
+      <p class="desc">振幅 <i>A</i>・角振動数 <i>ω</i>・位相 <i>φ</i> を動かし、波がどう変わるか確かめましょう。</p>
+      <div class="grid2">
+        <div><canvas id="cv-sine" class="plot"></canvas>
+          <div class="legend"><span><i class="sw" style="background:var(--act)"></i>いまの波</span><span><i class="sw" style="background:var(--sin)"></i>sin(t)</span><span><i class="sw" style="background:var(--cos)"></i>cos(t)</span></div>
+        </div>
+        <div>
+          <div class="seg" id="seg-fn"><button data-v="cos" class="on">cos 型</button><button data-v="sin">sin 型</button></div>
+          <div class="row"><label>振幅 <i>A</i></label><input type="range" id="s-A" min="0.2" max="2" step="0.1" value="1"><span class="val" id="v-A">1.0</span></div>
+          <div class="row"><label>角振動数 <i>ω</i></label><input type="range" id="s-w" min="0.5" max="4" step="0.1" value="1"><span class="val" id="v-w">1.0</span></div>
+          <div class="row"><label>位相 <i>φ</i></label><input type="range" id="s-p" min="-180" max="180" step="5" value="0"><span class="val" id="v-p">0°</span></div>
+          <div class="eq" id="eq-sine"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 Resistor circuit -->
+  <section class="slide" id="sl-res-circuit" data-title="正弦波交流回路（抵抗のみ）">
+    <div class="inner">
+      <span class="tag2 tag-fig">図</span><span class="tag2 tag-ex">解説</span>
+      <p class="kicker">正弦波交流回路（抵抗のみ）</p>
+      <h1 class="tt">抵抗だけの交流回路</h1>
+      <div class="twocol">
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 320 200" role="img" aria-label="抵抗のみの交流回路">
+            <path class="w" d="M70 40 H250 M70 170 H250 M70 40 V87 M70 123 V170 M250 40 V72 M250 118 V170"/>
+            <circle class="w" cx="70" cy="105" r="18"/><path class="w" d="M61 105 q4.5 -7 9 0 q4.5 7 9 0"/>
+            <rect class="w" x="242" y="72" width="16" height="46"/>
+            <line class="cur" x1="210" y1="78" x2="210" y2="114"/><polygon class="curf" points="205,112 215,112 210,121"/>
+            <text x="12" y="110">v(t)</text><text x="266" y="100">R</text><text x="172" y="100">i(t)</text>
+          </svg>
+          <div class="figcap">電圧源 v(t) に抵抗 R をつないだ回路</div>
+        </div>
+        <div>
+          <p class="steps">電圧源が発生する電圧は正弦波<br>
+          <span class="eq big" style="display:inline-block;margin:.3em 0;"><i>v</i>(<i>t</i>) = <i>V</i><sub>0</sub> cos(<i>ωt</i> + <i>φ</i>)</span><br>
+          <i>V</i><sub>0</sub>＝振幅、<i>ω</i>＝角振動数、<i>φ</i>＝位相。</p>
+          <p class="steps">知りたいのは、抵抗を流れる電流 <i>i</i>(<i>t</i>)（図の下向き矢印）。次のページで求めます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 Resistor solve -->
+  <section class="slide" id="sl-res-solve" data-title="抵抗回路をオームの法則で解く">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">正弦波交流回路（抵抗のみ）</p>
+      <h1 class="tt">オームの法則そのままで解ける</h1>
+      <p class="desc">抵抗だけの回路なので、直流と同じくオームの法則 <i>v</i> = <i>R i</i> が使えます。</p>
+      <div class="eq steps">
+        <span class="lead2">オームの法則</span><br><i>v</i>(<i>t</i>) = <i>R</i> · <i>i</i>(<i>t</i>)<br>
+        <span class="lead2">左辺に正弦波電圧を代入</span><br><i>V</i><sub>0</sub> cos(<i>ωt</i>+<i>φ</i>) = <i>R</i> · <i>i</i>(<i>t</i>)<br>
+        <span class="lead2">両辺を R で割る</span><br><span class="big"><i>i</i>(<i>t</i>) = (<i>V</i><sub>0</sub>/<i>R</i>) cos(<i>ωt</i>+<i>φ</i>)</span>
+      </div>
+      <p class="note">電流の振幅は <i>V</i><sub>0</sub>/<i>R</i>。位相 <i>φ</i> は電圧と同じ＝<strong>電圧と電流は同相</strong>。直流と同じく、一回の計算で求まります。</p>
+    </div>
+  </section>
+
+  <!-- 10 Resistor wave -->
+  <section class="slide" id="sl-res-wave" data-title="（操作）電圧と電流は同相">
+    <div class="inner">
+      <span class="tag2 tag-do">操作</span>
+      <p class="kicker">確認</p>
+      <h1 class="tt">電圧と電流は同じタイミングで振動</h1>
+      <p class="desc"><i>V</i><sub>0</sub> と <i>R</i> を動かしても、山・谷の位置が電圧・電流でぴったり一致＝同相のままです。</p>
+      <div class="grid2">
+        <div><canvas id="cv-res" class="plot"></canvas>
+          <div class="legend"><span><i class="sw" style="background:var(--ref)"></i>電圧 v(t)</span><span><i class="sw" style="background:var(--act)"></i>電流 i(t)</span></div></div>
+        <div>
+          <div class="row"><label>振幅 <i>V</i><sub>0</sub> [V]</label><input type="range" id="s-V0" min="1" max="10" step="0.5" value="5"><span class="val" id="v-V0">5.0</span></div>
+          <div class="row"><label>抵抗 <i>R</i> [Ω]</label><input type="range" id="s-R" min="1" max="10" step="0.5" value="2"><span class="val" id="v-R">2.0</span></div>
+          <div class="eq" id="eq-res"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 LR circuit -->
+  <section class="slide" id="sl-lr-circuit" data-title="正弦波交流回路（LR回路）">
+    <div class="inner">
+      <span class="tag2 tag-fig">図</span><span class="tag2 tag-ex">解説</span>
+      <p class="kicker">正弦波交流回路（LR回路）</p>
+      <h1 class="tt">コイルが入ると、微分方程式になる</h1>
+      <div class="twocol">
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 340 210" role="img" aria-label="抵抗とコイルの直列交流回路">
+            <path class="w" d="M70 40 H255 M70 185 H255 M70 40 V92 M70 128 V185 M255 40 V60 M255 100 V118 M255 162 V185"/>
+            <circle class="w" cx="70" cy="110" r="18"/><path class="w" d="M61 110 q4.5 -7 9 0 q4.5 7 9 0"/>
+            <rect class="w" x="247" y="60" width="16" height="40"/>
+            <path class="w" d="M255 118 a6 6 0 0 1 0 11 a6 6 0 0 1 0 11 a6 6 0 0 1 0 11 a6 6 0 0 1 0 11"/>
+            <line class="cur" x1="215" y1="70" x2="215" y2="110"/><polygon class="curf" points="210,108 220,108 215,117"/>
+            <text x="12" y="115">v(t)</text><text x="272" y="84">R</text><text x="272" y="146">L</text><text x="176" y="96">i(t)</text>
+          </svg>
+          <div class="figcap">電圧源 v(t)・抵抗 R・コイル L の直列回路</div>
+        </div>
+        <div>
+          <p class="steps">コイルの電圧は電流の微分 <i>L</i> d<i>i</i>/d<i>t</i> で決まります。回路方程式は</p>
+          <div class="eq big"><i>R i</i>(<i>t</i>) + <i>L</i> d<i>i</i>/d<i>t</i> = <i>V</i><sub>0</sub> cos(<i>ωt</i>+<i>φ</i>)</div>
+          <p class="steps">電流 <i>i</i>(<i>t</i>) について、それ自身と微分の両方を含む<strong>微分方程式</strong>。回路が変わるたびに毎回これを解くのは大変。<span style="color:var(--act)">→ どうする？</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 LR wave -->
+  <section class="slide" id="sl-lr-wave" data-title="（操作）コイルで位相が遅れる">
+    <div class="inner">
+      <span class="tag2 tag-do">操作</span>
+      <p class="kicker">確認</p>
+      <h1 class="tt">コイル L を増やすと、電流は小さく・遅れる</h1>
+      <p class="desc">定常解は <i>i</i> = (<i>V</i><sub>0</sub>/√(<i>R</i>²+(<i>ωL</i>)²)) cos(<i>ωt</i>−<i>φ</i>)、<i>φ</i>=arctan(<i>ωL</i>/<i>R</i>)。<i>L</i> を増やして遅れ <i>φ</i> を体感しましょう。</p>
+      <div class="grid2">
+        <div><canvas id="cv-lr" class="plot"></canvas>
+          <div class="legend"><span><i class="sw" style="background:var(--ref)"></i>電圧 v(t)</span><span><i class="sw" style="background:var(--act)"></i>電流 i(t)</span></div></div>
+        <div>
+          <div class="row"><label>抵抗 <i>R</i> [Ω]</label><input type="range" id="s-lrR" min="0.5" max="6" step="0.5" value="2"><span class="val" id="v-lrR">2.0</span></div>
+          <div class="row"><label>コイル <i>L</i> [H]</label><input type="range" id="s-lrL" min="0" max="3" step="0.1" value="1"><span class="val" id="v-lrL">1.0</span></div>
+          <div class="row"><label>角振動数 <i>ω</i></label><input type="range" id="s-lrW" min="0.5" max="3" step="0.1" value="1.5"><span class="val" id="v-lrW">1.5</span></div>
+          <div class="eq" id="eq-lr"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 Goal -->
+  <section class="slide" id="sl-goal" data-title="交流回路：目指すところ">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">交流回路：本授業が目指すところ</p>
+      <h1 class="tt">微分方程式を“掛け算・割り算”に変えたい</h1>
+      <ul class="lead">
+        <li>真面目に解くと微分方程式 → 大変。</li>
+        <li>目標：交流回路を<strong>直流回路のようにオームの法則だけ</strong>で分析できるようにする。</li>
+        <li>その鍵となる道具が <strong>複素数</strong>。微分方程式を直接解かずに済むようになる。</li>
+      </ul>
+      <div class="eq big" style="text-align:center;">直流：掛け算・割り算（オームの法則）<br>↓ 同じ感覚で<br>交流：複素数の掛け算・割り算</div>
+      <p class="note">そのためにまず、複素数そのものを学びます（8.3）。</p>
+    </div>
+  </section>
+
+  <!-- 14 Complex vector -->
+  <section class="slide" id="sl-cvec" data-title="8.3 複素数＝複素ベクトル">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">8.3　複素数（複素ベクトル）</p>
+      <h1 class="tt">複素数は、平面上の矢印</h1>
+      <div class="twocol">
+        <div class="figbox"><canvas id="cv-cvec" class="figc"></canvas><div class="figcap">複素平面：横＝実軸 Re、縦＝虚軸 Im</div></div>
+        <div>
+          <p class="steps">横方向の軸を<strong>実軸（Re）</strong>、縦方向の軸を<strong>虚軸（Im）</strong>とし、この2本でできる平面を<strong>複素平面</strong>と呼びます。</p>
+          <p class="steps">複素数 <i>z</i> は、原点から伸びる矢印（<strong>複素ベクトル</strong>）。先端の横成分が <i>x</i>、縦成分が <i>y</i> です。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 Real/Imag -->
+  <section class="slide" id="sl-reim" data-title="複素数の実部と虚部">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-do">操作</span>
+      <p class="kicker">複素数の実部と虚部</p>
+      <h1 class="tt">z = <span class="re">x</span> + <span class="im">jy</span></h1>
+      <div class="eq big" style="text-align:center;"><i>z</i> = <span class="re">x</span> + <span class="im">j y</span><br>
+        <span style="font-size:.7em;"><span class="re">実部（real part）</span>　　<span class="im">虚部（imaginary part）</span></span></div>
+      <p class="steps"><span class="re">x</span> を<strong>実部</strong>（実軸の値）、虚数単位 <i>j</i> のついた <span class="im">y</span> を<strong>虚部</strong>（虚軸の値）と呼びます。
+        <i>j</i> は<strong>虚数単位</strong>で <i>j</i>² = −1。数学の <i>i</i> は電流と紛らわしいので、電気回路では <i>j</i> を使います。</p>
+      <div class="confirm">
+        <span class="lab">操作：矢印の先をドラッグ</span>
+        <div class="grid2" style="margin-top:.5em;">
+          <div><canvas id="cv-cz" class="plane"></canvas></div>
+          <div><div class="eq" id="eq-cz"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 Conjugate -->
+  <section class="slide" id="sl-conj" data-title="共役複素数（きょうやく）">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-do">操作</span>
+      <p class="kicker">共役複素数（きょうやくふくそすう）</p>
+      <h1 class="tt">共役（きょうやく）は、実軸で折り返した鏡像</h1>
+      <div class="eq big" style="text-align:center;"><i>z</i> = <i>x</i> + <i>jy</i>　に対して　<i>z̄</i> = <i>x</i> − <i>jy</i></div>
+      <p class="steps">実部 <i>x</i> はそのまま、<strong>虚部の符号だけ</strong>を反転させた複素数を<strong>共役複素数（きょうやく）</strong>（記号 <i>z̄</i>）と呼びます。複素平面では<strong>実軸に関して対称</strong>な点＝鏡像です。後で割り算に効いてきます。</p>
+      <div class="confirm">
+        <span class="lab">操作：z をドラッグして z̄ の動きを見る</span>
+        <div class="grid2" style="margin-top:.5em;">
+          <div><canvas id="cv-conj" class="plane"></canvas></div>
+          <div><div class="eq" id="eq-conj"></div>
+            <p class="note"><span class="sw" style="background:var(--z1)"></span> z　<span class="sw" style="background:var(--z2)"></span> z̄</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 Arg & magnitude -->
+  <section class="slide" id="sl-argmag" data-title="偏角と大きさ">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-do">操作</span>
+      <p class="kicker">偏角と大きさ</p>
+      <h1 class="tt">矢印を「長さ」と「向き」で測る</h1>
+      <div class="eq big" style="text-align:center;">大きさ |<i>z</i>| = √(<i>x</i>² + <i>y</i>²)　　偏角 <i>θ</i> = arctan(<i>y</i>/<i>x</i>)</div>
+      <p class="steps"><strong>大きさ</strong>は矢印の長さ（三平方の定理）、<strong>偏角</strong>は矢印が実軸となす角度。この2つで複素数を表すのが、後で出る<strong>極形式</strong>です。</p>
+      <div class="confirm">
+        <span class="lab">操作：z をドラッグ（円弧＝偏角、矢印長＝大きさ）</span>
+        <div class="grid2" style="margin-top:.5em;">
+          <div><canvas id="cv-arg" class="plane"></canvas></div>
+          <div><div class="eq" id="eq-arg"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 18 Special cases -->
+  <section class="slide" id="sl-special" data-title="特殊な場合（実数・純虚数）">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">特殊な場合</p>
+      <h1 class="tt">実軸上・虚軸上の複素数</h1>
+      <div class="twocol">
+        <div class="figbox"><canvas id="cv-special" class="figc"></canvas><div class="figcap"><span style="color:var(--z1)">z₁=2</span>（実数）／<span style="color:var(--z2)">z₂=j3</span>（純虚数）</div></div>
+        <div>
+          <p class="steps"><strong>虚部が0</strong>のとき：実軸上の点＝ふつうの<strong>実数</strong>。例 <span style="color:var(--z1)">z₁=2</span>。矢印は実軸と同じ向きなので<strong>偏角 0°（0 rad）</strong>。</p>
+          <p class="steps"><strong>実部が0</strong>のとき：虚軸上の点＝<strong>純虚数</strong>。例 <span style="color:var(--z2)">z₂=j3</span>。矢印は真上を向くので<strong>偏角 90°（π/2 rad）</strong>。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 19 Addition -->
+  <section class="slide" id="sl-add" data-title="8.4 複素数の加算・減算">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-do">操作</span>
+      <p class="kicker">8.4　複素数の計算（加算・減算）</p>
+      <h1 class="tt">足し算は、矢印の継ぎ足し</h1>
+      <div class="eq steps"><i>z</i><sub>1</sub>+<i>z</i><sub>2</sub> = (<i>x</i><sub>1</sub>+<i>x</i><sub>2</sub>) + j(<i>y</i><sub>1</sub>+<i>y</i><sub>2</sub>)　<span class="lead2">実部どうし・虚部どうしを足す</span></div>
+      <p class="steps">作図：① <i>z</i><sub>1</sub> を描き、② <i>z</i><sub>2</sub> を <i>z</i><sub>1</sub> の<strong>先端から</strong>継ぎ足し、③ 原点から継ぎ足した先端まで結ぶ。これが和（減算は実部・虚部を引くだけ）。</p>
+      <div class="confirm">
+        <span class="lab">操作：2本の矢印をドラッグ／和・差を切替</span>
+        <div class="grid2" style="margin-top:.5em;">
+          <div><canvas id="cv-add" class="plane"></canvas></div>
+          <div>
+            <div class="seg" id="seg-add"><button data-v="add" class="on">和 z₁+z₂</button><button data-v="sub">差 z₁−z₂</button></div>
+            <div class="eq" id="eq-add"></div>
+            <p class="note"><span class="sw" style="background:var(--z1)"></span>z₁ <span class="sw" style="background:var(--z2)"></span>z₂ <span class="sw" style="background:var(--zr)"></span>結果。点線＝継ぎ足した矢印。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 20 Add/Sub numeric -->
+  <section class="slide" id="sl-addnum" data-title="加算・減算の数値例">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">複素数の加算・減算（数値例）</p>
+      <h1 class="tt">具体的な数で確かめる</h1>
+      <div class="eq steps"><i>z</i><sub>1</sub> = 3 + j5、　<i>z</i><sub>2</sub> = 1 − j2</div>
+      <div class="eq steps">
+        <span class="lead2">和</span><br><i>z</i><sub>1</sub>+<i>z</i><sub>2</sub> = (3+1) + j(5−2) = <strong>4 + j3</strong><br>
+        <span class="lead2">差</span><br><i>z</i><sub>1</sub>−<i>z</i><sub>2</sub> = (3−1) + j(5+2) = <strong>2 + j7</strong>
+      </div>
+      <p class="note">ポイントは「実部どうし・虚部どうし」で足し引きすること。引き算では −(−2)=+2 の符号に注意。</p>
+    </div>
+  </section>
+
+  <!-- 21 Multiplication -->
+  <section class="slide" id="sl-mul" data-title="複素数の乗算">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">複素数の乗算</p>
+      <h1 class="tt">掛け算は展開して j²=−1</h1>
+      <div class="eq steps">
+        <i>z</i><sub>1</sub><i>z</i><sub>2</sub> = (<i>x</i><sub>1</sub>+j<i>y</i><sub>1</sub>)(<i>x</i><sub>2</sub>+j<i>y</i><sub>2</sub>)<br>
+        <span class="lead2">多項式と同じく展開</span><br>
+        = <i>x</i><sub>1</sub><i>x</i><sub>2</sub> + j<i>x</i><sub>1</sub><i>y</i><sub>2</sub> + j<i>x</i><sub>2</sub><i>y</i><sub>1</sub> + j²<i>y</i><sub>1</sub><i>y</i><sub>2</sub><br>
+        <span class="lead2">j² = −1 を使う</span><br>
+        = (<i>x</i><sub>1</sub><i>x</i><sub>2</sub> − <i>y</i><sub>1</sub><i>y</i><sub>2</sub>) + j(<i>x</i><sub>1</sub><i>y</i><sub>2</sub> + <i>x</i><sub>2</sub><i>y</i><sub>1</sub>)
+      </div>
+      <div class="ex"><strong>数値例</strong> <i>z</i><sub>1</sub>=3+j5, <i>z</i><sub>2</sub>=1−j2 のとき<br>
+        = (3·1 − 5·(−2)) + j(3·(−2) + 1·5) = (3+10) + j(−6+5) = <strong>13 − j1</strong></div>
+    </div>
+  </section>
+
+  <!-- 22 Division -->
+  <section class="slide" id="sl-div" data-title="複素数の除算">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-do">操作</span>
+      <p class="kicker">複素数の除算</p>
+      <h1 class="tt">割り算は、共役（きょうやく）で分母を実数に</h1>
+      <div class="eq steps">
+        <i>z</i><sub>1</sub>/<i>z</i><sub>2</sub> = (<i>x</i><sub>1</sub>+j<i>y</i><sub>1</sub>)/(<i>x</i><sub>2</sub>+j<i>y</i><sub>2</sub>)<br>
+        <span class="lead2">分母の共役 (<i>x</i><sub>2</sub>−j<i>y</i><sub>2</sub>) を分母・分子に掛ける</span><br>
+        分母 = (<i>x</i><sub>2</sub>+j<i>y</i><sub>2</sub>)(<i>x</i><sub>2</sub>−j<i>y</i><sub>2</sub>) = <i>x</i><sub>2</sub>²+<i>y</i><sub>2</sub>²（実数）<br>
+        = [(<i>x</i><sub>1</sub><i>x</i><sub>2</sub>+<i>y</i><sub>1</sub><i>y</i><sub>2</sub>) + j(<i>x</i><sub>2</sub><i>y</i><sub>1</sub>−<i>x</i><sub>1</sub><i>y</i><sub>2</sub>)] / (<i>x</i><sub>2</sub>²+<i>y</i><sub>2</sub>²)
+      </div>
+      <div class="confirm">
+        <span class="lab">操作：z₁, z₂ の実部・虚部を変えて積と商を試す</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 1.4em;margin-top:.4em;">
+          <div class="row"><label>z₁ 実部 x₁</label><input type="range" id="s-x1" min="-5" max="5" step="1" value="3"><span class="val" id="v-x1">3</span></div>
+          <div class="row"><label>z₁ 虚部 y₁</label><input type="range" id="s-y1" min="-5" max="5" step="1" value="5"><span class="val" id="v-y1">5</span></div>
+          <div class="row"><label>z₂ 実部 x₂</label><input type="range" id="s-x2" min="-5" max="5" step="1" value="1"><span class="val" id="v-x2">1</span></div>
+          <div class="row"><label>z₂ 虚部 y₂</label><input type="range" id="s-y2" min="-5" max="5" step="1" value="-2"><span class="val" id="v-y2">-2</span></div>
+        </div>
+        <div class="grid2"><div class="eq" id="eq-mul"></div><div class="eq" id="eq-div"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 23 Euler formula -->
+  <section class="slide" id="sl-euler" data-title="オイラーの公式">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">オイラーの公式</p>
+      <h1 class="tt">指数関数と三角関数を結ぶ</h1>
+      <div class="eq big" style="text-align:center;">e<sup>±jθ</sup> = cos θ ± j sin θ</div>
+      <p class="steps">指数関数 e の累乗が、三角関数 cos・sin に、虚数単位 <i>j</i> を通じて結びつきます。複号（±）は、左辺の肩の符号と右辺 sin の前の符号が対応します（上が上、下が下）。</p>
+      <p class="steps">この公式が、交流回路を複素数で扱うための<strong>要</strong>。次の2ページで導出します。</p>
+    </div>
+  </section>
+
+  <!-- 24 Derivation 1 -->
+  <section class="slide" id="sl-derive1" data-title="導出① ネイピア数とマクローリン展開">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">オイラーの公式の導出 ①</p>
+      <h1 class="tt">準備：ネイピア数とマクローリン展開</h1>
+      <div class="eq steps"><span class="lead2">ネイピア数 e（微分しても形が変わらない）</span><br>
+        d/d<i>x</i> e<sup><i>x</i></sup> = e<sup><i>x</i></sup>　／　e = lim<sub>n→∞</sub>(1+1/n)<sup>n</sup> ≈ 2.718</div>
+      <div class="eq steps"><span class="lead2">マクローリン展開（関数を多項式で表す）</span><br>
+        <i>f</i>(<i>x</i>) = <i>f</i>(0) + <i>f</i>′(0)<i>x</i> + <i>f</i>″(0)/2! <i>x</i>² + <i>f</i>‴(0)/3! <i>x</i>³ + …</div>
+      <p class="note">係数は「もとの関数を何回か微分して x=0 を代入」して決まります。次ページで e<sup>jx</sup> に当てはめます。</p>
+    </div>
+  </section>
+
+  <!-- 25 Derivation 2 -->
+  <section class="slide" id="sl-derive2" data-title="導出② 色分けで cos と j sin">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">オイラーの公式の導出 ②</p>
+      <h1 class="tt">偶数次＝cos、奇数次＝j sin</h1>
+      <div class="eq steps">e<sup>jx</sup> = 1 + jx + (jx)²/2! + (jx)³/3! + (jx)⁴/4! + …<br>
+        <span class="lead2">j²=−1, j³=−j, j⁴=1 … を使って整理</span><br>
+        = <span class="im">[1 − x²/2! + x⁴/4! − …]</span> + <span class="re">j[x − x³/3! + x⁵/5! − …]</span></div>
+      <div class="eq steps"><span class="im">青 = cos x のマクローリン展開</span><br><span class="re">赤 = j × sin x のマクローリン展開</span></div>
+      <div class="eq big" style="text-align:center;">∴ e<sup>jx</sup> = cos x + j sin x</div>
+    </div>
+  </section>
+
+  <!-- 26 Maclaurin convergence -->
+  <section class="slide" id="sl-mac" data-title="（操作）部分和の収束">
+    <div class="inner">
+      <span class="tag2 tag-do">操作</span>
+      <p class="kicker">確認</p>
+      <h1 class="tt">項を増やすと、真の点へ巻きつく</h1>
+      <p class="desc">項数 <i>n</i> を増やすと、部分和（×）が単位円上の真の e<sup>jx</sup>（○）に近づきます。グラフは自動で全体が収まるよう調整、＋／− で拡大縮小もできます。</p>
+      <div class="grid2">
+        <div><canvas id="cv-mac" class="plane"></canvas></div>
+        <div>
+          <div class="row"><label>角度 <i>x</i> [rad]</label><input type="range" id="s-macx" min="0.2" max="3.1" step="0.1" value="2.0"><span class="val" id="v-macx">2.0</span></div>
+          <div class="row"><label>項数 <i>n</i></label><input type="range" id="s-macn" min="1" max="16" step="1" value="3"><span class="val" id="v-macn">3</span></div>
+          <div class="row" style="gap:.5em;"><button class="btn" id="mac-zout">− 縮小</button><button class="btn" id="mac-zin">＋ 拡大</button><button class="btn" id="mac-zfit">自動フィット</button></div>
+          <div class="eq" id="eq-mac"></div>
+          <p class="note">青い折れ線＝部分和の道のり、× ＝ n 項までの部分和、○ ＝ 真の e<sup>jx</sup>。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 27 Euler unit circle -->
+  <section class="slide" id="sl-euler-circle" data-title="（操作）オイラーの公式＝単位円">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-do">操作</span>
+      <p class="kicker">オイラーの公式の意味</p>
+      <h1 class="tt">e<sup>±jθ</sup> は単位円の上の点</h1>
+      <p class="desc">大きさ1の複素数 e<sup>jθ</sup> は単位円上の点で、実部が cos θ、虚部が sin θ。点をドラッグして影（射影）の動きを見ましょう。</p>
+      <div class="grid2">
+        <div><canvas id="cv-euler" class="plane"></canvas></div>
+        <div>
+          <div class="row"><label>角度 <i>θ</i></label><input type="range" id="s-th" min="-180" max="180" step="1" value="50"><span class="val" id="v-th">50°</span></div>
+          <button class="btn" id="b-euler-spin" style="margin:.2em 0 .5em;">▶ 自動回転</button>
+          <div class="eq" id="eq-euler"></div>
+          <p class="note"><span class="sw" style="background:var(--cos)"></span> cos θ（横の影）　<span class="sw" style="background:var(--sin)"></span> sin θ（縦の影）。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 28 Polar form -->
+  <section class="slide" id="sl-polar" data-title="直交形式と極形式">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-do">操作</span>
+      <p class="kicker">直交形式と極形式</p>
+      <h1 class="tt">同じ複素数、2通りの言い方</h1>
+      <div class="eq big" style="text-align:center;"><i>x</i> + <i>jy</i>　⇄　<i>r</i> · e<sup>jθ</sup>　（= <i>r</i> ∠ θ）</div>
+      <div class="eq steps">直交形式 → 極形式：<i>r</i> = √(<i>x</i>²+<i>y</i>²)、 θ = arctan(<i>y</i>/<i>x</i>)<br>
+        極形式 → 直交形式：<i>x</i> = <i>r</i> cos θ、 <i>y</i> = <i>r</i> sin θ</div>
+      <div class="confirm">
+        <span class="lab">操作：矢印をドラッグ／r・θ を動かす（両表示が連動）</span>
+        <div class="grid2" style="margin-top:.5em;">
+          <div><canvas id="cv-polar" class="plane"></canvas></div>
+          <div>
+            <div class="row"><label>大きさ <i>r</i></label><input type="range" id="s-r" min="0.5" max="6" step="0.1" value="3.6"><span class="val" id="v-r">3.6</span></div>
+            <div class="row"><label>偏角 <i>θ</i></label><input type="range" id="s-pth" min="-180" max="180" step="1" value="34"><span class="val" id="v-pth">34°</span></div>
+            <div class="eq" id="eq-polar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 29 Polar mul/div -->
+  <section class="slide" id="sl-polmul" data-title="極形式の乗算・除算">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">極形式の乗算・除算</p>
+      <h1 class="tt">大きさは掛け算/割り算、偏角は足し算/引き算</h1>
+      <div class="eq steps"><i>z</i><sub>1</sub>=<i>r</i><sub>1</sub>e<sup>jθ₁</sup>, <i>z</i><sub>2</sub>=<i>r</i><sub>2</sub>e<sup>jθ₂</sup> のとき（指数法則 e<sup>a</sup>e<sup>b</sup>=e<sup>a+b</sup>）</div>
+      <div class="eq big">
+        乗算：<i>z</i><sub>1</sub><i>z</i><sub>2</sub> = <i>r</i><sub>1</sub><i>r</i><sub>2</sub> · e<sup>j(θ₁+θ₂)</sup><br>
+        除算：<i>z</i><sub>1</sub>/<i>z</i><sub>2</sub> = (<i>r</i><sub>1</sub>/<i>r</i><sub>2</sub>) · e<sup>j(θ₁−θ₂)</sup>
+      </div>
+      <p class="note">直交形式の割り算は共役をかける手間がありますが、極形式なら「大きさを割り、角度を引く」だけ。次ページで掛け算の図形的な意味＝回転を見ます。</p>
+    </div>
+  </section>
+
+  <!-- 30 Rotation -->
+  <section class="slide" id="sl-rotation" data-title="（操作）かけ算＝回転と拡大">
+    <div class="inner">
+      <span class="tag2 tag-do">操作</span>
+      <p class="kicker">複素ベクトルの回転</p>
+      <h1 class="tt">複素数を掛けると、回って伸びる</h1>
+      <p class="desc"><i>z</i><sub>1</sub> に <i>r</i><sub>2</sub>·e<sup>jθ₂</sup> を掛けた結果を見てください。<i>r</i><sub>2</sub>=1 にすると、長さそのままの<strong>純粋な回転（位相シフト）</strong>になります。これが交流の位相を扱う核心です。</p>
+      <div class="grid2">
+        <div><canvas id="cv-rot" class="plane"></canvas></div>
+        <div>
+          <div class="row"><label>掛ける大きさ <i>r</i><sub>2</sub></label><input type="range" id="s-r2" min="0.4" max="2" step="0.05" value="1"><span class="val" id="v-r2">1.00</span></div>
+          <div class="row"><label>回す角 <i>θ</i><sub>2</sub></label><input type="range" id="s-th2" min="-180" max="180" step="1" value="60"><span class="val" id="v-th2">60°</span></div>
+          <div class="eq" id="eq-rot"></div>
+          <p class="note"><span class="sw" style="background:var(--z1)"></span> z₁　<span class="sw" style="background:var(--zr)"></span> z₁·z₂。z₁ の矢印先はドラッグできます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 31 Practice -->
+  <section class="slide" id="sl-practice" data-title="練習問題（1〜4）">
+    <div class="inner">
+      <span class="tag2 tag-do">操作</span>
+      <p class="kicker">練習問題</p>
+      <h1 class="tt">手を動かして確かめる</h1>
+      <div class="seg" id="seg-pr"><button data-v="0" class="on">問1</button><button data-v="1">問2</button><button data-v="2">問3</button><button data-v="3">問4</button></div>
+      <div id="pr-body"></div>
+    </div>
+  </section>
+
+  <!-- 32 Summary -->
+  <section class="slide" id="sl-summary" data-title="まとめ">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">まとめ</p>
+      <h1 class="tt">今日のゴール</h1>
+      <ul class="lead">
+        <li>正弦波は <i>A</i>, <i>ω</i>, <i>φ</i> の3つで決まる。抵抗だけなら電圧と電流は同相。コイルが入ると位相が遅れ、微分方程式になる。</li>
+        <li>複素数 <i>z</i> = <span class="re">x</span> + <span class="im">jy</span> は複素平面の矢印。共役（きょうやく）・偏角・大きさで特徴づけられる。</li>
+        <li>四則演算：和差は成分ごと、積商は <i>j</i>²=−1 と共役がコツ。</li>
+        <li><strong>オイラーの公式</strong> e<sup>±jθ</sup>=cosθ±j sinθ で、複素数は <i>r</i>·e<sup>jθ</sup> の極形式に。</li>
+        <li>極形式の積は「大きさ掛け算・偏角足し算」＝<strong>回転</strong>。これが交流の位相を扱う土台。</li>
+      </ul>
+      <div class="eq big" style="text-align:center;">次回：この道具で、交流回路を<strong>オームの法則のように</strong>解く。</div>
+      <p class="note"><a href="../../" style="color:var(--act);">教材一覧へ戻る</a></p>
+    </div>
+  </section>
+
+</div>
+
+<audio id="narr" preload="none"></audio>
+<button id="narrbtn" class="narrbtn" aria-label="解説音声を再生" style="display:none;">🔊 解説</button>
+
+<nav class="nav">
+  <button class="arw" id="prev" aria-label="前へ">◀</button>
+  <select id="jump" aria-label="スライド選択"></select>
+  <span class="count" id="count">1 / 32</span>
+  <button class="arw" id="fs" aria-label="全画面" title="全画面（プロジェクタ向け）">⛶</button>
+  <button class="arw" id="next" aria-label="次へ">▶</button>
+</nav>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     ★ スケジュール設定 — 毎年ここを編集してください
+       year   : 年度
+       current: 今回の回（1〜15）。枠でハイライトされます
+       rows   : [回, 日付（曜日込み）, 内容, 'exam'(試験のみ)]
+     ============================================================ */
+  var SCHEDULE = {
+    year: 2026,
+    note: 'スケジュールは進捗に合わせて変更する可能性があります',
+    current: 8,
+    rows: [
+      [1,  '4/13（月）', '基本素子'],
+      [2,  '4/20（月）', '微分方程式の解法'],
+      [3,  '4/27（月）', '固有振動'],
+      [4,  '5/11（月）', '初期条件と時定数'],
+      [5,  '5/18（月）', '不連続な変化'],
+      [6,  '5/25（月）', '演習'],
+      [7,  '6/3（水）',  '中間テスト', 'exam'],
+      [8,  '6/8（月）',  '正弦波の複素数での表現'],
+      [9,  '6/15（月）', 'オイラーの式、極表現'],
+      [10, '6/22（月）', '中間振り返り'],
+      [11, '6/29（月）', '正弦波交流回路'],
+      [12, '7/6（月）',  'ベクトル図・電力'],
+      [13, '7/13（月）', '総合演習'],
+      [14, '7/23（木）', '期末試験', 'exam'],
+      [15, '7/27（月）', '自己点検']
+    ]
+  };
+
+  var TAU=Math.PI*2;
+  function $(s,r){return (r||document).querySelector(s);}
+  function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function fmt(v,d){d=d==null?2:d; return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);}
+  function roundTo(v,dp){var f=Math.pow(10,dp); return Math.round(v*f)/f;} // 四捨五入（指定小数桁）
+  function decimals(s){s=String(s).trim(); if(s.indexOf('.')<0)return 0; s=s.replace(/0+$/,''); var i=s.indexOf('.'); return i<0?0:(s.length-i-1);} // 末尾0を除いた小数桁数
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  // visible half-range (in plot units) of a plane, minus a small margin so the arrowhead stays in view
+  function vbnd(pl){var m=14/pl.s; return {x:(pl.W/2)/pl.s-m, y:(pl.H/2)/pl.s-m};}
+
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var N=slides.length, cur=0;
+  var hooks=slides.map(function(){return {};});
+  function idx(id){for(var i=0;i<slides.length;i++){if(slides[i].id===id)return i;} return -1;}
+  function reg(id,h){var i=idx(id); if(i>=0)hooks[i]=h;}
+  function goId(id){go(idx(id));}
+
+  var jump=$('#jump');
+  slides.forEach(function(s,i){var o=document.createElement('option'); o.value=i; o.textContent=(i+1)+'. '+s.getAttribute('data-title'); jump.appendChild(o);});
+  function go(i){
+    i=clamp(i,0,N-1); if(i===cur && slides[cur].classList.contains('active'))return;
+    if(hooks[cur].hide)hooks[cur].hide();
+    stopNarr();
+    slides[cur].classList.remove('active'); cur=i; slides[cur].classList.add('active');
+    jump.value=cur; $('#count').textContent=(cur+1)+' / '+N;
+    $('#prev').disabled=cur===0; $('#next').disabled=cur===N-1;
+    $('#prog').style.width=(cur/(N-1)*100)+'%'; slides[cur].scrollTop=0;
+    try{history.replaceState(null,'','#'+(cur+1));}catch(e){}
+    if(hooks[cur].show)hooks[cur].show();
+    syncNarrBtn();
+  }
+  $('#prev').onclick=function(){go(cur-1);}; $('#next').onclick=function(){go(cur+1);};
+  jump.onchange=function(){go(+jump.value);};
+  $('#fs').onclick=function(){ if(!document.fullscreenElement){ if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen(); } else { if(document.exitFullscreen)document.exitFullscreen(); } };
+  document.addEventListener('keydown',function(e){
+    if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+    if(e.target.tagName==='BUTTON'&&(e.key===' '||e.key==='Enter'))return; // フォーカス中ボタンのSpace/Enterはナビ二重発火させない
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){go(cur+1);e.preventDefault();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){go(cur-1);e.preventDefault();}
+    else if(e.key==='Home'){go(0);} else if(e.key==='End'){go(N-1);}
+    else if(e.key==='f'||e.key==='F'){$('#fs').click();}
+  });
+  window.addEventListener('resize',function(){var h=hooks[cur]; if(h&&h.redraw)h.redraw();});
+
+  function anim(draw){var run=false;function loop(){if(!run)return;draw();requestAnimationFrame(loop);}return{start:function(){if(!run){run=true;loop();}},stop:function(){run=false;}};}
+
+  // ---- 解説ナレーション音声（単一プレーヤを使い回す） ----
+  var NARR_DIR='audio/';                          // 音声ファイルは audio/<slide-id>.mp3
+  var NARR=new Set(slides.map(function(s){return s.id;})); // 全スライドに音声がある前提（無い場合は再生失敗時に自動で隠す）
+  var _audio=$('#narr'), _narrBtn=$('#narrbtn'), _playing=null;
+  function syncNarrBtn(){ var id=slides[cur].id; var on=(_playing===id && !_audio.paused);
+    if(NARR.has(id)){ _narrBtn.style.display='inline-flex'; _narrBtn.textContent=on?'⏸ 停止':'🔊 解説'; _narrBtn.classList.toggle('playing',on); }
+    else { _narrBtn.style.display='none'; } }
+  function stopNarr(){ try{_audio.pause(); _audio.currentTime=0;}catch(e){} _playing=null; }
+  function playNarr(id){ if(!NARR.has(id))return; stopNarr(); _audio.src=NARR_DIR+id+'.mp3'; _playing=id;
+    var p=_audio.play(); if(p&&p.catch)p.catch(function(){ NARR.delete(id); _playing=null; syncNarrBtn(); }); syncNarrBtn(); }
+  _narrBtn.onclick=function(e){ e.stopPropagation(); this.blur(); var id=slides[cur].id;
+    if(_playing===id && !_audio.paused){ stopNarr(); } else { playNarr(id); } syncNarrBtn(); };
+  _audio.addEventListener('ended', function(){ _playing=null; syncNarrBtn(); });
+  _audio.addEventListener('pause', function(){ syncNarrBtn(); });
+
+  // ---- complex plane ----
+  function makePlane(cv, spanX, spanY){
+    var ctx=cv.getContext('2d'), dpr=window.devicePixelRatio||1, W=0,H=0,s=1,cx=0,cy=0, sx=spanX, sy=spanY;
+    function setSpan(a,b){sx=a; sy=(b==null?a:b);}
+    function fit(){var w=cv.clientWidth,h=cv.clientHeight; cv.width=w*dpr; cv.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); W=w;H=h; s=Math.min(w/sx,h/sy); cx=w/2; cy=h/2;}
+    function PX(x,y){return [cx+x*s, cy-y*s];}
+    function UN(px,py){return [(px-cx)/s,(cy-py)/s];}
+    function clear(){ctx.clearRect(0,0,W,H);}
+    function axes(opt){opt=opt||{}; var xr=(W/2)/s, yr=(H/2)/s, i,p;
+      ctx.strokeStyle=cssv('--grd'); ctx.lineWidth=1; ctx.font='11px sans-serif'; ctx.fillStyle=cssv('--mut');
+      for(i=Math.ceil(-xr);i<=xr;i++){if(i===0)continue; p=PX(i,0); ctx.globalAlpha=.55; ctx.beginPath(); ctx.moveTo(p[0],0); ctx.lineTo(p[0],H); ctx.stroke();}
+      for(i=Math.ceil(-yr);i<=yr;i++){if(i===0)continue; p=PX(0,i); ctx.globalAlpha=.55; ctx.beginPath(); ctx.moveTo(0,p[1]); ctx.lineTo(W,p[1]); ctx.stroke();}
+      ctx.globalAlpha=1; ctx.strokeStyle=cssv('--ax'); ctx.lineWidth=1.5; var o=PX(0,0);
+      ctx.beginPath(); ctx.moveTo(0,o[1]); ctx.lineTo(W,o[1]); ctx.stroke(); ctx.beginPath(); ctx.moveTo(o[0],H); ctx.lineTo(o[0],0); ctx.stroke();
+      ctx.fillStyle=cssv('--mut'); ctx.fillText(opt.reLabel||'Re', W-26, o[1]-7); ctx.fillText(opt.imLabel||'Im', o[0]+7, 14);}
+    function head(x1,y1,x2,y2,color,L){L=L||10; var a=Math.atan2(y2-y1,x2-x1); ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-L*Math.cos(a-.42),y2-L*Math.sin(a-.42)); ctx.lineTo(x2-L*Math.cos(a+.42),y2-L*Math.sin(a+.42)); ctx.closePath(); ctx.fill();}
+    function arrow(ux1,uy1,ux2,uy2,color,w){var a=PX(ux1,uy1),b=PX(ux2,uy2); ctx.strokeStyle=color; ctx.lineWidth=w||3; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); head(a[0],a[1],b[0],b[1],color);}
+    function vec(x,y,color,opt){opt=opt||{}; arrow(0,0,x,y,color,opt.w||3.2);
+      if(opt.proj){var t=PX(x,y),ax=PX(x,0),ay=PX(0,y); ctx.save(); ctx.strokeStyle=color; ctx.globalAlpha=.5; ctx.setLineDash([4,4]); ctx.lineWidth=1.2;
+        ctx.beginPath(); ctx.moveTo(t[0],t[1]); ctx.lineTo(ax[0],ax[1]); ctx.stroke(); ctx.beginPath(); ctx.moveTo(t[0],t[1]); ctx.lineTo(ay[0],ay[1]); ctx.stroke(); ctx.restore();
+        if(opt.projlab){ctx.fillStyle=color; ctx.font='italic 13px Georgia,serif'; ctx.fillText('x',ax[0]-3,ax[1]+(y>=0?16:-8)); ctx.fillText('y',ay[0]+(x>=0?-14:8),ay[1]+4);}}
+      if(opt.label){var t2=PX(x,y); ctx.fillStyle=color; ctx.font='bold 14px Georgia,serif'; ctx.fillText(opt.label, t2[0]+8, t2[1]-6);}}
+    function dot(x,y,color,r){var p=PX(x,y); ctx.fillStyle=color; ctx.beginPath(); ctx.arc(p[0],p[1],r||4,0,TAU); ctx.fill();}
+    // grip affordance that does NOT cover the arrowhead: a donut-shaped halo (hole around the
+    // arrow tip) + a dashed ring, so the vector still clearly reads as an arrow. Call AFTER vec().
+    function handle(x,y,color){var p=PX(x,y); ctx.save();
+      ctx.globalAlpha=.16; ctx.fillStyle=color;
+      ctx.beginPath(); ctx.arc(p[0],p[1],17,0,TAU); ctx.arc(p[0],p[1],11,0,TAU,true); ctx.fill(); ctx.globalAlpha=1;
+      ctx.strokeStyle=color; ctx.lineWidth=1.6; ctx.setLineDash([3.5,3.5]);
+      ctx.beginPath(); ctx.arc(p[0],p[1],15,0,TAU); ctx.stroke();
+      ctx.restore();}
+    return {ctx:ctx, fit:fit, setSpan:setSpan, PX:PX, UN:UN, clear:clear, axes:axes, arrow:arrow, vec:vec, dot:dot, handle:handle, get s(){return s;}, get W(){return W;}, get H(){return H;}};
+  }
+  function dragger(cv, plane, getPts, onMove){
+    var ix=-1;
+    function rel(e){var r=cv.getBoundingClientRect(); return plane.UN(e.clientX-r.left, e.clientY-r.top);}
+    function pick(u){var pts=getPts(),best=-1,bd=1e9; for(var i=0;i<pts.length;i++){var a=plane.PX(pts[i].x,pts[i].y),b=plane.PX(u[0],u[1]); var d=Math.hypot(a[0]-b[0],a[1]-b[1]); if(d<bd){bd=d;best=i;}} return bd<34?best:-1;}
+    cv.style.touchAction='none';
+    cv.addEventListener('pointerdown',function(e){var u=rel(e); ix=pick(u); if(ix>=0){cv.setPointerCapture(e.pointerId); onMove(ix,u[0],u[1]); e.preventDefault();}});
+    cv.addEventListener('pointermove',function(e){if(ix<0)return; var u=rel(e); onMove(ix,u[0],u[1]); e.preventDefault();});
+    function end(){ix=-1;} cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+  }
+
+  // ---- time plot ----
+  function timeCtx(cv){var ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1,W=0,H=0;
+    function fit(){var w=cv.clientWidth,h=cv.clientHeight;cv.width=w*dpr;cv.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);W=w;H=h;}
+    return {ctx:ctx,fit:fit,get W(){return W;},get H(){return H;}};}
+  function drawTimeAxes(c,ymax){var ctx=c.ctx,W=c.W,H=c.H,padL=34,padB=20,padT=10,padR=10;
+    function X(t){return padL+t/c._tmax*(W-padL-padR);} function Y(v){return padT+(ymax-v)/(2*ymax)*(H-padT-padB);}
+    ctx.clearRect(0,0,W,H); ctx.strokeStyle=cssv('--grd'); ctx.fillStyle=cssv('--mut'); ctx.font='10px sans-serif'; ctx.lineWidth=1;
+    for(var g=-ymax;g<=ymax+1e-9;g+=ymax/2){ctx.globalAlpha=g===0?.85:.4; ctx.beginPath(); ctx.moveTo(padL,Y(g)); ctx.lineTo(W-padR,Y(g)); ctx.stroke(); ctx.globalAlpha=1; ctx.fillText(fmt(g,g%1?1:0),4,Y(g)+3);}
+    return {X:X,Y:Y};}
+  function plotFn(c,m,fn,color,w){var ctx=c.ctx,W=c.W; ctx.strokeStyle=color; ctx.lineWidth=w||2.4; ctx.lineJoin='round'; ctx.beginPath(); var first=true;
+    for(var px=34;px<=W-10;px+=2){var t=(px-34)/(W-44)*c._tmax; var y=fn(t); var X=m.X(t),Y=m.Y(y); if(first){ctx.moveTo(X,Y);first=false;}else ctx.lineTo(X,Y);} ctx.stroke();}
+
+  // ===== 1 TITLE =====
+  (function(){var cv=$('#cv-title'),c=timeCtx(cv); c._tmax=4*Math.PI;
+    var A=anim(function(){c.fit(); var m=drawTimeAxes(c,1.2); var ph=performance.now()/700;
+      plotFn(c,m,function(t){return Math.cos(t-ph);},cssv('--act'),3); plotFn(c,m,function(t){return 0.7*Math.sin(2*t-ph*1.3);},cssv('--sin'),2);});
+    reg('sl-title',{show:A.start,hide:A.stop});})();
+
+  // ===== 2 SCHEDULE =====
+  (function(){
+    $('#sch-year').textContent=SCHEDULE.year; $('#sch-note').textContent=SCHEDULE.note;
+    var rows=SCHEDULE.rows, half=Math.ceil(rows.length/2);
+    function cell(r){var cls='schrow'; if(r[3]==='exam')cls+=' exam'; if(r[0]===SCHEDULE.current)cls+=' cur';
+      return '<div class="'+cls+'"><span class="sn">'+r[0]+'</span><span class="sd">'+r[1]+'</span><span class="st">'+r[2]+'</span></div>';}
+    var L='',R='';
+    rows.forEach(function(r,i){ if(i<half)L+=cell(r); else R+=cell(r); });
+    $('#sched').innerHTML='<div class="schcol">'+L+'</div><div class="schcol">'+R+'</div>';
+  })();
+
+  // ===== 3 AGENDA =====
+  (function(){var items=[['8.1','直流と交流','変わらない電気と振動する電気','sl-dcac'],['8.2','正弦波交流','A・ω・φ で波を操る','sl-sincos'],
+      ['8.3','複素数','平面上の矢印として捉える','sl-cvec'],['8.4','複素数の計算 / オイラー','四則演算と e^{jθ}=cosθ+j sinθ','sl-add']];
+    var box=$('#agenda'); items.forEach(function(it){var b=document.createElement('button');
+      b.innerHTML='<div class="n">'+it[0]+'</div><div class="t">'+it[1]+'</div><div class="s">'+it[2]+'</div>'; b.onclick=function(){goId(it[3]);}; box.appendChild(b);});})();
+
+  // ===== 4 DC/AC static =====
+  (function(){var cv=$('#cv-dcac'),c=timeCtx(cv); c._tmax=4*Math.PI;
+    function draw(){c.fit(); var ctx=c.ctx,W=c.W,H=c.H; ctx.clearRect(0,0,W,H); var padL=30;
+      ctx.strokeStyle=cssv('--grd'); ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(padL,H*0.27); ctx.lineTo(W-10,H*0.27); ctx.stroke();
+      ctx.strokeStyle=cssv('--thr'); ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(padL,H*0.27); ctx.lineTo(W-10,H*0.27); ctx.stroke();
+      ctx.fillStyle=cssv('--mut'); ctx.font='12px sans-serif'; ctx.fillText('直流 DC', padL+4, H*0.13);
+      var cy=H*0.72, amp=H*0.18; ctx.strokeStyle=cssv('--grd'); ctx.beginPath(); ctx.moveTo(padL,cy); ctx.lineTo(W-10,cy); ctx.stroke();
+      ctx.strokeStyle=cssv('--act'); ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath();
+      for(var px=padL;px<=W-10;px+=2){var t=(px-padL)/(W-padL-10)*c._tmax; var y=cy-amp*Math.cos(t); if(px===padL)ctx.moveTo(px,y); else ctx.lineTo(px,y);} ctx.stroke();
+      ctx.fillStyle=cssv('--mut'); ctx.fillText('交流 AC', padL+4, H*0.93);}
+    reg('sl-dcac',{show:draw,redraw:draw});})();
+
+  // ===== 5 sin/cos static =====
+  (function(){var cv=$('#cv-sincos'),c=timeCtx(cv); c._tmax=4*Math.PI;
+    function draw(){c.fit(); var m=drawTimeAxes(c,1.2); plotFn(c,m,function(t){return Math.sin(t);},cssv('--sin'),2.6); plotFn(c,m,function(t){return Math.cos(t);},cssv('--cos'),2.6);}
+    reg('sl-sincos',{show:draw,redraw:draw});})();
+
+  // ===== 7 sine explorer =====
+  (function(){var cv=$('#cv-sine'),c=timeCtx(cv); c._tmax=4*Math.PI; var A=1,w=1,p=0,fn='cos';
+    var seg=$('#seg-fn'); seg.addEventListener('click',function(e){var b=e.target.closest('button'); if(!b)return; fn=b.getAttribute('data-v'); [].forEach.call(seg.children,function(x){x.classList.toggle('on',x===b);}); upd();});
+    function bind(id,vid,set,suf,dec){var el=$(id),o=$(vid); el.addEventListener('input',function(){set(parseFloat(el.value)); o.textContent=fmt(parseFloat(el.value),dec)+(suf||''); upd();});}
+    bind('#s-A','#v-A',function(v){A=v;},'',1); bind('#s-w','#v-w',function(v){w=v;},'',1); bind('#s-p','#v-p',function(v){p=v;},'°',0);
+    function upd(){var T=TAU/w; $('#eq-sine').innerHTML='<span class="big"><i>y</i> = '+fmt(A,1)+' '+fn+'('+fmt(w,1)+'<i>t</i> '+(p>=0?'+ ':'− ')+Math.abs(p)+'°)</span><br>周期 <i>T</i> = '+fmt(T,2)+' ／ 周波数 <i>f</i> = '+fmt(w/TAU,3);}
+    var anm=anim(function(){c.fit(); var m=drawTimeAxes(c,2.1);
+      plotFn(c,m,function(t){return Math.sin(t);},cssv('--sin'),1.4); plotFn(c,m,function(t){return Math.cos(t);},cssv('--cos'),1.4);
+      var ph=p*Math.PI/180, f=fn==='cos'?Math.cos:Math.sin; plotFn(c,m,function(t){return A*f(w*t+ph);},cssv('--act'),3);
+      var tt=(performance.now()/700)%c._tmax, yv=A*f(w*tt+ph), X=m.X(tt),Y=m.Y(yv); c.ctx.fillStyle=cssv('--act'); c.ctx.beginPath(); c.ctx.arc(X,Y,5,0,TAU); c.ctx.fill();});
+    upd(); reg('sl-sine',{show:anm.start,hide:anm.stop});})();
+
+  // ===== 10 resistor wave =====
+  (function(){var cv=$('#cv-res'),c=timeCtx(cv); c._tmax=4*Math.PI; var V0=5,R=2;
+    function bind(id,vid,set,dec){var el=$(id),o=$(vid); el.addEventListener('input',function(){set(parseFloat(el.value)); o.textContent=fmt(parseFloat(el.value),dec); upd();});}
+    bind('#s-V0','#v-V0',function(v){V0=v;},1); bind('#s-R','#v-R',function(v){R=v;},1);
+    function upd(){$('#eq-res').innerHTML='<span class="big"><i>i</i>(<i>t</i>) = (<i>V</i><sub>0</sub>/<i>R</i>) cos(<i>ωt</i>) = '+fmt(V0/R,2)+' cos(<i>ωt</i>)</span><br>電流振幅 = '+fmt(V0/R,2)+' A（電圧と<strong>同相</strong>）';}
+    var anm=anim(function(){c.fit(); var m=drawTimeAxes(c,11); var ph=performance.now()/700; plotFn(c,m,function(t){return V0*Math.cos(t-ph);},cssv('--ref'),2.6); plotFn(c,m,function(t){return (V0/R)*Math.cos(t-ph);},cssv('--act'),2.6);});
+    upd(); reg('sl-res-wave',{show:anm.start,hide:anm.stop});})();
+
+  // ===== 12 LR wave =====
+  (function(){var cv=$('#cv-lr'),c=timeCtx(cv); c._tmax=4*Math.PI; var R=2,L=1,w=1.5,V0=8;
+    function bind(id,vid,set,dec){var el=$(id),o=$(vid); el.addEventListener('input',function(){set(parseFloat(el.value)); o.textContent=fmt(parseFloat(el.value),dec); upd();});}
+    bind('#s-lrR','#v-lrR',function(v){R=v;},1); bind('#s-lrL','#v-lrL',function(v){L=v;},1); bind('#s-lrW','#v-lrW',function(v){w=v;},1);
+    function upd(){var Z=Math.hypot(R,w*L),phi=Math.atan2(w*L,R); $('#eq-lr').innerHTML='|<i>Z</i>| = √(R²+(ωL)²) = '+fmt(Z,2)+'<br>遅れ角 <i>φ</i> = arctan(ωL/R) = '+fmt(phi*180/Math.PI,1)+'°<br>電流振幅 = <i>V</i><sub>0</sub>/|Z| = '+fmt(V0/Z,2)+' A';}
+    var anm=anim(function(){c.fit(); var m=drawTimeAxes(c,V0*1.15); var t0=performance.now()/700; var Z=Math.hypot(R,w*L),phi=Math.atan2(w*L,R);
+      plotFn(c,m,function(t){return V0*Math.cos(w*t-t0);},cssv('--ref'),2.6); plotFn(c,m,function(t){return (V0/Z)*Math.cos(w*t-t0-phi);},cssv('--act'),2.6);});
+    upd(); reg('sl-lr-wave',{show:anm.start,hide:anm.stop});})();
+
+  // ===== 14 complex vector static =====
+  (function(){var cv=$('#cv-cvec'),pl=makePlane(cv,12,12);
+    function draw(){pl.fit(); pl.clear(); pl.axes(); pl.vec(3,2,cssv('--z1'),{proj:true,projlab:true,label:'z'}); pl.dot(3,2,cssv('--z1'),5);}
+    reg('sl-cvec',{show:draw,redraw:draw});})();
+
+  // ===== 15 real/imag confirm =====
+  (function(){var cv=$('#cv-cz'),pl=makePlane(cv,12,12); var z={x:3,y:2};
+    function draw(){pl.fit(); pl.clear(); pl.axes(); pl.vec(z.x,z.y,cssv('--z1'),{proj:true,label:'z'}); pl.handle(z.x,z.y,cssv('--z1'));
+      $('#eq-cz').innerHTML='<span class="big"><i>z</i> = <span class="re">'+fmt(z.x,1)+'</span>'+(z.y>=0?' + <span class="im">j':' − <span class="im">j')+fmt(Math.abs(z.y),1)+'</span></span><br>実部 x = '+fmt(z.x,1)+' ／ 虚部 y = '+fmt(z.y,1);}
+    dragger(cv,pl,function(){return [z];},function(i,x,y){var b=vbnd(pl); z.x=clamp(Math.round(x*2)/2,-b.x,b.x); z.y=clamp(Math.round(y*2)/2,-b.y,b.y); draw();});
+    reg('sl-reim',{show:draw,redraw:draw});})();
+
+  // ===== 16 conjugate =====
+  (function(){var cv=$('#cv-conj'),pl=makePlane(cv,12,12); var z={x:3,y:2.5};
+    function draw(){pl.fit(); pl.clear(); pl.axes(); pl.vec(z.x,z.y,cssv('--z1'),{label:'z'}); pl.handle(z.x,z.y,cssv('--z1')); pl.vec(z.x,-z.y,cssv('--z2'),{label:'z̄'}); pl.dot(z.x,-z.y,cssv('--z2'),4);
+      $('#eq-conj').innerHTML='<span class="big"><i>z</i> = '+fmt(z.x,1)+(z.y>=0?' + j':' − j')+fmt(Math.abs(z.y),1)+'</span><br><span class="big"><i>z̄</i> = '+fmt(z.x,1)+(z.y>=0?' − j':' + j')+fmt(Math.abs(z.y),1)+'</span>';}
+    dragger(cv,pl,function(){return [z];},function(i,x,y){var b=vbnd(pl); z.x=clamp(Math.round(x*2)/2,-b.x,b.x); z.y=clamp(Math.round(y*2)/2,-b.y,b.y); draw();});
+    reg('sl-conj',{show:draw,redraw:draw});})();
+
+  // ===== 17 arg & magnitude =====
+  (function(){var cv=$('#cv-arg'),pl=makePlane(cv,12,12); var z={x:3,y:2.5};
+    function draw(){pl.fit(); pl.clear(); pl.axes(); var th=Math.atan2(z.y,z.x), r=Math.hypot(z.x,z.y); var o=pl.PX(0,0), ar=Math.min(46,pl.s*1.1);
+      pl.ctx.strokeStyle=cssv('--thr'); pl.ctx.lineWidth=2; pl.ctx.beginPath(); pl.ctx.arc(o[0],o[1],ar,0,-th,th>0); pl.ctx.stroke();
+      pl.vec(z.x,z.y,cssv('--z1'),{label:'z'}); pl.handle(z.x,z.y,cssv('--z1'));
+      $('#eq-arg').innerHTML='大きさ |<i>z</i>| = √('+fmt(z.x,1)+'² + '+fmt(z.y,1)+'²) = <strong>'+fmt(r,2)+'</strong><br>偏角 <i>θ</i> = arctan(y/x) = <strong>'+fmt(th*180/Math.PI,1)+'°</strong>（'+fmt(th,2)+' rad）';}
+    dragger(cv,pl,function(){return [z];},function(i,x,y){var b=vbnd(pl); z.x=clamp(Math.round(x*2)/2,-b.x,b.x); z.y=clamp(Math.round(y*2)/2,-b.y,b.y); if(Math.abs(z.x)<.2&&Math.abs(z.y)<.2)z.x=.5; draw();});
+    reg('sl-argmag',{show:draw,redraw:draw});})();
+
+  // ===== 18 special cases static =====
+  (function(){var cv=$('#cv-special'),pl=makePlane(cv,12,12);
+    function draw(){pl.fit(); pl.clear(); pl.axes(); var o=pl.PX(0,0);
+      pl.vec(2,0,cssv('--z1'),{label:'z₁=2'}); pl.dot(2,0,cssv('--z1'),5); pl.vec(0,3,cssv('--z2'),{label:'z₂=j3'}); pl.dot(0,3,cssv('--z2'),5);
+      pl.ctx.fillStyle=cssv('--mut'); pl.ctx.font='11px sans-serif'; pl.ctx.fillText('θ=0°', o[0]+pl.s*1.0, o[1]-6); pl.ctx.fillText('θ=90°', o[0]+8, o[1]-pl.s*2.6);}
+    reg('sl-special',{show:draw,redraw:draw});})();
+
+  // ===== 19 add/sub =====
+  (function(){var cv=$('#cv-add'),pl=makePlane(cv,18,18); var z1={x:3,y:5},z2={x:1,y:-2},mode='add';
+    var seg=$('#seg-add'); seg.addEventListener('click',function(e){var b=e.target.closest('button'); if(!b)return; mode=b.getAttribute('data-v'); [].forEach.call(seg.children,function(x){x.classList.toggle('on',x===b);}); draw();});
+    function draw(){pl.fit(); pl.clear(); pl.axes(); var rx=mode==='add'?z1.x+z2.x:z1.x-z2.x, ry=mode==='add'?z1.y+z2.y:z1.y-z2.y;
+      pl.ctx.save(); pl.ctx.setLineDash([5,5]); pl.ctx.globalAlpha=.7; pl.arrow(z1.x,z1.y,rx,ry,cssv('--z2'),2); pl.ctx.restore();
+      pl.vec(z1.x,z1.y,cssv('--z1'),{label:'z₁'}); pl.handle(z1.x,z1.y,cssv('--z1')); pl.vec(z2.x,z2.y,cssv('--z2'),{label:'z₂'}); pl.handle(z2.x,z2.y,cssv('--z2'));
+      pl.vec(rx,ry,cssv('--zr'),{w:3.6}); pl.dot(rx,ry,cssv('--zr'),5); var op=mode==='add'?'+':'−', sub=mode!=='add';
+      function term(a,b){var minus=sub!==(b<0); return fmt(a,0)+(minus?' − ':' + ')+fmt(Math.abs(b),0);}
+      $('#eq-add').innerHTML='<span class="big">z₁ '+op+' z₂ = ('+term(z1.x,z2.x)+') + j('+term(z1.y,z2.y)+')</span><br>= <strong>'+fmt(rx,0)+(ry>=0?' + j':' − j')+fmt(Math.abs(ry),0)+'</strong>';}
+    dragger(cv,pl,function(){return [z1,z2];},function(i,x,y){var p=i===0?z1:z2,b=vbnd(pl); p.x=clamp(Math.round(x),-Math.round(b.x),Math.round(b.x)); p.y=clamp(Math.round(y),-Math.round(b.y),Math.round(b.y)); draw();});
+    reg('sl-add',{show:draw,redraw:draw});})();
+
+  // ===== 22 mul/div interactive =====
+  (function(){var x1=3,y1=5,x2=1,y2=-2;
+    function bind(id,vid,set){var el=$(id),o=$(vid); el.addEventListener('input',function(){set(parseInt(el.value,10)); o.textContent=el.value; upd();});}
+    bind('#s-x1','#v-x1',function(v){x1=v;}); bind('#s-y1','#v-y1',function(v){y1=v;}); bind('#s-x2','#v-x2',function(v){x2=v;}); bind('#s-y2','#v-y2',function(v){y2=v;});
+    function cstr(a,b){return fmt(a,0)+(b>=0?' + j':' − j')+fmt(Math.abs(b),0);}
+    function upd(){var pr=x1*x2-y1*y2, pi=x1*y2+x2*y1;
+      $('#eq-mul').innerHTML='<strong>積</strong> z₁·z₂<br>= ('+cstr(x1,y1)+')('+cstr(x2,y2)+')<br>= <span class="big">'+cstr(pr,pi)+'</span>';
+      var den=x2*x2+y2*y2, qr=x1*x2+y1*y2, qi=x2*y1-x1*y2;
+      $('#eq-div').innerHTML='<strong>商</strong> z₁/z₂（共役 '+cstr(x2,-y2)+'）<br>= ['+fmt(qr,0)+(qi>=0?' + j':' − j')+fmt(Math.abs(qi),0)+'] / '+fmt(den,0)+'<br>= <span class="big">'+(den?fmt(qr/den,2)+(qi>=0?' + j':' − j')+fmt(Math.abs(qi/den),2):'—')+'</span>';}
+    reg('sl-div',{show:upd});})();
+
+  // ===== 26 maclaurin (auto-fit + zoom) =====
+  (function(){var cv=$('#cv-mac'),pl=makePlane(cv,3.4,3.4); var x=2.0,n=3,zoom=1;
+    function bind(id,vid,set,dec){var el=$(id),o=$(vid); el.addEventListener('input',function(){set(parseFloat(el.value)); o.textContent=fmt(parseFloat(el.value),dec); draw();});}
+    bind('#s-macx','#v-macx',function(v){x=v;},1); bind('#s-macn','#v-macn',function(v){n=Math.round(v);},0);
+    $('#mac-zin').onclick=function(){zoom*=1.3; draw();}; $('#mac-zout').onclick=function(){zoom/=1.3; draw();}; $('#mac-zfit').onclick=function(){zoom=1; draw();};
+    function partials(){var tr=1,ti=0,out=[{re:1,im:0}]; for(var k=1;k<=n;k++){var nr=(tr*0-ti*x)/k, ni=(tr*x+ti*0)/k; tr=nr; ti=ni; var last=out[out.length-1]; out.push({re:last.re+tr,im:last.im+ti});} return out;}
+    function draw(){var ps=partials();
+      var ext=1.05; for(var k=0;k<ps.length;k++){ext=Math.max(ext,Math.abs(ps[k].re),Math.abs(ps[k].im));}
+      var span=Math.max(2.6, ext*2*1.15)/zoom; pl.setSpan(span,span);
+      pl.fit(); pl.clear(); pl.axes(); var o=pl.PX(0,0); pl.ctx.strokeStyle=cssv('--grd'); pl.ctx.lineWidth=1.2; pl.ctx.beginPath(); pl.ctx.arc(o[0],o[1],pl.s,0,TAU); pl.ctx.stroke();
+      pl.ctx.strokeStyle=cssv('--ref'); pl.ctx.lineWidth=2; pl.ctx.beginPath();
+      for(var i=0;i<ps.length;i++){var p=pl.PX(ps[i].re,ps[i].im); if(i===0)pl.ctx.moveTo(p[0],p[1]); else pl.ctx.lineTo(p[0],p[1]);} pl.ctx.stroke();
+      for(i=0;i<ps.length;i++)pl.dot(ps[i].re,ps[i].im,cssv('--ref'),2.5);
+      var sum=ps[ps.length-1], tx=Math.cos(x),ty=Math.sin(x);
+      pl.ctx.strokeStyle=cssv('--thr'); pl.ctx.lineWidth=2.5; var tp=pl.PX(tx,ty); pl.ctx.beginPath(); pl.ctx.arc(tp[0],tp[1],7,0,TAU); pl.ctx.stroke();
+      var sp=pl.PX(sum.re,sum.im); pl.ctx.strokeStyle=cssv('--act'); pl.ctx.lineWidth=2.5; pl.ctx.beginPath(); pl.ctx.moveTo(sp[0]-6,sp[1]-6); pl.ctx.lineTo(sp[0]+6,sp[1]+6); pl.ctx.moveTo(sp[0]+6,sp[1]-6); pl.ctx.lineTo(sp[0]-6,sp[1]+6); pl.ctx.stroke();
+      var err=Math.hypot(sum.re-tx,sum.im-ty);
+      $('#eq-mac').innerHTML='n='+n+' 項までの部分和<br>× = '+fmt(sum.re,3)+(sum.im>=0?' + j':' − j')+fmt(Math.abs(sum.im),3)+'<br>○ = '+fmt(tx,3)+(ty>=0?' + j':' − j')+fmt(Math.abs(ty),3)+'<br>誤差 = '+fmt(err,3);}
+    reg('sl-mac',{show:draw,redraw:draw});})();
+
+  // ===== 27 euler unit circle =====
+  (function(){var cv=$('#cv-euler'),pl=makePlane(cv,3.4,3.4); var th=50*Math.PI/180, spinning=false;
+    var elTh=$('#s-th'),elV=$('#v-th');
+    function setTh(v){th=v; elTh.value=Math.round(v*180/Math.PI); elV.textContent=Math.round(v*180/Math.PI)+'°';}
+    elTh.addEventListener('input',function(){spinning=false; $('#b-euler-spin').textContent='▶ 自動回転'; setTh(parseFloat(elTh.value)*Math.PI/180); draw();});
+    $('#b-euler-spin').onclick=function(){spinning=!spinning; this.textContent=spinning?'⏸ 停止':'▶ 自動回転'; if(spinning)A.start();};
+    function draw(){pl.fit(); pl.clear(); pl.axes(); var o=pl.PX(0,0);
+      pl.ctx.strokeStyle=cssv('--grd'); pl.ctx.lineWidth=1.5; pl.ctx.beginPath(); pl.ctx.arc(o[0],o[1],pl.s,0,TAU); pl.ctx.stroke();
+      var x=Math.cos(th),y=Math.sin(th), t=pl.PX(x,y),ax=pl.PX(x,0),ay=pl.PX(0,y);
+      pl.ctx.save(); pl.ctx.setLineDash([4,4]); pl.ctx.lineWidth=1.4;
+      pl.ctx.strokeStyle=cssv('--cos'); pl.ctx.beginPath(); pl.ctx.moveTo(t[0],t[1]); pl.ctx.lineTo(ax[0],ax[1]); pl.ctx.stroke();
+      pl.ctx.strokeStyle=cssv('--sin'); pl.ctx.beginPath(); pl.ctx.moveTo(t[0],t[1]); pl.ctx.lineTo(ay[0],ay[1]); pl.ctx.stroke(); pl.ctx.restore();
+      pl.ctx.strokeStyle=cssv('--cos'); pl.ctx.lineWidth=4; pl.ctx.beginPath(); pl.ctx.moveTo(o[0],o[1]); pl.ctx.lineTo(ax[0],o[1]); pl.ctx.stroke();
+      pl.ctx.strokeStyle=cssv('--sin'); pl.ctx.lineWidth=4; pl.ctx.beginPath(); pl.ctx.moveTo(o[0],o[1]); pl.ctx.lineTo(o[0],ay[1]); pl.ctx.stroke();
+      pl.vec(x,y,cssv('--zr'),{w:3}); pl.handle(x,y,cssv('--zr'));
+      pl.ctx.strokeStyle=cssv('--mut'); pl.ctx.lineWidth=1.5; pl.ctx.beginPath(); pl.ctx.arc(o[0],o[1],26,0,-th,th>0); pl.ctx.stroke();
+      $('#eq-euler').innerHTML='<span class="big">e<sup>±jθ</sup> = cos θ ± j sin θ</span><br>θ = '+Math.round(th*180/Math.PI)+'° ＝ '+fmt(th,2)+' rad<br>e<sup>jθ</sup> = '+fmt(x,3)+(y>=0?' + j':' − j')+fmt(Math.abs(y),3);}
+    var A=anim(function(){if(spinning){th+=0.02; if(th>Math.PI)th-=TAU; elTh.value=Math.round(th*180/Math.PI); elV.textContent=Math.round(th*180/Math.PI)+'°';} draw(); if(!spinning)A.stop();});
+    reg('sl-euler-circle',{show:function(){draw(); if(spinning)A.start();},hide:function(){A.stop();},redraw:draw});})();
+
+  // ===== 28 polar <-> rect =====
+  (function(){var cv=$('#cv-polar'),pl=makePlane(cv,12,12); var r=3.6,th=34*Math.PI/180;
+    var sr=$('#s-r'),vr=$('#v-r'),sp=$('#s-pth'),vp=$('#v-pth');
+    function sync(){sr.value=fmt(r,1); vr.textContent=fmt(r,1); sp.value=Math.round(th*180/Math.PI); vp.textContent=Math.round(th*180/Math.PI)+'°';}
+    sr.addEventListener('input',function(){r=parseFloat(sr.value); vr.textContent=fmt(r,1); draw();});
+    sp.addEventListener('input',function(){th=parseFloat(sp.value)*Math.PI/180; vp.textContent=sp.value+'°'; draw();});
+    function draw(){pl.fit(); pl.clear(); pl.axes(); var x=r*Math.cos(th),y=r*Math.sin(th), o=pl.PX(0,0);
+      pl.ctx.strokeStyle=cssv('--mut'); pl.ctx.lineWidth=1.4; pl.ctx.beginPath(); pl.ctx.arc(o[0],o[1],24,0,-th,th>0); pl.ctx.stroke();
+      pl.vec(x,y,cssv('--zr'),{proj:true,label:'z'}); pl.handle(x,y,cssv('--zr'));
+      $('#eq-polar').innerHTML='<span class="big">直交：'+fmt(x,2)+(y>=0?' + j':' − j')+fmt(Math.abs(y),2)+'</span><br><span class="big">極：'+fmt(r,2)+' · e<sup>j'+fmt(th,2)+'</sup>（'+fmt(r,2)+' ∠ '+Math.round(th*180/Math.PI)+'°）</span>';}
+    dragger(cv,pl,function(){var x=r*Math.cos(th),y=r*Math.sin(th); return [{x:x,y:y}];},function(i,x,y){var b=vbnd(pl),cxv=clamp(x,-b.x,b.x),cyv=clamp(y,-b.y,b.y); r=clamp(Math.hypot(cxv,cyv),0.5,Math.min(6,b.x,b.y)); th=Math.atan2(cyv,cxv); sync(); draw();});
+    reg('sl-polar',{show:function(){sync();draw();},redraw:draw});})();
+
+  // ===== 30 rotation =====
+  (function(){var cv=$('#cv-rot'),pl=makePlane(cv,12,12); var z1={x:2.4,y:1.2},r2=1,th2=60*Math.PI/180;
+    function bind(id,vid,set,dec,suf){var el=$(id),o=$(vid); el.addEventListener('input',function(){set(parseFloat(el.value)); o.textContent=fmt(parseFloat(el.value),dec)+(suf||''); draw();});}
+    bind('#s-r2','#v-r2',function(v){r2=v;},2); bind('#s-th2','#v-th2',function(v){th2=v*Math.PI/180;},0,'°');
+    function draw(){pl.fit(); pl.clear(); pl.axes(); var r1=Math.hypot(z1.x,z1.y), a1=Math.atan2(z1.y,z1.x), rr=r1*r2, ar=a1+th2, rx=rr*Math.cos(ar), ry=rr*Math.sin(ar), o=pl.PX(0,0);
+      pl.ctx.strokeStyle=cssv('--mut'); pl.ctx.lineWidth=1.4; pl.ctx.beginPath(); pl.ctx.arc(o[0],o[1],28,-a1,-ar,th2>0); pl.ctx.stroke();
+      pl.vec(z1.x,z1.y,cssv('--z1'),{label:'z₁'}); pl.handle(z1.x,z1.y,cssv('--z1')); pl.vec(rx,ry,cssv('--zr'),{w:3.4,label:'z₁·z₂'}); pl.dot(rx,ry,cssv('--zr'),5);
+      $('#eq-rot').innerHTML='z₂ = '+fmt(r2,2)+' · e<sup>j'+Math.round(th2*180/Math.PI)+'°</sup><br>|z₁·z₂| = '+fmt(r1,2)+'×'+fmt(r2,2)+' = <strong>'+fmt(rr,2)+'</strong><br>偏角 = '+Math.round(a1*180/Math.PI)+'° + '+Math.round(th2*180/Math.PI)+'° = <strong>'+Math.round(ar*180/Math.PI)+'°</strong>'+(Math.abs(r2-1)<1e-6?'<br><span style="color:var(--act)">r₂=1 → 長さ不変の純粋な回転</span>':'');}
+    dragger(cv,pl,function(){return [z1];},function(i,x,y){var b=vbnd(pl); z1.x=clamp(x,-b.x,b.x); z1.y=clamp(y,-b.y,b.y); draw();});
+    reg('sl-rotation',{show:draw,redraw:draw});})();
+
+  // ===== 31 practice (自分で解く → 答え合わせ → 必要なときだけ解答) =====
+  (function(){
+    var seg=$('#seg-pr'), body=$('#pr-body'), pidx=0, pl=null, st=null, revealAns=false;
+    var probs=[
+      { type:'plot', span:12, start:{x:1,y:1}, target:{x:3,y:4},
+        q:'問1：複素数 <i>z</i> = 3 + 4j を複素平面に図示せよ。矢印の先をドラッグして点 (3, 4) に合わせ、「答え合わせ」を押してください。',
+        sol:'実部3 → 横に3、虚部4 → 縦に4 進んだ点 (3, 4) への矢印が答えです。' },
+      { type:'fields',
+        q:'問2：<i>z</i> = 3 + 4j の大きさ |<i>z</i>| と偏角 <i>θ</i>（rad）を求めよ。<b>答えは小数第2位まで（四捨五入）</b>。',
+        fields:[{label:'大きさ |z|', ans:5, dp:2},{label:'偏角 θ [rad]', ans:Math.atan2(4,3), dp:2}],
+        sol:'|z| = √(3²+4²) = √25 = <strong>5.00</strong>。偏角 θ = arctan(4/3) = <strong>0.93 rad</strong>（詳しくは 0.9273…、≈ 53.1°）。' },
+      { type:'fields',
+        q:'問3：<i>z</i><sub>1</sub> = 3 + 4j, <i>z</i><sub>2</sub> = 1 + j のとき <i>z</i><sub>2</sub>/<i>z</i><sub>1</sub> を a + j b の形で求めよ。<b>答えは小数第2位まで（四捨五入）</b>。',
+        fields:[{label:'実部 a', ans:0.28, dp:2},{label:'虚部 b', ans:-0.04, dp:2}],
+        sol:'分母 z₁ の共役（きょうやく）3−4j を分母・分子に掛ける。分母 = 3²+4² = 25。分子 = (1+j)(3−4j) = 7 − j。∴ z₂/z₁ = (7 − j)/25 = <strong>0.28 − 0.04j</strong>。' },
+      { type:'fields',
+        q:'問4：<i>z</i> = 5 + 7j を極形式 <i>A</i>·e<sup>jθ</sup>（θ は rad）で表せ。<b>A・θ を小数第2位まで（四捨五入）</b>。',
+        fields:[{label:'大きさ A', ans:Math.sqrt(74), dp:2},{label:'偏角 θ [rad]', ans:Math.atan2(7,5), dp:2}],
+        sol:'A = |z| = √(5²+7²) = √74 = <strong>8.60</strong>（詳しくは 8.6023…）。θ = arctan(7/5) = <strong>0.95 rad</strong>（詳しくは 0.9505…、≈ 54.5°）。∴ z ≈ 8.60 · e<sup>j·0.95</sup>。' }
+    ];
+    function drawPlot(){ pl.fit(); pl.clear(); pl.axes();
+      if(revealAns){ var t=probs[pidx].target; pl.vec(t.x,t.y,cssv('--z2'),{label:'正解 ('+t.x+','+t.y+')'}); pl.dot(t.x,t.y,cssv('--z2'),5); }
+      pl.vec(st.x,st.y,cssv('--z1'),{proj:true,label:'z'}); pl.handle(st.x,st.y,cssv('--z1'));
+      pl.ctx.fillStyle=cssv('--mut'); pl.ctx.font='12px sans-serif'; pl.ctx.fillText('いまの点: ('+st.x+', '+st.y+')', 12, pl.H-12); }
+    function render(){
+      var p=probs[pidx]; pl=null; st=null; revealAns=false;
+      var h='<p class="desc" style="margin-top:.6em;">'+p.q+'</p>';
+      if(p.type==='plot'){ h+='<canvas id="cv-pr" class="plane"></canvas>'; }
+      else { h+='<div class="prfields">'; p.fields.forEach(function(f,i){ var stp=f.dp>0?(1/Math.pow(10,f.dp)).toFixed(f.dp):'1'; h+='<label class="prf"><span>'+f.label+'</span><input type="number" inputmode="decimal" step="'+stp+'" placeholder="小数第'+f.dp+'位" id="prin'+i+'"><span class="prmark" id="prmk'+i+'"></span></label>'; }); h+='</div>'; }
+      h+='<div class="prbtns"><button class="btn pr-primary" id="pr-check">答え合わせ</button><button class="btn" id="pr-rev">答えを見る</button><button class="btn" id="pr-retry">やり直す</button></div>';
+      h+='<div class="prresult" id="pr-res"></div><div class="reveal" id="pr-ans"><strong>解答</strong>　'+p.sol+'</div>';
+      body.innerHTML=h;
+      $('#pr-rev').onclick=function(){ var sh=$('#pr-ans').classList.toggle('show'); if(p.type==='plot'){ revealAns=sh; drawPlot(); } };
+      $('#pr-check').onclick=check; $('#pr-retry').onclick=render;
+      if(p.type==='plot'){ var cv=$('#cv-pr'); pl=makePlane(cv,p.span,p.span); st={x:p.start.x,y:p.start.y}; drawPlot();
+        dragger(cv,pl,function(){return [st];},function(i,x,y){var b=vbnd(pl); st.x=clamp(Math.round(x),-Math.round(b.x),Math.round(b.x)); st.y=clamp(Math.round(y),-Math.round(b.y),Math.round(b.y)); drawPlot();}); }
+      else { p.fields.forEach(function(f,i){ $('#prin'+i).addEventListener('keydown',function(e){ if(e.key==='Enter')check(); }); }); }
+    }
+    function check(){
+      var p=probs[pidx], ok=true, digitErr=false, res=$('#pr-res');
+      if(p.type==='plot'){ ok=(st.x===p.target.x && st.y===p.target.y); }
+      else { p.fields.forEach(function(f,i){ var el=$('#prin'+i), mk=$('#prmk'+i), raw=el.value.trim(), v=parseFloat(raw);
+        if(raw===''){ mk.textContent='—'; mk.className='prmark'; ok=false; return; }
+        if(decimals(raw)>f.dp){ mk.textContent='⚠'; mk.className='prmark bad'; ok=false; digitErr=true; return; } // 指定より細かい桁 → 桁数を指摘
+        // 指定小数桁ちょうど（以下）なら、四捨五入した値で正誤を判定
+        var good=isFinite(v)&&Math.abs(roundTo(v,f.dp)-roundTo(f.ans,f.dp))<1e-9; if(!good)ok=false;
+        mk.textContent=good?'○':'✕'; mk.className='prmark '+(good?'good':'bad'); }); }
+      if(digitErr){ var dpm=Math.max.apply(null,p.fields.map(function(f){return f.dp;}));
+        res.className='prresult bad'; res.innerHTML='⚠ 桁が多すぎます。指定の桁に<b>四捨五入してから</b>、<b>小数第'+dpm+'位まで</b>で入力し直してください（⚠ の欄）。'; }
+      else { res.className='prresult '+(ok?'good':'bad'); res.innerHTML= ok ? '✓ 正解！' : '✕ 不正解。もう一度試すか、「答えを見る」で確認しましょう。'; }
+    }
+    seg.addEventListener('click',function(e){var b=e.target.closest('button'); if(!b)return; pidx=+b.getAttribute('data-v'); [].forEach.call(seg.children,function(x){x.classList.toggle('on',x===b);}); render();});
+    reg('sl-practice',{show:render, redraw:function(){ if(probs[pidx].type==='plot'&&pl)drawPlot(); }});
+  })();
+
+  // ---- boot ----
+  var start=0, h=parseInt((location.hash||'').replace('#',''),10);
+  if(h>=1&&h<=N)start=h-1;
+  go(start);
+})();
+</script>
+</body>
+</html>
