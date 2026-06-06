@@ -66,6 +66,15 @@
   .figbox{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:.8em; text-align:center;}
   .figcap{font-size:var(--fs-micro); color:var(--mut); margin-top:.4em;}
   .fig{display:block; width:100%; max-width:20em; height:auto; margin:0 auto;}
+  /* スケジュール表（表紙の次に置く sl-schedule 用。SCHEDULE データを JS で描画） */
+  .schnote{color:var(--act); font-size:var(--fs-note); margin:.3em 0 .7em;}
+  .sched{display:grid; grid-template-columns:1fr; gap:.3em 2.6em; max-width:56em; margin:.3em auto 0;}
+  @media(min-width:680px){ .sched{grid-template-columns:1fr 1fr;} }
+  .schcol{display:flex; flex-direction:column;}
+  .schrow{display:grid; grid-template-columns:2em 7.2em 1fr; gap:.5em; align-items:baseline; font-size:var(--fs-table); padding:.32em .5em; border-radius:6px;}
+  .schrow .sn{color:var(--mut); text-align:right;} .schrow .sd{font-variant-numeric:tabular-nums; color:var(--mut);}
+  .schrow.cur{background:var(--surface2); font-weight:700; box-shadow:inset 0 0 0 1.5px var(--act);}
+  .schrow.exam{color:var(--act); font-weight:600;}
   .fig .w{fill:none; stroke:var(--ink); stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
   .fig .cur{fill:none; stroke:var(--ref); stroke-width:2.4;} .fig .curf{fill:var(--ref); stroke:none;}
   .fig text{fill:var(--ink); font-family:Georgia,serif; font-style:italic; font-size:15px;}
@@ -103,6 +112,8 @@
 <div class="deck" id="deck">
   <!-- SLIDES:START -->
 <section class="slide" id="sl-title" data-title="正弦波の複素数表示"><div class="inner hero"><p class="kicker">電気回路Ⅱ 第10回</p><h1 class="tt" style="font-size:var(--fs-display);">正弦波の複素数表示</h1><p class="desc">8.7 正弦波の複素数表示 — 回転する複素ベクトルと位相</p><canvas id="cv-title" class="titlewave"></canvas><p class="note">→／Space で進みます。右上の <strong>🔊 解説</strong> で各ページの音声、右下 ⛶ で全画面。</p></div></section>
+
+<section class="slide" id="sl-schedule" data-title="スケジュール"><div class="inner"><span class="tag2 tag-ex">解説</span><p class="kicker">スケジュール</p><h1 class="tt">電気回路Ⅱ 全15回（<span id="sch-year"></span>年度）</h1><p class="schnote" id="sch-note"></p><div class="sched" id="sched"></div><p class="note">本日は第10回（枠で表示）。<span style="color:var(--act)">赤</span>は試験。日程は進捗に合わせて変更する可能性があります。</p></div></section>
 
 <section class="slide" id="sl-agenda" data-title="この回のねらいと前提知識"><div class="inner"><span class="tag2 tag-ex">解説</span><p class="kicker">8.7 正弦波の複素数表示</p><h1 class="tt">この回のねらいと前提知識</h1><p class="desc">正弦波を「回転する複素ベクトル <i>|z|e</i><sup><i>j</i>(<i>ωt</i>+<i>θ</i>)</sup>」で表し、振幅と位相だけで扱えるようにする。</p><ul class="lead"><li>正弦波と回転する複素ベクトルの対応</li><li>実部が正弦波を表すこと</li><li>位相の意味と極形式（フェーザ）</li></ul><p class="ex">本日の新しい知識は多くない。理解の鍵は先週の複素数（極形式・オイラーの公式・複素数の計算）。不安なら複素数を十分に復習すること。</p></div></section>
 
@@ -453,6 +464,8 @@
 
   /* HOOKS:START */
 (function(){var cv=$('#cv-title'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI; var A=anim(function(){c.fit(); var m=drawTimeAxes(c,1.2); var ph=performance.now()/700; plotFn(c,m,function(t){return Math.cos(t-ph);},cssv('--zr'),3); plotFn(c,m,function(t){return Math.cos(t-ph+Math.PI/2);},cssv('--cos'),2);}); reg('sl-title',{show:A.start,hide:A.stop});})();
+
+(function(){var root=$('#sched'); if(!root)return;var SCHEDULE={year:2026, note:'スケジュールは進捗に合わせて変更する可能性があります', current:10, rows:[[1,'4/13（月）','基本素子'],[2,'4/20（月）','微分方程式の解法'],[3,'4/27（月）','固有振動'],[4,'5/11（月）','初期条件と時定数'],[5,'5/18（月）','不連続な変化'],[6,'5/25（月）','演習'],[7,'6/3（水）','中間テスト','exam'],[8,'6/8（月）','複素数'],[9,'6/15（月）','中間振り返り'],[10,'6/22（月）','正弦波の複素数表示'],[11,'6/29（月）','正弦波交流回路'],[12,'7/6（月）','ベクトル図・電力'],[13,'7/13（月）','総合演習'],[14,'7/23（木）','期末試験','exam'],[15,'7/27（月）','自己点検']]};var y=$('#sch-year'); if(y)y.textContent=SCHEDULE.year;var n=$('#sch-note'); if(n)n.textContent=SCHEDULE.note;var rows=SCHEDULE.rows, half=Math.ceil(rows.length/2);function cell(r){var c='schrow'; if(r[3]==='exam')c+=' exam'; if(r[0]===SCHEDULE.current)c+=' cur';return '<div class="'+c+'"><span class="sn">'+r[0]+'</span><span class="sd">'+r[1]+'</span><span class="st">'+r[2]+'</span></div>';}var L='',R=''; rows.forEach(function(r,i){ if(i<half)L+=cell(r); else R+=cell(r); });root.innerHTML='<div class="schcol">'+L+'</div><div class="schcol">'+R+'</div>';reg('sl-schedule',{show:function(){},redraw:function(){}});})();
 
 (function(){var cv=$('#cv-phr'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI; function draw(){c.fit(); var m=drawTimeAxes(c,1.15); plotFn(c,m,function(t){return Math.cos(t+Math.PI/2);},cssv('--cos'),2.4); plotFn(c,m,function(t){return Math.cos(t-Math.PI/2);},cssv('--ref'),2.4); plotFn(c,m,function(t){return Math.cos(t);},cssv('--zr'),3);} reg('sl-phase-read',{show:draw,redraw:draw});})();
 

@@ -5,6 +5,11 @@
     "duration": 29.14
   },
   {
+    "id": "sl-schedule",
+    "file": "audio/sl-schedule.mp3",
+    "duration": 25.13
+  },
+  {
     "id": "sl-agenda",
     "file": "audio/sl-agenda.mp3",
     "duration": 45.98
