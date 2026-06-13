@@ -1,0 +1,127 @@
+[
+  {
+    "id": "sl-title",
+    "file": "audio/sl-title.mp3",
+    "duration": 66.84
+  },
+  {
+    "id": "sl-schedule",
+    "file": "audio/sl-schedule.mp3",
+    "duration": 66.62
+  },
+  {
+    "id": "sl-agenda",
+    "file": "audio/sl-agenda.mp3",
+    "duration": 74.93
+  },
+  {
+    "id": "sl-vi-relations",
+    "file": "audio/sl-vi-relations.mp3",
+    "duration": 81.0
+  },
+  {
+    "id": "sl-rl-transient",
+    "file": "audio/sl-rl-transient.mp3",
+    "duration": 80.14
+  },
+  {
+    "id": "sl-rc-transient",
+    "file": "audio/sl-rc-transient.mp3",
+    "duration": 77.81
+  },
+  {
+    "id": "sl-complex-plot",
+    "file": "audio/sl-complex-plot.mp3",
+    "duration": 70.27
+  },
+  {
+    "id": "sl-arg-mag",
+    "file": "audio/sl-arg-mag.mp3",
+    "duration": 63.79
+  },
+  {
+    "id": "sl-complex-arith",
+    "file": "audio/sl-complex-arith.mp3",
+    "duration": 71.28
+  },
+  {
+    "id": "sl-polar-form",
+    "file": "audio/sl-polar-form.mp3",
+    "duration": 63.43
+  },
+  {
+    "id": "sl-angfreq-phase",
+    "file": "audio/sl-angfreq-phase.mp3",
+    "duration": 63.02
+  },
+  {
+    "id": "sl-rationalize",
+    "file": "audio/sl-rationalize.mp3",
+    "duration": 66.86
+  },
+  {
+    "id": "sl-phasor-convert",
+    "file": "audio/sl-phasor-convert.mp3",
+    "duration": 73.03
+  },
+  {
+    "id": "sl-ac-impedance",
+    "file": "audio/sl-ac-impedance.mp3",
+    "duration": 74.38
+  },
+  {
+    "id": "sl-rms-amp",
+    "file": "audio/sl-rms-amp.mp3",
+    "duration": 69.82
+  },
+  {
+    "id": "sl-power",
+    "file": "audio/sl-power.mp3",
+    "duration": 73.03
+  },
+  {
+    "id": "sl-power-confirm",
+    "file": "audio/sl-power-confirm.mp3",
+    "duration": 80.42
+  },
+  {
+    "id": "sl-exam-intro",
+    "file": "audio/sl-exam-intro.mp3",
+    "duration": 73.82
+  },
+  {
+    "id": "sl-exam-vi",
+    "file": "audio/sl-exam-vi.mp3",
+    "duration": 69.84
+  },
+  {
+    "id": "sl-exam-kirchhoff",
+    "file": "audio/sl-exam-kirchhoff.mp3",
+    "duration": 68.95
+  },
+  {
+    "id": "sl-exam-capacitance",
+    "file": "audio/sl-exam-capacitance.mp3",
+    "duration": 70.18
+  },
+  {
+    "id": "sl-exam-rc-ode",
+    "file": "audio/sl-exam-rc-ode.mp3",
+    "duration": 72.34
+  },
+  {
+    "id": "sl-exam-rl-ode",
+    "file": "audio/sl-exam-rl-ode.mp3",
+    "duration": 79.97
+  },
+  {
+    "id": "sl-exam-switch",
+    "file": "audio/sl-exam-switch.mp3",
+    "duration": 73.7
+  },
+  {
+    "id": "sl-summary",
+    "file": "audio/sl-summary.mp3",
+    "duration": 91.85
+  }
+]

@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>総合演習</title>
+<!-- interactive-lecture deck template — assemble.py が SLIDES と HOOKS の差し込み口に中身を挿入する。
+     外部依存ゼロ・単一HTML。詳細は reference/framework.md。 -->
+<style>
+  :root{
+    --bg:#faf9f5; --surface:#ffffff; --surface2:#f1efe8; --panel:#ece9e0;
+    --ink:#1f1e1c; --mut:#6b6a64; --grd:rgba(0,0,0,0.10); --line:rgba(0,0,0,0.14);
+    --ref:#378ADD; --act:#D85A30; --thr:#639922;
+    --sin:#7E57C2; --cos:#2E9E6B; --z1:#3FA34D; --z2:#D85A30; --zr:#7E57C2; --ax:#46443e;
+    --re:#C0392B; --im:#2E6FB0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1a1915; --surface:#23221d; --surface2:#2b2a24; --panel:#201f1a;
+      --ink:#ecebe4; --mut:#a3a299; --grd:rgba(255,255,255,0.12); --line:rgba(255,255,255,0.16);
+      --ref:#85B7EB; --act:#F0997B; --thr:#97C459;
+      --sin:#B39DDB; --cos:#7BD0A3; --z1:#7BD0A3; --z2:#F0997B; --zr:#B39DDB; --ax:#c9c7bd;
+      --re:#F08A7A; --im:#7FB2E8;
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%; overflow:hidden;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Yu Gothic UI",sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;}
+  i{font-family:Georgia,"Times New Roman",serif;}
+  .deck{position:fixed; inset:0; bottom:52px;}
+  .slide{position:absolute; inset:0; display:flex; flex-direction:column; justify-content:safe center;
+    overflow-y:auto; padding:2vh clamp(16px,4vw,70px); opacity:0; visibility:hidden; transition:opacity .2s;}
+  .slide.active{opacity:1; visibility:visible;}
+  /* master scale + 型スケール（フォント共通ルール）。全体拡縮は .inner、相対比は --fs-* を変更 */
+  .inner{ font-size:clamp(16px, 2.05vh, 32px); width:100%; max-width:62em; margin:0 auto; line-height:1.6;}
+  :root{
+    --fs-display:2.4em; --fs-h1:1.5em; --fs-lead:1.22em; --fs-body:1.32em; --fs-eq:1.38em; --fs-eq-lg:1.7em;
+    --fs-note:1.13em; --fs-table:1.15em; --fs-ui:.85em; --fs-label:.68em; --fs-tag:.6em; --fs-micro:.72em;
+  }
+  .tag2{display:inline-block; font-size:var(--fs-tag); font-weight:700; letter-spacing:.04em; padding:.15em .6em; border-radius:999px; margin:0 .3em .5em 0;}
+  .tag-ex{color:var(--thr); border:1px solid var(--thr);} .tag-do{color:var(--act); border:1px solid var(--act);} .tag-fig{color:var(--ref); border:1px solid var(--ref);}
+  .kicker{font-size:var(--fs-label); letter-spacing:.06em; color:var(--act); font-weight:700; margin:0 0 .25em;}
+  h1.tt{font-size:var(--fs-h1); font-weight:700; margin:0 0 .15em; line-height:1.2;}
+  .desc{font-size:var(--fs-lead); color:var(--mut); margin:.35em 0 .8em;}
+  canvas{width:100%; display:block; background:var(--surface); border:1px solid var(--line); border-radius:12px;}
+  .plot{height:clamp(150px,33vh,330px);} .plane{height:clamp(180px,42vh,400px);} .figc{height:clamp(150px,32vh,300px);}
+  .titlewave{height:clamp(96px,16vh,180px)!important;} .confirm .plane{height:clamp(150px,30vh,290px);}
+  .row{display:flex; align-items:center; gap:.7em; margin:.5em 0;}
+  .row label{font-size:var(--fs-ui); color:var(--mut); width:7.4em; flex:none;}
+  .row .val{font-size:var(--fs-ui); font-weight:700; min-width:3.6em; text-align:right; font-variant-numeric:tabular-nums;}
+  input[type=range]{flex:1; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px; background:var(--line); outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:1.1em; height:1.1em; border-radius:50%; background:var(--act); cursor:pointer; border:2px solid var(--surface);}
+  input[type=range]::-moz-range-thumb{width:1.1em; height:1.1em; border-radius:50%; background:var(--act); cursor:pointer; border:2px solid var(--surface);}
+  .grid2{display:grid; grid-template-columns:1fr; gap:1em;} @media(min-width:760px){ .grid2{grid-template-columns:1.05fr .95fr;} }
+  .twocol{display:grid; grid-template-columns:1fr; gap:.9em; align-items:center;} @media(min-width:720px){ .twocol{grid-template-columns:.9fr 1.1fr;} }
+  .eq{background:var(--surface2); border-radius:10px; padding:.6em .8em; font-size:var(--fs-eq); margin:.55em 0; line-height:1.85;}
+  .eq.big{font-size:var(--fs-eq-lg);}
+  .steps{font-size:var(--fs-body); line-height:1.95; margin:.4em 0;} .steps .lead2{color:var(--mut); font-size:.85em;}
+  .ex{font-size:var(--fs-body); color:var(--mut); background:var(--surface2); border-left:3px solid var(--act); border-radius:0 8px 8px 0; padding:.5em .75em; margin:.55em 0;}
+  .note{font-size:var(--fs-note); color:var(--mut); margin-top:.7em; line-height:1.65;}
+  .re{color:var(--re); font-weight:700;} .im{color:var(--im); font-weight:700;}
+  .deftbl{width:100%; border-collapse:collapse; font-size:var(--fs-table); margin:.5em 0;}
+  .deftbl th,.deftbl td{border:1px solid var(--line); padding:.4em .65em; text-align:left;} .deftbl th{background:var(--surface2); font-weight:700; white-space:nowrap;}
+  .figbox{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:.8em; text-align:center;}
+  .figcap{font-size:var(--fs-micro); color:var(--mut); margin-top:.4em;}
+  .fig{display:block; width:100%; max-width:20em; height:auto; margin:0 auto;}
+  /* スケジュール表（表紙の次に置く sl-schedule 用。SCHEDULE データを JS で描画） */
+  .schnote{color:var(--act); font-size:var(--fs-note); margin:.3em 0 .7em;}
+  .sched{display:grid; grid-template-columns:1fr; gap:.3em 2.6em; max-width:56em; margin:.3em auto 0;}
+  @media(min-width:680px){ .sched{grid-template-columns:1fr 1fr;} }
+  .schcol{display:flex; flex-direction:column;}
+  .schrow{display:grid; grid-template-columns:2em 7.2em 1fr; gap:.5em; align-items:baseline; font-size:var(--fs-table); padding:.32em .5em; border-radius:6px;}
+  .schrow .sn{color:var(--mut); text-align:right;} .schrow .sd{font-variant-numeric:tabular-nums; color:var(--mut);}
+  .schrow.cur{background:var(--surface2); font-weight:700; box-shadow:inset 0 0 0 1.5px var(--act);}
+  .schrow.exam{color:var(--act); font-weight:600;}
+  .fig .w{fill:none; stroke:var(--ink); stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+  .fig .cur{fill:none; stroke:var(--ref); stroke-width:2.4;} .fig .curf{fill:var(--ref); stroke:none;}
+  .fig text{fill:var(--ink); font-family:Georgia,serif; font-style:italic; font-size:15px;}
+  .seg{display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; margin:.4em 0;}
+  .seg button{border:none; background:transparent; color:var(--mut); font-size:var(--fs-ui); padding:.45em .9em; cursor:pointer;} .seg button.on{background:var(--act); color:#fff;}
+  .legend{display:flex; gap:1em; flex-wrap:wrap; font-size:var(--fs-ui); color:var(--mut); margin:.5em 0 0;}
+  .sw{display:inline-block; width:.8em; height:.8em; border-radius:3px; vertical-align:-1px; margin-right:.3em;}
+  .btn{border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:9px; padding:.5em .9em; font-size:var(--fs-ui); cursor:pointer;} .btn:hover{background:var(--surface2);}
+  .reveal{margin-top:.7em; padding:.7em .9em; border-radius:10px; background:var(--surface2); font-size:var(--fs-body); display:none; line-height:1.85;} .reveal.show{display:block;}
+  ul.lead{font-size:var(--fs-body); padding-left:1.2em; margin:.3em 0;} ul.lead li{margin:.4em 0;}
+  .hero{justify-content:center;}
+  .back{display:inline-block; font-size:var(--fs-micro); color:var(--mut); text-decoration:none; margin-bottom:.6em;} .back:hover{color:var(--ink);}
+  .confirm{margin-top:.7em; padding-top:.6em; border-top:1px dashed var(--line);} .confirm .lab{font-size:var(--fs-micro); font-weight:700; color:var(--act); letter-spacing:.04em;}
+  /* 採点つき練習 */
+  .prfields{display:flex; flex-direction:column; gap:.5em; margin:.7em 0;}
+  .prf{display:flex; align-items:center; gap:.6em; font-size:var(--fs-note);} .prf>span:first-child{min-width:9.5em; color:var(--mut);}
+  .prf input{width:8.5em; height:2.1em; font-size:1em; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); padding:0 .55em;} .prf input:focus{outline:none; border-color:var(--act);}
+  .prmark{font-weight:700; font-size:1.3em; min-width:1em;} .prmark.good{color:var(--thr);} .prmark.bad{color:var(--act);}
+  .prbtns{display:flex; gap:.5em; flex-wrap:wrap; margin:.8em 0 .3em;}
+  .pr-primary{background:var(--act); color:#fff; border-color:var(--act); font-weight:700;}
+  .prresult{font-weight:700; font-size:var(--fs-note); min-height:1.5em; margin:.3em 0;} .prresult.good{color:var(--thr);} .prresult.bad{color:var(--act);}
+  /* nav / 解説ボタン */
+  .nav{position:fixed; left:0; right:0; bottom:0; height:52px; background:var(--surface); border-top:1px solid var(--line); display:flex; align-items:center; gap:10px; padding:0 12px; z-index:20;}
+  .nav button.arw{width:38px; height:34px; border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:8px; cursor:pointer; font-size:15px;} .nav button.arw:hover{background:var(--surface2);} .nav button.arw:disabled{opacity:.35; cursor:default;}
+  .nav select{flex:1; min-width:0; height:34px; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:8px; padding:0 10px; font-size:13px;}
+  .nav .count{font-size:12.5px; color:var(--mut); font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .prog{position:fixed; left:0; bottom:52px; height:3px; background:var(--act); width:0; z-index:21; transition:width .2s;}
+  .narrbtn{position:fixed; top:max(10px,1.4vh); right:max(12px,1.2vw); z-index:25; display:inline-flex; align-items:center; gap:.4em;
+    border:1px solid var(--act); background:var(--surface); color:var(--act); border-radius:999px; padding:.4em .9em; font-size:clamp(13px,1.7vh,22px); font-weight:700; cursor:pointer; box-shadow:0 1px 5px rgba(0,0,0,.10);} .narrbtn:hover{background:var(--surface2);} .narrbtn.playing{background:var(--act); color:#fff;}
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+<div class="deck" id="deck">
+  <!-- SLIDES:START -->
+<section class="slide" id="sl-title" data-title="表紙">
+    <div class="inner hero">
+      <p class="kicker">電気回路Ⅱ 第13回（7/13 月）</p>
+      <h1 class="tt" style="font-size:var(--fs-display);">総合演習</h1>
+      <p class="desc" style="font-size:.95em;">第8〜12回の総まとめ ― 複素数・正弦波の複素表示・交流回路・電力</p>
+      <canvas id="l13cv-title" class="titlewave"></canvas>
+      <p class="note">→／Space で進みます。右上の <strong>🔊 解説</strong> で音声、右下の ⛶ で全画面。</p>
+    </div>
+  </section>
+
+<section class="slide" id="sl-schedule" data-title="スケジュール">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <h1 class="tt">スケジュール</h1>
+      <p class="schnote">スケジュールは進捗に合わせて変更する可能性があります</p>
+      <div id="l13sched"></div>
+    </div>
+  </section>
+
+<section class="slide" id="sl-agenda" data-title="本日の流れ・課題・期末試験">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <h1 class="tt">今日の進め方と試験案内</h1>
+      <ul class="lead">
+        <li><strong>前半</strong>：毎週の練習問題14問を一気に復習（複素数・フェーザ・交流回路・電力）</li>
+        <li><strong>後半</strong>：中間以前も含む、期末対策の演習</li>
+      </ul>
+      <div class="ex">
+        <strong>期末試験</strong>：7/23（木）1限・80分／記述式／第12週までの全範囲／教科書・ノート持込不可／関数電卓は使用可
+      </div>
+      <p class="note"><strong>課題</strong>：本日の練習問題1〜14をノートに解き、写真またはスクリーンショットをPDFにしてEシラバスに提出。締切は本日23:59。</p>
+    </div>
+  </section>
+
+<section class="slide" id="sl-vi-relations" data-title="R・L・C の電圧と電流の関係">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">練習問題1</p>
+      <h1 class="tt">基本素子：電圧と電流の関係</h1>
+      <table class="deftbl">
+        <thead><tr><th>抵抗</th><th>キャパシタ（コンデンサ）</th><th>インダクタ（コイル）</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="eq" style="display:block;margin:.2em 0;"><i>V</i> = <i>R I</i></span><span class="eq" style="display:block;margin:.2em 0;"><i>I</i> = <i>V</i> / <i>R</i></span></td>
+            <td><span class="eq" style="display:block;margin:.2em 0;"><i>V</i> = (1/<i>C</i>) ∫ <i>I</i> d<i>t</i></span><span class="eq" style="display:block;margin:.2em 0;"><i>I</i> = <i>C</i> d<i>V</i>/d<i>t</i></span></td>
+            <td><span class="eq" style="display:block;margin:.2em 0;"><i>V</i> = <i>L</i> d<i>I</i>/d<i>t</i></span><span class="eq" style="display:block;margin:.2em 0;"><i>I</i> = (1/<i>L</i>) ∫ <i>V</i> d<i>t</i></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">抵抗は電圧と電流が<strong>比例</strong>（オームの法則）。コイルとコンデンサは<strong>微分・積分</strong>で結ばれる。これが交流のインピーダンスにつながる土台。</p>
+    </div>
+  </section>
+
+<section class="slide" id="sl-rl-transient" data-title="練習2：RL回路の過渡電流">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">練習問題2</p>
+      <h1 class="tt">練習2：RL回路の電流を求める</h1>
+      <div class="twocol">
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 320 180" role="img" aria-label="RL回路：9V電源、6Ω抵抗と2Hコイルの並列、3Ωが直列">
+            <!-- outer wires -->
+            <path class="w" d="M40 50 H80 M40 130 V155 H300 V120 M40 50 V90"/>
+            <!-- source -->
+            <circle class="w" cx="40" cy="105" r="15"/>
+            <path class="w" d="M33 105 q3.5 -6 7 0 q3.5 6 7 0"/>
+            <text x="8" y="92">9V</text>
+            <!-- top branch: 6 ohm -->
+            <path class="w" d="M80 50 H110"/>
+            <rect class="w" x="110" y="40" width="46" height="20"/>
+            <text x="118" y="34">6Ω</text>
+            <path class="w" d="M156 50 H205 V72"/>
+            <!-- coil branch (parallel) -->
+            <path class="w" d="M80 50 V92 H100"/>
+            <path class="w" d="M100 92 q6 -12 12 0 q6 12 12 0 q6 -12 12 0 q6 12 12 0 q6 -12 12 0"/>
+            <path class="w" d="M160 92 H205 V108"/>
+            <text x="124" y="80">2H</text>
+            <!-- current arrow on coil -->
+            <line class="cur" x1="110" y1="118" x2="150" y2="118"/>
+            <polygon class="curf" points="150,113 160,118 150,123"/>
+            <text x="118" y="140">i(t)</text>
+            <!-- node dots -->
+            <circle class="curf" cx="80" cy="50" r="3"/>
+            <circle class="curf" cx="205" cy="50" r="3"/>
+            <!-- 3 ohm series -->
+            <rect class="w" x="205" y="72" width="20" height="36"/>
+            <text x="232" y="95">3Ω</text>
+          </svg>
+          <div class="figcap">9V電源・6Ωと2Hの並列・3Ω直列</div>
+        </div>
+        <div>
+          <p class="steps">
+            <span class="lead2">キルヒホッフより</span><br>
+            9 − 6<i>i</i><sub>1</sub> − 3(<i>i</i><sub>1</sub>+<i>i</i>) = 0<br>
+            <span class="lead2">整理して微分方程式に</span>
+          </p>
+          <div class="eq big">d<i>i</i>/d<i>t</i> + <i>i</i> = 3</div>
+          <p class="steps"><span class="lead2">初期条件</span> <i>i</i>(0) = 1 より</p>
+          <div class="eq big" style="border:2px solid var(--act);"><i>i</i>(<i>t</i>) = −2<i>e</i><sup>−<i>t</i></sup> + 3 &nbsp;[A]</div>
+          <p class="note">定常値は3A、時定数は1秒。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="slide" id="sl-rc-transient" data-title="練習3：RC回路の電圧">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">練習問題3</p>
+      <h1 class="tt">練習3：RC回路の電圧を求める</h1>
+      <div class="twocol">
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 320 180" role="img" aria-label="RC回路：3A電流源、上枝に1Ωと2Fの直列、下枝に2Ω">
+            <!-- current source -->
+            <circle class="w" cx="45" cy="100" r="15"/>
+            <line class="cur" x1="45" y1="112" x2="45" y2="88"/>
+            <polygon class="curf" points="40,92 50,92 45,82"/>
+            <text x="20" y="135">3A</text>
+            <!-- left rail -->
+            <path class="w" d="M45 85 V45 H80 M45 115 V155 H300 V115"/>
+            <!-- node left -->
+            <circle class="curf" cx="80" cy="45" r="3"/>
+            <!-- top branch: 1 ohm + 2F cap -->
+            <rect class="w" x="90" y="35" width="40" height="20"/>
+            <text x="98" y="30">1Ω</text>
+            <path class="w" d="M80 45 H90 M130 45 H170"/>
+            <!-- capacitor 2F -->
+            <path class="w" d="M170 32 V58 M182 32 V58"/>
+            <text x="186" y="40">2F</text>
+            <path class="w" d="M182 45 H300 V90"/>
+            <!-- node right -->
+            <circle class="curf" cx="300" cy="45" r="3"/>
+            <!-- bottom branch: 2 ohm with v(t) -->
+            <path class="w" d="M80 45 V100 H110"/>
+            <rect class="w" x="110" y="90" width="46" height="20"/>
+            <text x="118" y="84">2Ω</text>
+            <path class="w" d="M156 100 H300 V55"/>
+            <text x="96" y="132">+ v(t) −</text>
+          </svg>
+          <div class="figcap">3A電流源・上枝1Ωと2Fの直列・下枝2Ω</div>
+        </div>
+        <div>
+          <p class="steps">
+            <span class="lead2">キルヒホッフより</span><br>
+            <i>i</i><sub>1</sub>+<i>i</i><sub>2</sub> = 3、&nbsp; <i>v</i> = 2<i>i</i><sub>2</sub><br>
+            <i>i</i><sub>1</sub> = 2 d<i>v</i><sub>C</sub>/d<i>t</i>（2Fより）<br>
+            <span class="lead2">整理して微分方程式に</span>
+          </p>
+          <div class="eq big">6 d<i>v</i>/d<i>t</i> + <i>v</i> = 6</div>
+          <p class="steps"><span class="lead2">初期条件</span> <i>i</i>(0) = 1A より</p>
+          <div class="eq big" style="border:2px solid var(--act);"><i>v</i>(<i>t</i>) = −2<i>e</i><sup>−<i>t</i>/6</sup> + 6 &nbsp;[V]</div>
+          <p class="note">定常値は6V、時定数は6秒。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="slide" id="sl-complex-plot" data-title="練習4：複素数を複素平面に描く">
+<div class="inner">
+  <span class="tag2 tag-do">操作</span>
+  <p class="kicker">練習問題4</p>
+  <h1 class="tt">練習4：複素数を複素平面に図示する</h1>
+  <div class="grid2">
+    <div><canvas id="l13cv-plot" class="plane"></canvas></div>
+    <div>
+      <p class="steps">矢印を<strong>ドラッグ</strong>して、3つの複素数を図示しましょう。</p>
+      <ul class="lead">
+        <li><span style="color:var(--z1);font-weight:700;"><i>z</i><sub>1</sub> = 2 + j</span></li>
+        <li><span style="color:var(--z2);font-weight:700;"><i>z</i><sub>2</sub> = j3</span></li>
+        <li><span style="color:var(--zr);font-weight:700;"><i>z</i><sub>3</sub> = 3</span></li>
+      </ul>
+      <div class="prbtns">
+        <button class="btn pr-primary" id="l13plot-grade">答え合わせ</button>
+        <button class="btn" id="l13plot-show">答えを見る</button>
+        <button class="btn" id="l13plot-reset">やり直す</button>
+      </div>
+      <div class="prresult" id="l13plot-res"></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="slide" id="sl-arg-mag" data-title="練習5：偏角と大きさ">
+<div class="inner">
+  <span class="tag2 tag-do">操作</span><span class="tag2 tag-ex">解説</span>
+  <p class="kicker">練習問題5</p>
+  <h1 class="tt">練習5：偏角と大きさを求める</h1>
+  <p class="steps">大きさは <span class="eq" style="display:inline-block;margin:0 .2em;">|<i>z</i>| = √(実部² + 虚部²)</span>、偏角は <span class="eq" style="display:inline-block;margin:0 .2em;">arg <i>z</i> = arctan(虚部 / 実部)</span>（答えはラジアン）。</p>
+  <div class="prfields">
+    <div class="prf"><span style="min-width:13em;"><i>z</i><sub>1</sub>=2+j&nbsp;&nbsp;|z|</span><input type="number" id="l13am-m1" step="any"><span class="prmark" id="l13am-m1-m"></span><span style="min-width:3em;color:var(--mut);">arg</span><input type="number" id="l13am-a1" step="any"><span class="prmark" id="l13am-a1-m"></span></div>
+    <div class="prf"><span style="min-width:13em;"><i>z</i><sub>2</sub>=j3&nbsp;&nbsp;|z|</span><input type="number" id="l13am-m2" step="any"><span class="prmark" id="l13am-m2-m"></span><span style="min-width:3em;color:var(--mut);">arg</span><input type="number" id="l13am-a2" step="any"><span class="prmark" id="l13am-a2-m"></span></div>
+    <div class="prf"><span style="min-width:13em;"><i>z</i><sub>3</sub>=3&nbsp;&nbsp;|z|</span><input type="number" id="l13am-m3" step="any"><span class="prmark" id="l13am-m3-m"></span><span style="min-width:3em;color:var(--mut);">arg</span><input type="number" id="l13am-a3" step="any"><span class="prmark" id="l13am-a3-m"></span></div>
+  </div>
+  <div class="prbtns">
+    <button class="btn pr-primary" id="l13am-grade">採点</button>
+    <button class="btn" id="l13am-show">答えを見る</button>
+    <button class="btn" id="l13am-reset">やり直す</button>
+  </div>
+  <div class="prresult" id="l13am-res"></div>
+  <div class="reveal" id="l13am-rev">
+    <i>z</i><sub>1</sub>=2+j: |z|=√5≈2.236, arg=arctan(1/2)≈0.4636 rad<br>
+    <i>z</i><sub>2</sub>=j3: |z|=3, arg=π/2≈1.5708 rad（まっすぐ上）<br>
+    <i>z</i><sub>3</sub>=3: |z|=3, arg=0 rad（実軸上）
+  </div>
+</div>
+</section>
+
+<section class="slide" id="sl-complex-arith" data-title="練習6：複素数の四則演算">
+<div class="inner">
+  <span class="tag2 tag-do">操作</span><span class="tag2 tag-ex">解説</span>
+  <p class="kicker">練習問題6</p>
+  <h1 class="tt">練習6：複素数の足し算・引き算・かけ算・わり算</h1>
+  <p class="steps"><i>z</i><sub>1</sub> = 2 + j　,　<i>z</i><sub>2</sub> = 3 + j2　（各問 実部 / 虚部 を入力）</p>
+  <div class="prfields">
+<div class="prf"><span style="min-width:11em;">(1) <i>z</i><sub>1</sub>+<i>z</i><sub>2</sub></span><input type="number" id="l13ar-r1" step="any" style="width:5.5em;"><span class="prmark" id="l13ar-r1-m"></span><span style="min-width:1em;color:var(--mut);">+j</span><input type="number" id="l13ar-i1" step="any" style="width:5.5em;"><span class="prmark" id="l13ar-i1-m"></span></div><div class="prf"><span style="min-width:11em;">(2) <i>z</i><sub>1</sub>−<i>z</i><sub>2</sub></span><input type="number" id="l13ar-r2" step="any" style="width:5.5em;"><span class="prmark" id="l13ar-r2-m"></span><span style="min-width:1em;color:var(--mut);">+j</span><input type="number" id="l13ar-i2" step="any" style="width:5.5em;"><span class="prmark" id="l13ar-i2-m"></span></div><div class="prf"><span style="min-width:11em;">(3) <i>z</i><sub>1</sub>·<i>z</i><sub>2</sub></span><input type="number" id="l13ar-r3" step="any" style="width:5.5em;"><span class="prmark" id="l13ar-r3-m"></span><span style="min-width:1em;color:var(--mut);">+j</span><input type="number" id="l13ar-i3" step="any" style="width:5.5em;"><span class="prmark" id="l13ar-i3-m"></span></div><div class="prf"><span style="min-width:11em;">(4) <i>z</i><sub>2</sub>/<i>z</i><sub>1</sub></span><input type="number" id="l13ar-r4" step="any" style="width:5.5em;"><span class="prmark" id="l13ar-r4-m"></span><span style="min-width:1em;color:var(--mut);">+j</span><input type="number" id="l13ar-i4" step="any" style="width:5.5em;"><span class="prmark" id="l13ar-i4-m"></span></div>  </div>
+  <div class="prbtns">
+    <button class="btn pr-primary" id="l13ar-grade">採点</button>
+    <button class="btn" id="l13ar-show">答えを見る</button>
+    <button class="btn" id="l13ar-reset">やり直す</button>
+  </div>
+  <div class="prresult" id="l13ar-res"></div>
+  <div class="reveal" id="l13ar-rev">
+    (1) <i>z</i><sub>1</sub>+<i>z</i><sub>2</sub> = 5 + 3j<br>
+    (2) <i>z</i><sub>1</sub>−<i>z</i><sub>2</sub> = −1 − 1j<br>
+    (3) <i>z</i><sub>1</sub>·<i>z</i><sub>2</sub> = (2+j)(3+j2) = 6+j4+j3+j²2 = 4 + 7j　（j²=−1）<br>
+    (4) <i>z</i><sub>2</sub>/<i>z</i><sub>1</sub> = (3+j2)(2−j)/5 = (8+j)/5 = 1.6 + 0.2j
+  </div>
+</div>
+</section>
+
+<section class="slide" id="sl-polar-form" data-title="練習7：極形式">
+<div class="inner">
+  <span class="tag2 tag-ex">解説</span><span class="tag2 tag-do">操作</span>
+  <p class="kicker">練習問題7</p>
+  <h1 class="tt">練習7：極形式で表す</h1>
+  <div class="eq big"><i>z</i> = <i>r</i> e<sup>jθ</sup>　（<i>r</i> = |<i>z</i>|, θ = arg <i>z</i>）</div>
+  <p class="steps">大きさ <i>r</i> と、偏角を π の係数 <i>k</i>（θ = <i>k</i>π）で入力（角度はπを用いてラジアン）。</p>
+  <div class="prfields">
+    <div class="prf"><span style="min-width:9em;"><i>z</i>=1+j&nbsp;&nbsp;<i>r</i></span><input type="number" id="l13pf-r1" step="any" style="width:6em;"><span class="prmark" id="l13pf-r1-m"></span><span style="min-width:5em;color:var(--mut);">θ = <i>k</i>π,&nbsp;<i>k</i>=</span><input type="number" id="l13pf-k1" step="any" style="width:6em;"><span class="prmark" id="l13pf-k1-m"></span></div>
+    <div class="prf"><span style="min-width:9em;"><i>z</i>=1+j√3&nbsp;&nbsp;<i>r</i></span><input type="number" id="l13pf-r2" step="any" style="width:6em;"><span class="prmark" id="l13pf-r2-m"></span><span style="min-width:5em;color:var(--mut);">θ = <i>k</i>π,&nbsp;<i>k</i>=</span><input type="number" id="l13pf-k2" step="any" style="width:6em;"><span class="prmark" id="l13pf-k2-m"></span></div>
+    <div class="prf"><span style="min-width:9em;"><i>z</i>=j&nbsp;&nbsp;<i>r</i></span><input type="number" id="l13pf-r3" step="any" style="width:6em;"><span class="prmark" id="l13pf-r3-m"></span><span style="min-width:5em;color:var(--mut);">θ = <i>k</i>π,&nbsp;<i>k</i>=</span><input type="number" id="l13pf-k3" step="any" style="width:6em;"><span class="prmark" id="l13pf-k3-m"></span></div>
+  </div>
+  <div class="prbtns">
+    <button class="btn pr-primary" id="l13pf-grade">採点</button>
+    <button class="btn" id="l13pf-show">答えを見る</button>
+    <button class="btn" id="l13pf-reset">やり直す</button>
+  </div>
+  <div class="prresult" id="l13pf-res"></div>
+  <div class="reveal" id="l13pf-rev">
+    <i>z</i>=1+j = √2 e<sup>jπ/4</sup>　（<i>r</i>=√2≈1.414, <i>k</i>=1/4=0.25）<br>
+    <i>z</i>=1+j√3 = 2 e<sup>jπ/3</sup>　（<i>r</i>=2, <i>k</i>=1/3≈0.333）<br>
+    <i>z</i>=j = e<sup>jπ/2</sup>　（<i>r</i>=1, <i>k</i>=1/2=0.5）
+  </div>
+</div>
+</section>
+
+<section class="slide" id="sl-angfreq-phase" data-title="練習8：角周波数と位相の時間">
+<div class="inner">
+  <span class="tag2 tag-do">操作</span><span class="tag2 tag-ex">解説</span>
+  <p class="kicker">練習問題8</p>
+  <h1 class="tt">練習8：角周波数・位相を時間に直す</h1>
+  <p class="steps">角周波数 <span class="eq" style="display:inline-block;margin:0 .2em;">ω = 2π<i>f</i></span>。位相を時間に直すには <span class="eq" style="display:inline-block;margin:0 .2em;"><i>t</i> = θ / ω</span>。</p>
+  <div class="prfields">
+    <div class="prf"><span style="min-width:18em;">(1) 60Hz の角周波数 ω [rad/s]</span><input type="number" id="l13af-w" step="any"><span class="prmark" id="l13af-w-m"></span></div>
+    <div class="prf"><span style="min-width:18em;">(2) 位相 π/4 は何秒か（ω=120π）[s]</span><input type="number" id="l13af-t" step="any"><span class="prmark" id="l13af-t-m"></span></div>
+  </div>
+  <div class="prbtns">
+    <button class="btn pr-primary" id="l13af-grade">採点</button>
+    <button class="btn" id="l13af-show">答えを見る</button>
+    <button class="btn" id="l13af-reset">やり直す</button>
+  </div>
+  <div class="prresult" id="l13af-res"></div>
+  <div class="reveal" id="l13af-rev">
+    (1) ω = 2π·60 = 120π ≈ 376.99 rad/s<br>
+    (2) <i>t</i> = (π/4) / (120π) = 1/480 ≈ 0.00208 s
+  </div>
+</div>
+</section>
+
+<section class="slide" id="sl-rationalize" data-title="練習9：有理化（複素数の除算）">
+<div class="inner">
+  <span class="tag2 tag-do">操作</span><span class="tag2 tag-ex">解説</span>
+  <p class="kicker">練習問題9</p>
+  <h1 class="tt">練習9：有理化して複素数の割り算をする</h1>
+  <div class="eq"><span style="display:inline-block;">分母の共役をかける：&nbsp;1/(a+jb) = (a−jb) / (a²+b²)</span></div>
+  <p class="steps">各問 実部 / 虚部 を入力。</p>
+  <div class="prfields">
+<div class="prf"><span style="min-width:8em;">(1) 1/j</span><input type="number" id="l13ra-r1" step="any" style="width:5.5em;"><span class="prmark" id="l13ra-r1-m"></span><span style="min-width:1em;color:var(--mut);">+j</span><input type="number" id="l13ra-i1" step="any" style="width:5.5em;"><span class="prmark" id="l13ra-i1-m"></span></div><div class="prf"><span style="min-width:8em;">(2) 1/(2+3j)</span><input type="number" id="l13ra-r2" step="any" style="width:5.5em;"><span class="prmark" id="l13ra-r2-m"></span><span style="min-width:1em;color:var(--mut);">+j</span><input type="number" id="l13ra-i2" step="any" style="width:5.5em;"><span class="prmark" id="l13ra-i2-m"></span></div><div class="prf"><span style="min-width:8em;">(3) 1/(3−j)</span><input type="number" id="l13ra-r3" step="any" style="width:5.5em;"><span class="prmark" id="l13ra-r3-m"></span><span style="min-width:1em;color:var(--mut);">+j</span><input type="number" id="l13ra-i3" step="any" style="width:5.5em;"><span class="prmark" id="l13ra-i3-m"></span></div>  </div>
+  <div class="prbtns">
+    <button class="btn pr-primary" id="l13ra-grade">採点</button>
+    <button class="btn" id="l13ra-show">答えを見る</button>
+    <button class="btn" id="l13ra-reset">やり直す</button>
+  </div>
+  <div class="prresult" id="l13ra-res"></div>
+  <div class="reveal" id="l13ra-rev">
+    (1) 1/j = (1·−j)/(j·−j) = −j/1 = −j　→ 0 − 1j<br>
+    (2) 1/(2+3j) = (2−3j)/((2+3j)(2−3j)) = (2−3j)/13 ≈ 0.1538 − 0.2308j<br>
+    (3) 1/(3−j) = (3+j)/((3−j)(3+j)) = (3+j)/10 = 0.3 + 0.1j
+  </div>
+</div>
+</section>
+
+<section class="slide" id="sl-phasor-convert" data-title="練習10・11：正弦波とフェーザの変換">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">練習問題10・11</p>
+    <h1 class="tt">正弦波 &#8644; 複素交流（フェーザ）の変換</h1>
+    <p class="steps">この授業の約束: 正弦波 <span class="eq" style="display:inline-block;padding:.1em .4em;margin:0;"><i>A</i> cos(<i>&omega;t</i>+<i>&phi;</i>)</span> は フェーザ <span class="eq" style="display:inline-block;padding:.1em .4em;margin:0;"><i>A e</i><sup><i>j&phi;</i></sup></span> に対応する。サインは <span class="eq" style="display:inline-block;padding:.1em .4em;margin:0;">sin <i>x</i> = cos(<i>x</i> &minus; <i>&pi;</i>/2)</span> で位相を &minus;<i>&pi;</i>/2 ずらしてコサインに直す。</p>
+    <div class="eq">練習10(1)&nbsp; cos(<i>&omega;t</i> + <i>&pi;</i>/6)&nbsp;&#8594;&nbsp; <i>e</i><sup><i>j&pi;</i>/6</sup></div>
+    <div class="eq">練習10(2)&nbsp; sin(<i>&omega;t</i> + <i>&pi;</i>/6) = cos(<i>&omega;t</i> + <i>&pi;</i>/6 &minus; <i>&pi;</i>/2) = cos(<i>&omega;t</i> &minus; <i>&pi;</i>/3)&nbsp;&#8594;&nbsp; <i>e</i><sup>&minus;<i>j&pi;</i>/3</sup></div>
+    <div class="eq">練習11&nbsp; 5<i>e</i><sup><i>j&pi;</i>/2</sup>&nbsp;&#8594;&nbsp; 5 cos(<i>&omega;t</i> + <i>&pi;</i>/2)</div>
+    <p class="note">大きさ <i>A</i> は振幅、肩の角 <i>&phi;</i> は初期位相。フェーザは振幅と位相だけを取り出した複素数で、共通の <i>e</i><sup><i>j&omega;t</i></sup> は省く。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-ac-impedance" data-title="練習12：交流RL回路のインピーダンス">
+  <div class="inner">
+    <span class="tag2 tag-fig">図</span><span class="tag2 tag-ex">解説</span>
+    <p class="kicker">練習問題12</p>
+    <h1 class="tt">練習12：交流RL回路の電流を求める</h1>
+    <div class="twocol">
+      <div class="figbox">
+        <svg class="fig" viewBox="0 0 320 220" role="img" aria-label="RL直列回路">
+          <path class="w" d="M60 40 H150 M60 180 H150 M60 40 V72 M60 108 V180 M150 40 V60 M150 160 V180 M260 40 H150 M260 180 H150"/>
+          <circle class="w" cx="60" cy="90" r="18"/><path class="w" d="M51 90 q4.5 -7 9 0 q4.5 7 9 0"/>
+          <rect class="w" x="142" y="60" width="16" height="46"/>
+          <path class="w" d="M150 120 q9 -9 18 0 q9 9 18 0 q9 -9 18 0" transform="translate(-34,40) scale(1,1)"/>
+          <line class="cur" x1="175" y1="30" x2="215" y2="30"/><polygon class="curf" points="213,25 213,35 222,30"/>
+          <text x="8" y="95">v(t)</text><text x="166" y="88">R</text><text x="166" y="168">L</text><text x="180" y="22">i(t)</text>
+        </svg>
+        <div class="figcap">v(t)=5cos(4t+&pi;/3), R=10&Omega;, L=5H, &omega;=4</div>
+      </div>
+      <div>
+        <div class="eq"><i>Z</i> = <i>R</i> + <i>j&omega;L</i> = 10 + <i>j</i>&middot;4&middot;5 = 10 + <i>j</i>20</div>
+        <p class="steps">|<i>Z</i>| = &radic;500 = 10&radic;5,&nbsp; &ang;<i>Z</i> = arctan(20/10) = arctan2<br>複素電圧 <i>V&#775;</i> = 5<i>e</i><sup><i>j&pi;</i>/3</sup><br><i>I&#775;</i> = <i>V&#775;</i>/<i>Z</i> = (&radic;5/10) <i>e</i><sup><i>j</i>(<i>&pi;</i>/3 &minus; arctan2)</sup> = (&radic;5/10) <i>e</i><sup>&minus;<i>j</i>0.05995</sup></p>
+        <div class="eq big" style="box-shadow:inset 0 0 0 2px var(--act);"><i>i</i>(<i>t</i>) = (&radic;5/10) cos(4<i>t</i> &minus; 0.05995) [A]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-rms-amp" data-title="練習13：実効値と振幅">
+  <div class="inner">
+    <span class="tag2 tag-do">操作</span>
+    <p class="kicker">練習問題13</p>
+    <h1 class="tt">練習13：実効値から振幅を求める</h1>
+    <p class="steps">ヒント: 振幅 = &radic;2 &times; 実効値（&radic;2 &asymp; 1.414）。正弦波の実効値は振幅の 1/&radic;2 倍だから、逆に振幅は実効値の &radic;2 倍になる。</p>
+    <div class="prfields">
+      <div class="prf"><span style="min-width:14em;">(1) 実効値200Vの振幅 [V]</span><input type="number" id="l13rms-1" step="any"><span class="prmark" id="l13rms-1-m"></span></div>
+      <div class="prf"><span style="min-width:14em;">(2) 実効値10Aの振幅 [A]</span><input type="number" id="l13rms-2" step="any"><span class="prmark" id="l13rms-2-m"></span></div>
+    </div>
+    <div class="prbtns"><button class="btn pr-primary" id="l13rms-grade">採点</button><button class="btn" id="l13rms-show">答えを見る</button><button class="btn" id="l13rms-reset">やり直す</button></div>
+    <div class="prresult" id="l13rms-res"></div>
+    <div class="reveal" id="l13rms-rev">(1) 200&radic;2 &asymp; 283 V&emsp;(2) 10&radic;2 &asymp; 14.1 A</div>
+  </div>
+</section>
+
+<section class="slide" id="sl-power" data-title="練習14：インピーダンスと電力">
+  <div class="inner">
+    <span class="tag2 tag-do">操作</span>
+    <p class="kicker">練習問題14</p>
+    <h1 class="tt">練習14：インピーダンスと電力の総合問題</h1>
+    <div class="twocol">
+      <div class="figbox">
+        <svg class="fig" viewBox="0 0 280 180" role="img" aria-label="電源とインピーダンスのループ">
+          <path class="w" d="M50 40 H210 M50 140 H210 M50 40 V72 M50 108 V140 M210 40 V70 M210 110 V140"/>
+          <circle class="w" cx="50" cy="90" r="18"/><path class="w" d="M41 90 q4.5 -7 9 0 q4.5 7 9 0"/>
+          <rect class="w" x="202" y="70" width="16" height="40"/>
+          <text x="4" y="95">v(t)</text><text x="224" y="95">Z</text>
+        </svg>
+        <div class="figcap"><i>Z</i> = &radic;2 + <i>j</i>&radic;2 [&Omega;], v(t)=200cos150t</div>
+      </div>
+      <div>
+        <p class="steps">電圧振幅 <i>V<sub>m</sub></i>=200, 電流振幅 <i>I<sub>m</sub></i> = <i>V<sub>m</sub></i>/|<i>Z</i>|。<br>平均電力 <i>P</i> = &frac12;<i>V<sub>m</sub>I<sub>m</sub></i> cos<i>&phi;</i>, 皮相電力 <i>S</i> = &frac12;<i>V<sub>m</sub>I<sub>m</sub></i>。</p>
+        <div class="prfields">
+          <div class="prf"><span style="min-width:11em;">(1) |<i>Z</i>|</span><input type="number" id="l13pw-1" step="any"><span class="prmark" id="l13pw-1-m"></span></div>
+          <div class="prf"><span style="min-width:11em;">(2) &ang;<i>Z</i> [rad]</span><input type="number" id="l13pw-2" step="any"><span class="prmark" id="l13pw-2-m"></span></div>
+          <div class="prf"><span style="min-width:11em;">(3) 平均電力 <i>P</i> [W]</span><input type="number" id="l13pw-3" step="any"><span class="prmark" id="l13pw-3-m"></span></div>
+          <div class="prf"><span style="min-width:11em;">(4) 皮相電力 <i>S</i> [VA]</span><input type="number" id="l13pw-4" step="any"><span class="prmark" id="l13pw-4-m"></span></div>
+        </div>
+        <div class="prbtns"><button class="btn pr-primary" id="l13pw-grade">採点</button><button class="btn" id="l13pw-show">答えを見る</button><button class="btn" id="l13pw-reset">やり直す</button></div>
+        <div class="prresult" id="l13pw-res"></div>
+        <div class="reveal" id="l13pw-rev">|<i>Z</i>| = &radic;(2+2) = 2,&nbsp; &ang;<i>Z</i> = arctan1 = <i>&pi;</i>/4 &asymp; 0.785,&nbsp; <i>I<sub>m</sub></i> = 200/2 = 100 A,&nbsp; <i>P</i> = &frac12;&middot;200&middot;100&middot;cos(<i>&pi;</i>/4) &asymp; 7071 W,&nbsp; <i>S</i> = &frac12;&middot;200&middot;100 = 10000 VA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-power-confirm" data-title="操作：力率と電力の三角形">
+  <div class="inner">
+    <span class="tag2 tag-do">操作</span>
+    <p class="kicker">確認</p>
+    <h1 class="tt">操作：力率を変えて電力を見る</h1>
+    <div class="grid2">
+      <div><canvas id="l13cv-tri" class="plane"></canvas></div>
+      <div>
+        <div class="row"><label>偏角 <i>&phi;</i></label><input type="range" id="l13s-phi" min="0" max="1.5708" step="0.01" value="0.7854"><span class="val" id="l13v-phi">0.79</span></div>
+        <div class="eq" id="l13eq-tri"></div>
+        <p class="note">皮相電力 <i>S</i>=10000 VA を斜辺に固定。横が有効電力 <i>P</i>=<i>S</i>cos<i>&phi;</i>、縦が無効電力 <i>Q</i>=<i>S</i>sin<i>&phi;</i>。<i>&phi;</i> が0に近いほど力率 cos<i>&phi;</i> は1に近い。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-exam-intro" data-title="期末試験対策の演習へ">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">期末試験対策</p>
+      <h1 class="tt">ここからは期末試験の全範囲演習</h1>
+      <p class="desc" style="font-size:1.05em;">残りの問題は<strong>中間試験以前も含む全範囲</strong>です。試験対策に使ってください。</p>
+      <ul class="lead">
+        <li><strong>問1</strong>：受動素子（抵抗・キャパシタ・インダクタ）の電圧・電流の式</li>
+        <li><strong>問2</strong>：キルヒホッフの法則（電流則・電圧則）</li>
+        <li><strong>問3</strong>：合成キャパシタンス（直列・並列）</li>
+        <li><strong>問4</strong>：RC回路の過渡現象（微分方程式）</li>
+        <li><strong>問5</strong>：2ループRL回路の過渡電流</li>
+        <li><strong>問6</strong>：スイッチを切ったあとの過渡</li>
+      </ul>
+      <p class="note">基本素子・キルヒホッフの法則・合成静電容量・微分方程式による過渡現象まで、全範囲をおさらいします。</p>
+    </div>
+  </section>
+
+<section class="slide" id="sl-exam-vi" data-title="問1：受動素子の電圧・電流">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">問1（各10点）</p>
+      <h1 class="tt">問1：各素子の電圧・電流の式</h1>
+      <table class="deftbl">
+        <thead><tr><th>抵抗</th><th>キャパシタ（コンデンサ）</th><th>インダクタ（コイル）</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="eq" style="display:block;margin:.2em 0;"><i>V</i> = <i>R I</i></span></td>
+            <td><span class="eq" style="display:block;margin:.2em 0;"><i>I</i> = <i>C</i> d<i>V</i>/d<i>t</i></span></td>
+            <td><span class="eq" style="display:block;margin:.2em 0;"><i>V</i> = <i>L</i> d<i>I</i>/d<i>t</i></span></td>
+          </tr>
+        </tbody>
+      </table>
+      <ul class="lead">
+        <li>(1) 抵抗<i>R</i>に電流<i>I</i>が流れる時の電位差： <span class="eq" style="display:inline-block;margin:.1em 0;"><i>V</i> = <i>R I</i></span></li>
+        <li>(2) 静電容量<i>C</i>のコンデンサに流れる電流： <span class="eq" style="display:inline-block;margin:.1em 0;"><i>I</i> = <i>C</i> d<i>V</i>/d<i>t</i></span></li>
+        <li>(3) インダクタンス<i>L</i>のコイルの端子間電位差： <span class="eq" style="display:inline-block;margin:.1em 0;"><i>V</i> = <i>L</i> d<i>I</i>/d<i>t</i></span></li>
+      </ul>
+      <p class="note">微分・積分の向き（どちらを微分するか）を取り違えないこと。</p>
+    </div>
+  </section>
+
+<section class="slide" id="sl-exam-kirchhoff" data-title="問2：キルヒホッフの法則">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">問2（各5点）</p>
+      <h1 class="tt">問2：キルヒホッフの法則</h1>
+      <ul class="lead">
+        <li><strong>電流則</strong>：ある点に<strong>流入</strong>する電流の総和と<strong>流出</strong>する電流の総和は等しい</li>
+      </ul>
+      <div class="eq">Σ <i>I</i><sub>in</sub> = Σ <i>I</i><sub>out</sub></div>
+      <ul class="lead">
+        <li><strong>電圧則</strong>：閉回路を一周すると電位差の総和は0になる</li>
+      </ul>
+      <div class="eq">Σ <i>V</i> = 0 &nbsp;（閉回路一周）</div>
+      <p class="note">この2つが、回路方程式を立てるための土台になる。過渡現象の微分方程式もここから出発する。</p>
+    </div>
+  </section>
+
+<section class="slide" id="sl-exam-capacitance" data-title="問3：合成キャパシタンス">
+    <div class="inner">
+      <span class="tag2 tag-do">操作</span>
+      <p class="kicker">問3</p>
+      <h1 class="tt">問3：合成キャパシタンスを求める</h1>
+      <div class="twocol">
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 280 220" role="img" aria-label="A-B間：C1と、C2とC3の直列、が並列">
+            <!-- terminals A, B -->
+            <path class="w" d="M140 20 V45 M140 175 V200"/>
+            <text x="132" y="15">A</text>
+            <text x="132" y="215">B</text>
+            <!-- top & bottom rails -->
+            <path class="w" d="M70 45 H210 M70 175 H210"/>
+            <circle class="curf" cx="140" cy="45" r="3"/>
+            <circle class="curf" cx="140" cy="175" r="3"/>
+            <!-- left branch: C1 -->
+            <path class="w" d="M70 45 V100 M70 120 V175"/>
+            <path class="w" d="M55 100 H85 M55 120 H85"/>
+            <text x="30" y="115">C₁</text>
+            <!-- right branch: C2 (top) series C3 (bottom) -->
+            <path class="w" d="M210 45 V70"/>
+            <path class="w" d="M195 70 H225 M195 88 H225"/>
+            <text x="232" y="83">C₂</text>
+            <path class="w" d="M210 88 V128"/>
+            <circle class="curf" cx="210" cy="108" r="2.5"/>
+            <path class="w" d="M195 128 H225 M195 146 H225"/>
+            <text x="232" y="141">C₃</text>
+            <path class="w" d="M210 146 V175"/>
+          </svg>
+          <div class="figcap">C₁ と、C₂・C₃ の直列が並列。<br>C₁=10, C₂=20, C₃=30 [μF]</div>
+        </div>
+        <div>
+          <p class="steps">
+            <span class="lead2">直列部分（C₂・C₃）</span><br>
+            1/<i>C</i><sub>23</sub> = 1/<i>C</i><sub>2</sub> + 1/<i>C</i><sub>3</sub><br>
+            <i>C</i><sub>23</sub> = <i>C</i><sub>2</sub><i>C</i><sub>3</sub>/(<i>C</i><sub>2</sub>+<i>C</i><sub>3</sub>)
+          </p>
+          <p class="steps"><span class="lead2">並列部分（C₁ と C₂₃）</span><br>
+            <i>C</i><sub>eq</sub> = <i>C</i><sub>1</sub> + <i>C</i><sub>23</sub></p>
+          <div class="confirm">
+            <span class="lab">採点</span>
+            <div class="prfields">
+              <div class="prf"><span style="min-width:11em;">(1) <i>C</i><sub>23</sub> ［μF］</span><input type="number" id="l13cap-1" step="any"><span class="prmark" id="l13cap-1-m"></span></div>
+              <div class="prf"><span style="min-width:11em;">(2) 合成 <i>C</i><sub>eq</sub> ［μF］</span><input type="number" id="l13cap-2" step="any"><span class="prmark" id="l13cap-2-m"></span></div>
+            </div>
+            <div class="prbtns"><button class="btn pr-primary" id="l13cap-grade">採点</button><button class="btn" id="l13cap-show">答えを見る</button><button class="btn" id="l13cap-reset">やり直す</button></div>
+            <div class="prresult" id="l13cap-res"></div>
+            <div class="reveal" id="l13cap-rev"><strong>直列：</strong>C₂₃ = C₂C₃/(C₂+C₃) = 20·30/50 = <strong>12 μF</strong><br><strong>並列：</strong>C_eq = C₁ + C₂₃ = 10 + 12 = <strong>22 μF</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="slide" id="sl-exam-rc-ode" data-title="問4：RC回路の過渡現象">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">問4</p>
+      <h1 class="tt">問4：RC回路の微分方程式と解</h1>
+      <div class="twocol">
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 320 200" role="img" aria-label="5V電源、2Ω抵抗と1Fコンデンサの直列、初期電流2A">
+            <!-- left source -->
+            <path class="w" d="M50 45 V80 M50 120 V160 M50 45 H120 M50 160 H230"/>
+            <path class="w" d="M40 85 H60 M44 95 H56 M40 105 H60 M44 115 H56"/>
+            <text x="60" y="108">5V</text>
+            <text x="32" y="50">+</text>
+            <text x="32" y="160">−</text>
+            <!-- top wire to resistor -->
+            <line class="cur" x1="140" y1="34" x2="185" y2="34"/>
+            <polygon class="curf" points="183,29 193,34 183,39"/>
+            <text x="150" y="28">i(t)</text>
+            <!-- 2 ohm resistor -->
+            <path class="w" d="M120 45 V60"/>
+            <rect class="w" x="110" y="60" width="20" height="40"/>
+            <text x="134" y="82">2Ω</text>
+            <text x="134" y="58">v_R</text>
+            <!-- 1F capacitor -->
+            <path class="w" d="M120 100 V118"/>
+            <path class="w" d="M104 118 H136 M104 132 H136"/>
+            <text x="134" y="130">1F</text>
+            <text x="134" y="150">v_C</text>
+            <path class="w" d="M120 132 V160"/>
+          </svg>
+          <div class="figcap">5V電源・2Ω・1F の直列。<i>i</i>(0)=2A</div>
+        </div>
+        <div>
+          <p class="steps">
+            <span class="lead2">キルヒホッフ電圧則</span> <i>v</i><sub>R</sub>+<i>v</i><sub>C</sub> = 5<br>
+            <i>v</i><sub>R</sub> = 2<i>i</i>、&nbsp; <i>i</i> = d<i>v</i><sub>C</sub>/d<i>t</i><br>
+            <span class="lead2">代入して整理</span>
+          </p>
+          <div class="eq">2 d<i>i</i>/d<i>t</i> + <i>i</i> = 0 &nbsp;<span style="font-size:.75em;color:var(--mut);">（斉次・特殊解0）</span></div>
+          <p class="steps"><span class="lead2">解</span> <i>i</i>=<i>Ae</i><sup><i>pt</i></sup>：2<i>p</i>+1=0 → <i>p</i>=−1/2、 定常解 <i>I</i><sub>s</sub>=0<br>
+          <span class="lead2">初期</span> <i>i</i>(0)=2 → <i>A</i>=2</p>
+          <div class="eq big" style="border:2px solid var(--act);"><i>i</i>(<i>t</i>) = 2<i>e</i><sup>−<i>t</i>/2</sup> &nbsp;[A]</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="slide" id="sl-exam-rl-ode" data-title="問5：2ループRL回路の過渡">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">問5</p>
+      <h1 class="tt">問5：2ループ回路の過渡電流</h1>
+      <div class="twocol">
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 340 200" role="img" aria-label="11V電源、2Ω直列、3Ω枝と1Ω・5Hコイル枝の2ループ">
+            <!-- source -->
+            <circle class="w" cx="40" cy="110" r="15"/>
+            <path class="w" d="M40 95 V125"/>
+            <text x="6" y="114">11V</text>
+            <text x="48" y="90">+</text>
+            <text x="48" y="140">−</text>
+            <!-- rails -->
+            <path class="w" d="M40 95 V50 H80 M40 125 V170 H300 M300 170 V120"/>
+            <!-- 2 ohm series -->
+            <rect class="w" x="80" y="40" width="44" height="20"/>
+            <text x="90" y="34">2Ω</text>
+            <line class="cur" x1="90" y1="72" x2="118" y2="72"/>
+            <polygon class="curf" points="116,67 126,72 116,77"/>
+            <text x="95" y="90">i(t)</text>
+            <path class="w" d="M124 50 H180"/>
+            <circle class="curf" cx="180" cy="50" r="3"/>
+            <!-- middle branch: 3 ohm (i2) -->
+            <path class="w" d="M180 50 V80"/>
+            <rect class="w" x="170" y="80" width="20" height="40"/>
+            <text x="194" y="104">3Ω</text>
+            <line class="cur" x1="160" y1="70" x2="160" y2="98"/>
+            <polygon class="curf" points="155,96 165,96 160,106"/>
+            <text x="142" y="82">i₂</text>
+            <path class="w" d="M180 120 V170"/>
+            <!-- right branch: 1 ohm + 5H coil (i1) -->
+            <path class="w" d="M180 50 H220"/>
+            <rect class="w" x="220" y="40" width="40" height="20"/>
+            <text x="228" y="34">1Ω</text>
+            <line class="cur" x1="230" y1="72" x2="258" y2="72"/>
+            <polygon class="curf" points="256,67 266,72 256,77"/>
+            <text x="238" y="90">i₁</text>
+            <path class="w" d="M260 50 H300 V72"/>
+            <path class="w" d="M300 72 q-12 6 0 12 q12 6 0 12 q-12 6 0 12 q12 6 0 12"/>
+            <text x="308" y="100">5H</text>
+          </svg>
+          <div class="figcap">11V・2Ω直列、3Ω枝と1Ω＋5H枝。コイル初期8A</div>
+        </div>
+        <div>
+          <p class="steps">
+            <span class="lead2">回路方程式</span><br>
+            11−2<i>i</i>−3<i>i</i><sub>2</sub>=0、&nbsp; 11−2<i>i</i>−<i>i</i><sub>1</sub>−5 d<i>i</i><sub>1</sub>/d<i>t</i>=0<br>
+            <i>i</i><sub>1</sub>+<i>i</i><sub>2</sub>=<i>i</i> &nbsp; <span class="lead2">→整理</span>
+          </p>
+          <div class="eq">25 d<i>i</i>/d<i>t</i> + 11<i>i</i> = 44</div>
+          <p class="steps"><i>p</i>=−11/25、 定常解 11<i>I</i><sub>s</sub>=44 → <i>I</i><sub>s</sub>=4<br>
+          初期 <i>i</i><sub>1</sub>=8 → <i>i</i>(0)=7 → <i>A</i>=7−4=3</p>
+          <div class="eq big" style="border:2px solid var(--act);"><i>i</i>(<i>t</i>) = 3<i>e</i><sup>−11<i>t</i>/25</sup> + 4 &nbsp;[A]</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="slide" id="sl-exam-switch" data-title="問6：スイッチ切替の過渡">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+      <p class="kicker">問6</p>
+      <h1 class="tt">問6：スイッチを切ったあとの過渡</h1>
+      <div class="twocol">
+        <div>
+          <div class="figbox" style="padding:.5em;">
+            <svg class="fig" style="max-width:14em;" viewBox="0 0 220 170" role="img" aria-label="図4 オン：6V、2Hコイル、2Ωと3Ωの並列、スイッチ閉">
+              <circle class="w" cx="30" cy="95" r="14"/>
+              <path class="w" d="M30 81 V109"/>
+              <text x="4" y="99">6V</text>
+              <text x="38" y="78">+</text>
+              <text x="38" y="122">−</text>
+              <path class="w" d="M30 81 V40 H60"/>
+              <path class="w" d="M60 40 q9 -10 18 0 q9 10 18 0 q9 -10 18 0"/>
+              <text x="62" y="30">2H</text>
+              <line class="cur" x1="66" y1="55" x2="96" y2="55"/>
+              <polygon class="curf" points="94,50 104,55 94,60"/>
+              <text x="70" y="72">i(t)</text>
+              <path class="w" d="M114 40 H190"/>
+              <circle class="curf" cx="130" cy="40" r="2.5"/>
+              <rect class="w" x="120" y="60" width="20" height="36"/>
+              <text x="100" y="82">2Ω</text>
+              <path class="w" d="M130 40 V60 M130 96 V130"/>
+              <rect class="w" x="180" y="60" width="20" height="36"/>
+              <text x="202" y="82">3Ω</text>
+              <path class="w" d="M190 40 V60 M190 96 V120"/>
+              <path class="w" d="M30 109 V130 H130"/>
+              <path class="w" d="M160 130 H190 V120"/>
+              <path class="w" d="M130 130 L158 120"/>
+            </svg>
+            <div class="figcap">図4 オン（定常）</div>
+          </div>
+        </div>
+        <div>
+          <div class="figbox" style="padding:.5em;">
+            <svg class="fig" style="max-width:14em;" viewBox="0 0 220 170" role="img" aria-label="図5 オフ：スイッチ開、3Ω切り離し">
+              <circle class="w" cx="30" cy="95" r="14"/>
+              <path class="w" d="M30 81 V109"/>
+              <text x="4" y="99">6V</text>
+              <text x="38" y="78">+</text>
+              <text x="38" y="122">−</text>
+              <path class="w" d="M30 81 V40 H60"/>
+              <path class="w" d="M60 40 q9 -10 18 0 q9 10 18 0 q9 -10 18 0"/>
+              <text x="62" y="30">2H</text>
+              <line class="cur" x1="66" y1="55" x2="96" y2="55"/>
+              <polygon class="curf" points="94,50 104,55 94,60"/>
+              <text x="70" y="72">i(t)</text>
+              <path class="w" d="M114 40 H190"/>
+              <circle class="curf" cx="130" cy="40" r="2.5"/>
+              <rect class="w" x="120" y="60" width="20" height="36"/>
+              <text x="100" y="82">2Ω</text>
+              <path class="w" d="M130 40 V60 M130 96 V130"/>
+              <rect class="w" x="180" y="60" width="20" height="36"/>
+              <text x="202" y="82">3Ω</text>
+              <path class="w" d="M190 40 V60 M190 96 V120"/>
+              <path class="w" d="M30 109 V130 H130"/>
+              <path class="w" d="M130 130 L150 121"/>
+              <path class="w" d="M168 130 H190 V120"/>
+            </svg>
+            <div class="figcap">図5 オフ（スイッチ開・3Ω切断）</div>
+          </div>
+        </div>
+      </div>
+      <div class="twocol" style="margin-top:.4em;">
+        <div>
+          <p class="steps"><span class="lead2">オン定常 → 初期値</span><br>
+          コイル短絡、並列合成 <i>R</i>=1/(1/2+1/3)=6/5<br>
+          <i>i</i> = <i>V</i>/<i>R</i> = 6/(6/5) = 5A（初期値）</p>
+        </div>
+        <div>
+          <p class="steps"><span class="lead2">オフ状態</span> 6−2 d<i>i</i>/d<i>t</i>−2<i>i</i>=0 → d<i>i</i>/d<i>t</i>+<i>i</i>=3<br>
+          <i>p</i>=−1、 <i>I</i><sub>s</sub>=3、 <i>i</i>(0)=5 → <i>A</i>=5−3=2</p>
+          <div class="eq big" style="border:2px solid var(--act);"><i>i</i>(<i>t</i>) = 2<i>e</i><sup>−<i>t</i></sup> + 3 &nbsp;[A]</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="slide" id="sl-summary" data-title="まとめ">
+    <div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">まとめ</p>
+      <h1 class="tt">まとめ：総合演習で確認したこと</h1>
+      <ul class="lead">
+        <li><strong>複素数の計算</strong>：四則演算・有理化・極形式</li>
+        <li><strong>正弦波とフェーザ</strong>：時間波形と複素数の往復</li>
+        <li><strong>交流回路</strong>：インピーダンスと電流の求め方</li>
+        <li><strong>実効値と電力</strong>：平均電力・皮相電力・力率</li>
+        <li><strong>過渡現象</strong>：微分方程式による全範囲の解法</li>
+      </ul>
+      <div class="ex"><strong>期末試験は7/23（木）</strong>。全範囲です。基本式と手順を押さえて、落ち着いて取り組みましょう。</div>
+      <p class="note">お疲れさまでした。</p>
+    </div>
+  </section>
+  <!-- SLIDES:END -->
+</div>
+
+<audio id="narr" preload="none"></audio>
+<button id="narrbtn" class="narrbtn" aria-label="解説音声" style="display:none;">🔊 解説</button>
+
+<nav class="nav">
+  <button class="arw" id="prev" aria-label="前へ">◀</button>
+  <select id="jump" aria-label="スライド選択"></select>
+  <span class="count" id="count">1 / 1</span>
+  <button class="arw" id="fs" aria-label="全画面" title="全画面">⛶</button>
+  <button class="arw" id="next" aria-label="次へ">▶</button>
+</nav>
+
+<script>
+(function(){
+  "use strict";
+  var TAU=Math.PI*2;
+  function $(s,r){return (r||document).querySelector(s);}
+  function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function fmt(v,d){d=d==null?2:d; return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function roundTo(v,dp){var f=Math.pow(10,dp); return Math.round(v*f)/f;}            // 採点: 四捨五入
+  function decimals(s){s=String(s).trim(); if(s.indexOf('.')<0)return 0; s=s.replace(/0+$/,''); var i=s.indexOf('.'); return i<0?0:(s.length-i-1);} // 採点: 小数桁
+  function vbnd(pl){var m=14/pl.s; return {x:(pl.W/2)/pl.s-m, y:(pl.H/2)/pl.s-m};}    // ドラッグ可動域（表示端まで）
+
+  // ---- スライドエンジン ----
+  var slides=[].slice.call(document.querySelectorAll('.slide')), N=slides.length, cur=0;
+  var hooks=slides.map(function(){return {};});
+  function idx(id){for(var i=0;i<slides.length;i++){if(slides[i].id===id)return i;} return -1;}
+  function reg(id,h){var i=idx(id); if(i>=0)hooks[i]=h;}
+  function goId(id){go(idx(id));}
+  var jump=$('#jump');
+  slides.forEach(function(s,i){var o=document.createElement('option'); o.value=i; o.textContent=(i+1)+'. '+(s.getAttribute('data-title')||s.id); jump.appendChild(o);});
+  $('#count').textContent='1 / '+N;
+  function go(i){
+    i=clamp(i,0,N-1); if(i===cur && slides[cur].classList.contains('active'))return;
+    if(hooks[cur].hide)hooks[cur].hide();
+    stopNarr();
+    slides[cur].classList.remove('active'); cur=i; slides[cur].classList.add('active');
+    jump.value=cur; $('#count').textContent=(cur+1)+' / '+N;
+    $('#prev').disabled=cur===0; $('#next').disabled=cur===N-1;
+    $('#prog').style.width=(cur/(N-1||1)*100)+'%'; slides[cur].scrollTop=0;
+    try{history.replaceState(null,'','#'+(cur+1));}catch(e){}
+    if(hooks[cur].show)hooks[cur].show();
+    syncNarrBtn();
+  }
+  $('#prev').onclick=function(){go(cur-1);}; $('#next').onclick=function(){go(cur+1);};
+  jump.onchange=function(){go(+jump.value);};
+  $('#fs').onclick=function(){ if(!document.fullscreenElement){ if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen(); } else { if(document.exitFullscreen)document.exitFullscreen(); } };
+  document.addEventListener('keydown',function(e){
+    if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+    if(e.target.tagName==='BUTTON'&&(e.key===' '||e.key==='Enter'))return;
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){go(cur+1);e.preventDefault();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){go(cur-1);e.preventDefault();}
+    else if(e.key==='Home'){go(0);} else if(e.key==='End'){go(N-1);}
+    else if(e.key==='f'||e.key==='F'){$('#fs').click();}
+  });
+  window.addEventListener('resize',function(){var h=hooks[cur]; if(h&&h.redraw)h.redraw();});
+
+  function anim(draw){var run=false;function loop(){if(!run)return;draw();requestAnimationFrame(loop);}return{start:function(){if(!run){run=true;loop();}},stop:function(){run=false;}};}
+
+  // ---- 解説ナレーション音声（単一プレーヤを使い回す） ----
+  var NARR_DIR='audio/';
+  var NARR=new Set(slides.map(function(s){return s.id;}));
+  var _audio=$('#narr'), _narrBtn=$('#narrbtn'), _playing=null;
+  function syncNarrBtn(){ var id=slides[cur].id, on=(_playing===id && !_audio.paused);
+    if(NARR.has(id)){ _narrBtn.style.display='inline-flex'; _narrBtn.textContent=on?'⏸ 停止':'🔊 解説'; _narrBtn.classList.toggle('playing',on);} else _narrBtn.style.display='none'; }
+  function stopNarr(){ try{_audio.pause(); _audio.currentTime=0;}catch(e){} _playing=null; }
+  function playNarr(id){ if(!NARR.has(id))return; stopNarr(); _audio.src=NARR_DIR+id+'.mp3'; _playing=id;
+    var p=_audio.play(); if(p&&p.catch)p.catch(function(){ NARR.delete(id); _playing=null; syncNarrBtn(); }); syncNarrBtn(); }
+  _narrBtn.onclick=function(e){ e.stopPropagation(); this.blur(); var id=slides[cur].id; if(_playing===id&&!_audio.paused){stopNarr();}else{playNarr(id);} syncNarrBtn(); };
+  _audio.addEventListener('ended',function(){_playing=null;syncNarrBtn();});
+  _audio.addEventListener('pause',function(){syncNarrBtn();});
+
+  // ---- 複素平面ヘルパー ----
+  function makePlane(cv, spanX, spanY){
+    var ctx=cv.getContext('2d'), dpr=window.devicePixelRatio||1, W=0,H=0,s=1,cx=0,cy=0, sx=spanX, sy=spanY;
+    function setSpan(a,b){sx=a; sy=(b==null?a:b);}
+    function fit(){var w=cv.clientWidth,h=cv.clientHeight; cv.width=w*dpr; cv.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); W=w;H=h; s=Math.min(w/sx,h/sy); cx=w/2; cy=h/2;}
+    function PX(x,y){return [cx+x*s, cy-y*s];} function UN(px,py){return [(px-cx)/s,(cy-py)/s];}
+    function clear(){ctx.clearRect(0,0,W,H);}
+    function axes(opt){opt=opt||{}; var xr=(W/2)/s, yr=(H/2)/s, i,p;
+      ctx.strokeStyle=cssv('--grd'); ctx.lineWidth=1; ctx.font='11px sans-serif'; ctx.fillStyle=cssv('--mut');
+      for(i=Math.ceil(-xr);i<=xr;i++){if(i===0)continue; p=PX(i,0); ctx.globalAlpha=.55; ctx.beginPath(); ctx.moveTo(p[0],0); ctx.lineTo(p[0],H); ctx.stroke();}
+      for(i=Math.ceil(-yr);i<=yr;i++){if(i===0)continue; p=PX(0,i); ctx.globalAlpha=.55; ctx.beginPath(); ctx.moveTo(0,p[1]); ctx.lineTo(W,p[1]); ctx.stroke();}
+      ctx.globalAlpha=1; ctx.strokeStyle=cssv('--ax'); ctx.lineWidth=1.5; var o=PX(0,0);
+      ctx.beginPath(); ctx.moveTo(0,o[1]); ctx.lineTo(W,o[1]); ctx.stroke(); ctx.beginPath(); ctx.moveTo(o[0],H); ctx.lineTo(o[0],0); ctx.stroke();
+      ctx.fillStyle=cssv('--mut'); ctx.fillText(opt.reLabel||'Re', W-26, o[1]-7); ctx.fillText(opt.imLabel||'Im', o[0]+7, 14);}
+    function head(x1,y1,x2,y2,color,L){L=L||10; var a=Math.atan2(y2-y1,x2-x1); ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-L*Math.cos(a-.42),y2-L*Math.sin(a-.42)); ctx.lineTo(x2-L*Math.cos(a+.42),y2-L*Math.sin(a+.42)); ctx.closePath(); ctx.fill();}
+    function arrow(ux1,uy1,ux2,uy2,color,w){var a=PX(ux1,uy1),b=PX(ux2,uy2); ctx.strokeStyle=color; ctx.lineWidth=w||3; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); head(a[0],a[1],b[0],b[1],color);}
+    function vec(x,y,color,opt){opt=opt||{}; arrow(0,0,x,y,color,opt.w||3.2);
+      if(opt.proj){var t=PX(x,y),ax=PX(x,0),ay=PX(0,y); ctx.save(); ctx.strokeStyle=color; ctx.globalAlpha=.5; ctx.setLineDash([4,4]); ctx.lineWidth=1.2;
+        ctx.beginPath(); ctx.moveTo(t[0],t[1]); ctx.lineTo(ax[0],ax[1]); ctx.stroke(); ctx.beginPath(); ctx.moveTo(t[0],t[1]); ctx.lineTo(ay[0],ay[1]); ctx.stroke(); ctx.restore();}
+      if(opt.label){var t2=PX(x,y); ctx.fillStyle=color; ctx.font='bold 14px Georgia,serif'; ctx.fillText(opt.label, t2[0]+8, t2[1]-6);}}
+    function dot(x,y,color,r){var p=PX(x,y); ctx.fillStyle=color; ctx.beginPath(); ctx.arc(p[0],p[1],r||4,0,TAU); ctx.fill();}
+    function handle(x,y,color){var p=PX(x,y); ctx.save(); ctx.globalAlpha=.16; ctx.fillStyle=color;
+      ctx.beginPath(); ctx.arc(p[0],p[1],17,0,TAU); ctx.arc(p[0],p[1],11,0,TAU,true); ctx.fill(); ctx.globalAlpha=1;
+      ctx.strokeStyle=color; ctx.lineWidth=1.6; ctx.setLineDash([3.5,3.5]); ctx.beginPath(); ctx.arc(p[0],p[1],15,0,TAU); ctx.stroke(); ctx.restore();}
+    return {ctx:ctx, fit:fit, setSpan:setSpan, PX:PX, UN:UN, clear:clear, axes:axes, arrow:arrow, vec:vec, dot:dot, handle:handle, get s(){return s;}, get W(){return W;}, get H(){return H;}};
+  }
+  function dragger(cv, plane, getPts, onMove){
+    var ix=-1;
+    function rel(e){var r=cv.getBoundingClientRect(); return plane.UN(e.clientX-r.left, e.clientY-r.top);}
+    function pick(u){var pts=getPts(),best=-1,bd=1e9; for(var i=0;i<pts.length;i++){var a=plane.PX(pts[i].x,pts[i].y),b=plane.PX(u[0],u[1]); var d=Math.hypot(a[0]-b[0],a[1]-b[1]); if(d<bd){bd=d;best=i;}} return bd<34?best:-1;}
+    cv.style.touchAction='none';
+    cv.addEventListener('pointerdown',function(e){var u=rel(e); ix=pick(u); if(ix>=0){cv.setPointerCapture(e.pointerId); onMove(ix,u[0],u[1]); e.preventDefault();}});
+    cv.addEventListener('pointermove',function(e){if(ix<0)return; var u=rel(e); onMove(ix,u[0],u[1]); e.preventDefault();});
+    function end(){ix=-1;} cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+  }
+
+  // ---- 時間波形ヘルパー ----
+  function timeCtx(cv){var ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1,W=0,H=0;
+    function fit(){var w=cv.clientWidth,h=cv.clientHeight;cv.width=w*dpr;cv.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);W=w;H=h;}
+    return {ctx:ctx,fit:fit,get W(){return W;},get H(){return H;}};}
+  function drawTimeAxes(c,ymax){var ctx=c.ctx,W=c.W,H=c.H,padL=34,padB=20,padT=10,padR=10;
+    function X(t){return padL+t/c._tmax*(W-padL-padR);} function Y(v){return padT+(ymax-v)/(2*ymax)*(H-padT-padB);}
+    ctx.clearRect(0,0,W,H); ctx.strokeStyle=cssv('--grd'); ctx.fillStyle=cssv('--mut'); ctx.font='10px sans-serif'; ctx.lineWidth=1;
+    for(var g=-ymax;g<=ymax+1e-9;g+=ymax/2){ctx.globalAlpha=g===0?.85:.4; ctx.beginPath(); ctx.moveTo(padL,Y(g)); ctx.lineTo(W-padR,Y(g)); ctx.stroke(); ctx.globalAlpha=1; ctx.fillText(fmt(g,g%1?1:0),4,Y(g)+3);}
+    return {X:X,Y:Y};}
+  function plotFn(c,m,fn,color,w){var ctx=c.ctx,W=c.W; ctx.strokeStyle=color; ctx.lineWidth=w||2.4; ctx.lineJoin='round'; ctx.beginPath(); var first=true;
+    for(var px=34;px<=W-10;px+=2){var t=(px-34)/(W-44)*c._tmax; var y=fn(t); var X=m.X(t),Y=m.Y(y); if(first){ctx.moveTo(X,Y);first=false;}else ctx.lineTo(X,Y);} ctx.stroke();}
+
+  /* HOOKS:START */
+(function(){var cv=$('#l13cv-title'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI;
+    var A=anim(function(){c.fit(); var m=drawTimeAxes(c,1.2); var ph=performance.now()/700;
+      plotFn(c,m,function(t){return Math.cos(t-ph);},cssv('--act'),3);
+      plotFn(c,m,function(t){return 0.7*Math.sin(2*t-ph*1.3);},cssv('--ref'),2);});
+    reg('sl-title',{show:A.start,hide:A.stop});})();
+
+(function(){var box=$('#l13sched'); if(!box)return;
+    var SCHEDULE={current:13, rows:[
+      [1,'4/13','基本素子'],[2,'4/20','微分方程式の解法'],[3,'4/27','固有振動'],
+      [4,'5/11','初期条件と時定数'],[5,'5/18','不連続な変化'],[6,'5/25','演習'],
+      [7,'6/3(水)','中間テスト'],[8,'6/8','複素数'],[9,'6/15','中間振り返り'],
+      [10,'6/22','正弦波の複素数表現'],[11,'6/29','正弦波交流回路'],[12,'7/6','ベクトル図・電力'],
+      [13,'7/13','総合演習'],[14,'7/23(木)','期末試験','exam'],[15,'7/27','自己点検']]};
+    function row(r){var cls='schrow'; if(r[0]===SCHEDULE.current)cls+=' cur'; if(r[3]==='exam')cls+=' exam';
+      return '<div class="'+cls+'"><span class="sn">'+r[0]+'</span><span class="sd">'+r[1]+'</span><span>'+r[2]+'</span></div>';}
+    var rows=SCHEDULE.rows, half=Math.ceil(rows.length/2), L='',R='';
+    for(var i=0;i<half;i++)L+=row(rows[i]); for(var j=half;j<rows.length;j++)R+=row(rows[j]);
+    box.innerHTML='<div class="sched"><div class="schcol">'+L+'</div><div class="schcol">'+R+'</div></div>';
+    reg('sl-schedule',{});})();
+
+(function(){
+  var cv=$('#l13cv-plot'); if(!cv)return;
+  var pl=makePlane(cv,8,8);
+  var TGT=[{x:2,y:1,c:'--z1',label:'z\u2081'},{x:0,y:3,c:'--z2',label:'z\u2082'},{x:3,y:0,c:'--zr',label:'z\u2083'}];
+  var START=[{x:1,y:1},{x:1,y:2},{x:2,y:1}];
+  var pts=START.map(function(p){return {x:p.x,y:p.y};});
+  var labeled=false;
+  function draw(){
+    pl.fit(); pl.clear(); pl.axes();
+    for(var i=0;i<pts.length;i++){
+      var lab=labeled?TGT[i].label:'';
+      pl.vec(pts[i].x,pts[i].y,cssv(TGT[i].c),{proj:true,label:lab});
+      pl.handle(pts[i].x,pts[i].y,cssv(TGT[i].c));
+    }
+  }
+  dragger(cv,pl,function(){return pts;},function(i,x,y){
+    var b=vbnd(pl);
+    pts[i].x=clamp(Math.round(x),-Math.floor(b.x),Math.floor(b.x));
+    pts[i].y=clamp(Math.round(y),-Math.floor(b.y),Math.floor(b.y));
+    labeled=false; draw();
+  });
+  function el(s){return $('#'+s);}
+  el('l13plot-grade').onclick=function(){
+    var ok=0,marks=[];
+    for(var i=0;i<pts.length;i++){
+      var d=Math.hypot(pts[i].x-TGT[i].x,pts[i].y-TGT[i].y);
+      var good=d<=0.4; if(good)ok++;
+      marks.push('z'+(i+1)+(good?'\u25cb':'\u2715'));
+    }
+    var r=el('l13plot-res'); r.textContent=marks.join('  ')+'   '+ok+' / 3 \u554f\u6b63\u89e3';
+    r.className='prresult '+(ok===3?'good':'bad');
+  };
+  el('l13plot-show').onclick=function(){
+    for(var i=0;i<pts.length;i++){pts[i].x=TGT[i].x;pts[i].y=TGT[i].y;}
+    labeled=true; draw();
+    var r=el('l13plot-res'); r.textContent='\u6b63\u3057\u3044\u4f4d\u7f6e\u306b\u30b9\u30ca\u30c3\u30d7\u3057\u307e\u3057\u305f'; r.className='prresult good';
+  };
+  el('l13plot-reset').onclick=function(){
+    for(var i=0;i<pts.length;i++){pts[i].x=START[i].x;pts[i].y=START[i].y;}
+    labeled=false; el('l13plot-res').textContent=''; el('l13plot-res').className='prresult'; draw();
+  };
+  reg('sl-complex-plot',{show:draw,redraw:draw});
+})();
+
+(function(){
+  var Q=[
+    {id:'l13am-m1',ans:2.2360679775},{id:'l13am-a1',ans:0.4636476090},
+    {id:'l13am-m2',ans:3},{id:'l13am-a2',ans:1.5707963268},
+    {id:'l13am-m3',ans:3},{id:'l13am-a3',ans:0}
+  ];
+  function el(s){return $('#'+s);}
+  if(!el('l13am-grade'))return;
+  function ok(v,a){return Math.abs(a)<1e-9?(Math.abs(v-a)<=0.02):(Math.abs(v-a)/Math.abs(a)<=0.01);}
+  el('l13am-grade').onclick=function(){
+    var n=0,m=0;
+    for(var i=0;i<Q.length;i++){
+      var inp=el(Q[i].id),mk=el(Q[i].id+'-m'); var s=inp.value.trim();
+      if(s===''){mk.textContent='';mk.className='prmark';continue;}
+      m++; var good=ok(parseFloat(s),Q[i].ans); if(good)n++;
+      mk.textContent=good?'\u25cb':'\u2715'; mk.className='prmark '+(good?'good':'bad');
+    }
+    var r=el('l13am-res'); r.textContent=n+' / '+m+' \u554f\u6b63\u89e3'; r.className='prresult '+(n===m&&m>0?'good':'bad');
+  };
+  el('l13am-show').onclick=function(){el('l13am-rev').classList.add('show');};
+  el('l13am-reset').onclick=function(){
+    for(var i=0;i<Q.length;i++){el(Q[i].id).value='';var mk=el(Q[i].id+'-m');mk.textContent='';mk.className='prmark';}
+    el('l13am-res').textContent='';el('l13am-res').className='prresult';el('l13am-rev').classList.remove('show');
+  };
+  reg('sl-arg-mag',{});
+})();
+
+(function(){
+  var Q=[
+    {id:'l13ar-r1',ans:5},{id:'l13ar-i1',ans:3},
+    {id:'l13ar-r2',ans:-1},{id:'l13ar-i2',ans:-1},
+    {id:'l13ar-r3',ans:4},{id:'l13ar-i3',ans:7},
+    {id:'l13ar-r4',ans:1.6},{id:'l13ar-i4',ans:0.2}
+  ];
+  function el(s){return $('#'+s);}
+  if(!el('l13ar-grade'))return;
+  function ok(v,a){return Math.abs(v-a)<=0.05;}
+  el('l13ar-grade').onclick=function(){
+    var n=0,m=0;
+    for(var i=0;i<Q.length;i++){
+      var inp=el(Q[i].id),mk=el(Q[i].id+'-m'); var s=inp.value.trim();
+      if(s===''){mk.textContent='';mk.className='prmark';continue;}
+      m++; var good=ok(parseFloat(s),Q[i].ans); if(good)n++;
+      mk.textContent=good?'\u25cb':'\u2715'; mk.className='prmark '+(good?'good':'bad');
+    }
+    var r=el('l13ar-res'); r.textContent=n+' / '+m+' \u554f\u6b63\u89e3'; r.className='prresult '+(n===m&&m>0?'good':'bad');
+  };
+  el('l13ar-show').onclick=function(){el('l13ar-rev').classList.add('show');};
+  el('l13ar-reset').onclick=function(){
+    for(var i=0;i<Q.length;i++){el(Q[i].id).value='';var mk=el(Q[i].id+'-m');mk.textContent='';mk.className='prmark';}
+    el('l13ar-res').textContent='';el('l13ar-res').className='prresult';el('l13ar-rev').classList.remove('show');
+  };
+  reg('sl-complex-arith',{});
+})();
+
+(function(){
+  var Q=[
+    {id:'l13pf-r1',ans:1.4142135624},{id:'l13pf-k1',ans:0.25},
+    {id:'l13pf-r2',ans:2},{id:'l13pf-k2',ans:0.3333333333},
+    {id:'l13pf-r3',ans:1},{id:'l13pf-k3',ans:0.5}
+  ];
+  function el(s){return $('#'+s);}
+  if(!el('l13pf-grade'))return;
+  function ok(v,a){return Math.abs(a)<1e-9?(Math.abs(v-a)<=0.02):(Math.abs(v-a)/Math.abs(a)<=0.01);}
+  el('l13pf-grade').onclick=function(){
+    var n=0,m=0;
+    for(var i=0;i<Q.length;i++){
+      var inp=el(Q[i].id),mk=el(Q[i].id+'-m'); var s=inp.value.trim();
+      if(s===''){mk.textContent='';mk.className='prmark';continue;}
+      m++; var good=ok(parseFloat(s),Q[i].ans); if(good)n++;
+      mk.textContent=good?'\u25cb':'\u2715'; mk.className='prmark '+(good?'good':'bad');
+    }
+    var r=el('l13pf-res'); r.textContent=n+' / '+m+' \u554f\u6b63\u89e3'; r.className='prresult '+(n===m&&m>0?'good':'bad');
+  };
+  el('l13pf-show').onclick=function(){el('l13pf-rev').classList.add('show');};
+  el('l13pf-reset').onclick=function(){
+    for(var i=0;i<Q.length;i++){el(Q[i].id).value='';var mk=el(Q[i].id+'-m');mk.textContent='';mk.className='prmark';}
+    el('l13pf-res').textContent='';el('l13pf-res').className='prresult';el('l13pf-rev').classList.remove('show');
+  };
+  reg('sl-polar-form',{});
+})();
+
+(function(){
+  var Q=[
+    {id:'l13af-w',ans:376.9911184308},
+    {id:'l13af-t',ans:0.0020833333}
+  ];
+  function el(s){return $('#'+s);}
+  if(!el('l13af-grade'))return;
+  function ok(v,a){return Math.abs(v-a)/Math.abs(a)<=0.01;}
+  el('l13af-grade').onclick=function(){
+    var n=0,m=0;
+    for(var i=0;i<Q.length;i++){
+      var inp=el(Q[i].id),mk=el(Q[i].id+'-m'); var s=inp.value.trim();
+      if(s===''){mk.textContent='';mk.className='prmark';continue;}
+      m++; var good=ok(parseFloat(s),Q[i].ans); if(good)n++;
+      mk.textContent=good?'\u25cb':'\u2715'; mk.className='prmark '+(good?'good':'bad');
+    }
+    var r=el('l13af-res'); r.textContent=n+' / '+m+' \u554f\u6b63\u89e3'; r.className='prresult '+(n===m&&m>0?'good':'bad');
+  };
+  el('l13af-show').onclick=function(){el('l13af-rev').classList.add('show');};
+  el('l13af-reset').onclick=function(){
+    for(var i=0;i<Q.length;i++){el(Q[i].id).value='';var mk=el(Q[i].id+'-m');mk.textContent='';mk.className='prmark';}
+    el('l13af-res').textContent='';el('l13af-res').className='prresult';el('l13af-rev').classList.remove('show');
+  };
+  reg('sl-angfreq-phase',{});
+})();
+
+(function(){
+  var Q=[
+    {id:'l13ra-r1',ans:0},{id:'l13ra-i1',ans:-1},
+    {id:'l13ra-r2',ans:0.1538461538},{id:'l13ra-i2',ans:-0.2307692308},
+    {id:'l13ra-r3',ans:0.3},{id:'l13ra-i3',ans:0.1}
+  ];
+  function el(s){return $('#'+s);}
+  if(!el('l13ra-grade'))return;
+  function ok(v,a){return Math.abs(v-a)<=0.03;}
+  el('l13ra-grade').onclick=function(){
+    var n=0,m=0;
+    for(var i=0;i<Q.length;i++){
+      var inp=el(Q[i].id),mk=el(Q[i].id+'-m'); var s=inp.value.trim();
+      if(s===''){mk.textContent='';mk.className='prmark';continue;}
+      m++; var good=ok(parseFloat(s),Q[i].ans); if(good)n++;
+      mk.textContent=good?'\u25cb':'\u2715'; mk.className='prmark '+(good?'good':'bad');
+    }
+    var r=el('l13ra-res'); r.textContent=n+' / '+m+' \u554f\u6b63\u89e3'; r.className='prresult '+(n===m&&m>0?'good':'bad');
+  };
+  el('l13ra-show').onclick=function(){el('l13ra-rev').classList.add('show');};
+  el('l13ra-reset').onclick=function(){
+    for(var i=0;i<Q.length;i++){el(Q[i].id).value='';var mk=el(Q[i].id+'-m');mk.textContent='';mk.className='prmark';}
+    el('l13ra-res').textContent='';el('l13ra-res').className='prresult';el('l13ra-rev').classList.remove('show');
+  };
+  reg('sl-rationalize',{});
+})();
+
+(function(){
+  var Q=[{id:'l13rms-1',ans:200*Math.SQRT2},{id:'l13rms-2',ans:10*Math.SQRT2}];
+  function el(s){return $('#'+s);} if(!el('l13rms-grade'))return;
+  function grade(){var n=0;Q.forEach(function(q){var inp=el(q.id),mk=el(q.id+'-m');var v=parseFloat(inp.value);var ok=false;
+    if(!isNaN(v)){var tol=Math.abs(q.ans)<1e-9?0.02:Math.abs(q.ans)*0.01; ok=Math.abs(v-q.ans)<=tol;}
+    mk.textContent=ok?'\u25CB':'\u2715'; mk.className='prmark '+(ok?'good':'bad'); if(ok)n++;});
+    var r=el('l13rms-res'); r.textContent=n+' / '+Q.length+' 正解'; r.className='prresult '+(n===Q.length?'good':'bad');}
+  el('l13rms-grade').onclick=grade;
+  el('l13rms-show').onclick=function(){el('l13rms-rev').classList.add('show');};
+  el('l13rms-reset').onclick=function(){Q.forEach(function(q){el(q.id).value='';var mk=el(q.id+'-m');mk.textContent='';mk.className='prmark';});var r=el('l13rms-res');r.textContent='';r.className='prresult';el('l13rms-rev').classList.remove('show');};
+  reg('sl-rms-amp',{});
+})();
+
+(function(){
+  var Q=[{id:'l13pw-1',ans:2},{id:'l13pw-2',ans:Math.PI/4},{id:'l13pw-3',ans:10000/Math.SQRT2},{id:'l13pw-4',ans:10000}];
+  function el(s){return $('#'+s);} if(!el('l13pw-grade'))return;
+  function grade(){var n=0;Q.forEach(function(q){var inp=el(q.id),mk=el(q.id+'-m');var v=parseFloat(inp.value);var ok=false;
+    if(!isNaN(v)){var tol=Math.abs(q.ans)<1e-9?0.02:Math.abs(q.ans)*0.01; ok=Math.abs(v-q.ans)<=tol;}
+    mk.textContent=ok?'\u25CB':'\u2715'; mk.className='prmark '+(ok?'good':'bad'); if(ok)n++;});
+    var r=el('l13pw-res'); r.textContent=n+' / '+Q.length+' 正解'; r.className='prresult '+(n===Q.length?'good':'bad');}
+  el('l13pw-grade').onclick=grade;
+  el('l13pw-show').onclick=function(){el('l13pw-rev').classList.add('show');};
+  el('l13pw-reset').onclick=function(){Q.forEach(function(q){el(q.id).value='';var mk=el(q.id+'-m');mk.textContent='';mk.className='prmark';});var r=el('l13pw-res');r.textContent='';r.className='prresult';el('l13pw-rev').classList.remove('show');};
+  reg('sl-power',{});
+})();
+
+(function(){
+  var cv=$('#l13cv-tri'); if(!cv)return;
+  var pl=makePlane(cv,12,12); var phi=0.7854; var S=10;
+  var sl=$('#l13s-phi'),vo=$('#l13v-phi');
+  if(sl)sl.addEventListener('input',function(){phi=parseFloat(sl.value); vo.textContent=fmt(phi,2); draw();});
+  function draw(){pl.fit(); pl.clear(); pl.axes({reLabel:'P [kVA]',imLabel:'Q [kVA]'});
+    var P=S*Math.cos(phi), Qv=S*Math.sin(phi);
+    pl.arrow(0,0,P,0,cssv('--thr'),3.2);
+    pl.arrow(P,0,P,Qv,cssv('--ref'),3.2);
+    pl.arrow(0,0,P,Qv,cssv('--act'),3.4);
+    pl.dot(P,Qv,cssv('--act'),4);
+    $('#l13eq-tri').innerHTML='<span class="big">cos<i>&phi;</i> = '+fmt(Math.cos(phi),3)+'</span><br><i>P</i> = '+Math.round(P*1000)+' W&emsp;<i>Q</i> = '+Math.round(Qv*1000)+' var&emsp;<i>S</i> = 10000 VA';}
+  vo.textContent=fmt(phi,2);
+  reg('sl-power-confirm',{show:draw,redraw:draw});
+})();
+
+(function(){
+    var Q=[{id:'l13cap-1',ans:12},{id:'l13cap-2',ans:22}];
+    function el(s){return $('#'+s);}
+    if(!el('l13cap-grade'))return;
+    function clearMarks(){Q.forEach(function(q){var m=el(q.id+'-m'); m.textContent=''; m.className='prmark';}); var r=el('l13cap-res'); r.textContent=''; r.className='prresult';}
+    el('l13cap-grade').onclick=function(){var ok=0;
+      Q.forEach(function(q){var v=parseFloat(el(q.id).value); var m=el(q.id+'-m'); var good=false;
+        if(!isNaN(v)){var tol=Math.abs(q.ans)<1e-9?0.02:Math.abs(q.ans)*0.01; good=Math.abs(v-q.ans)<=tol;}
+        m.textContent=good?'○':'✕'; m.className='prmark '+(good?'good':'bad'); if(good)ok++;});
+      var r=el('l13cap-res'); r.textContent=ok+' / '+Q.length+' 正解'; r.className='prresult '+(ok===Q.length?'good':'bad');};
+    el('l13cap-show').onclick=function(){el('l13cap-rev').classList.add('show');};
+    el('l13cap-reset').onclick=function(){Q.forEach(function(q){el(q.id).value='';}); clearMarks(); el('l13cap-rev').classList.remove('show');};
+    reg('sl-exam-capacitance',{});})();
+  /* HOOKS:END */
+
+  // ---- 起動 ----
+  var start=0, h=parseInt((location.hash||'').replace('#',''),10); if(h>=1&&h<=N)start=h-1;
+  go(start);
+})();
+</script>
+</body>
+</html>
