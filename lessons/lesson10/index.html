@@ -117,6 +117,20 @@
 
 <section class="slide" id="sl-agenda" data-title="この回のねらいと前提知識"><div class="inner"><span class="tag2 tag-ex">解説</span><p class="kicker">8.7 正弦波の複素数表示</p><h1 class="tt">この回のねらいと前提知識</h1><p class="desc">正弦波を「回転する複素ベクトル <i>|z|e</i><sup><i>j</i>(<i>ωt</i>+<i>θ</i>)</sup>」で表し、振幅と位相だけで扱えるようにする。</p><ul class="lead"><li>正弦波と回転する複素ベクトルの対応</li><li>実部が正弦波を表すこと</li><li>位相の意味と極形式（フェーザ）</li></ul><p class="ex">本日の新しい知識は多くない。理解の鍵は先週の複素数（極形式・オイラーの公式・複素数の計算）。不安なら複素数を十分に復習すること。</p></div></section>
 
+<section class="slide" id="sl-euler" data-title="復習：オイラーの公式"><div class="inner">
+      <span class="tag2 tag-fig">図</span>
+      <p class="kicker">前提の復習</p>
+      <h1 class="tt">復習：オイラーの公式　<i>e</i><sup>jα</sup> = cos<i>α</i> + <i>j</i> sin<i>α</i></h1>
+      <div class="grid2">
+        <div><canvas id="cv-eu" class="plane"></canvas></div>
+        <div>
+          <div class="row"><label>角度 <i>α</i> (度)</label><input type="range" id="s-eua" min="-180" max="180" step="5" value="60"><span class="val" id="v-eua">60</span></div>
+          <div class="eq" id="eq-eu"></div>
+          <p class="note"><i>e</i><sup>jα</sup> は<strong>単位円上の点</strong>。実部が cos<i>α</i>（<span class="re">赤</span>）、虚部が sin<i>α</i>（<span class="im">青</span>）。α をどう変えても<strong>大きさは常に 1</strong>──肩の <i>jα</i> は「大きさ」ではなく「角度」を表す。これが今日の話のすべての土台。</p>
+        </div>
+      </div>
+    </div></section>
+
 <section class="slide" id="sl-phase-read" data-title="交流波形の読み方（位相の進み・遅れ）"><div class="inner"><span class="tag2 tag-fig">図</span><p class="kicker">8.7 正弦波の複素数表示</p><h1 class="tt">交流波形の読み方（位相の進み・遅れ）</h1><canvas id="cv-phr" class="plot"></canvas><div class="legend"><span><span class="sw" style="background:var(--zr);"></span>cos <i>t</i>（基準）</span><span><span class="sw" style="background:var(--cos);"></span>cos(<i>t</i>+π/2)：進む</span><span><span class="sw" style="background:var(--ref);"></span>cos(<i>t</i>−π/2)：遅れる</span></div><p class="note">+π/2 は位相が π/2 進む（波が左へ）、−π/2 は遅れる（右へ）。1周期は 2π 秒、角周波数 <i>ω</i> なら 2π/<i>ω</i> 秒。</p></div></section>
 
 <section class="slide" id="sl-phase-do" data-title="位相を動かして進み・遅れを体感"><div class="inner"><span class="tag2 tag-do">操作</span><p class="kicker">確認</p><h1 class="tt">位相を動かして進み・遅れを体感</h1><div class="grid2"><div><canvas id="cv-phd" class="plot"></canvas></div><div><div class="row"><label>位相 φ (rad)</label><input type="range" id="s-phi" min="-3.14" max="3.14" step="0.05" value="0"><span class="val" id="v-phi">0.00</span></div><div class="eq" id="eq-phd"></div></div></div></div></section>
@@ -259,6 +273,51 @@
       <div class="eq big">sin <i>α</i> = cos( <i>α</i> − π/2 )</div>
       <p class="note">この講義では波を <strong>すべて cos で表す</strong>のがルールです。だから sin が出てきたら cos に直す。やり方は簡単で、<strong>位相を −90度（−π/2）ずらす</strong>だけ。グラフでも cos の山は sin の山より 90度ぶん左にあります。</p>
       <div class="legend"><span><span class="sw" style="background:var(--sin);"></span>sin <i>x</i></span><span><span class="sw" style="background:var(--cos);"></span>cos <i>x</i></span></div>
+    </div></section>
+
+<section class="slide" id="sl-pr-convert" data-title="極形式⇔直交形式の変換"><div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">8.7 正弦波の複素数表示</p>
+      <h1 class="tt">極形式 ⇔ 直交形式の変換 ── 基本の型</h1>
+      <div class="grid2">
+        <div>
+          <p class="desc"><strong>極 → 直交</strong>（オイラーの公式で展開）</p>
+          <div class="eq">|<i>z</i>| <i>e</i><sup>jθ</sup> = |<i>z</i>| cos<i>θ</i> + <i>j</i> |<i>z</i>| sin<i>θ</i><br><span class="re"><i>a</i> = |<i>z</i>| cos<i>θ</i></span>,　<span class="im"><i>b</i> = |<i>z</i>| sin<i>θ</i></span></div>
+        </div>
+        <div>
+          <p class="desc"><strong>直交 → 極</strong>（大きさと偏角を求める）</p>
+          <div class="eq">|<i>z</i>| = √(<i>a</i>² + <i>b</i>²),　<i>θ</i> = tan⁻¹(<i>b</i>/<i>a</i>)</div>
+        </div>
+      </div>
+      <p class="note">⚠ <strong>tan⁻¹ が返すのは −90°〜+90° だけ</strong>（第1・第4象限）。<i>a</i> &lt; 0（第2・第3象限）のときは <strong>±180° の補正</strong>が必要。例：−1 + <i>j</i> は第2象限の点なので θ = 135°（電卓の tan⁻¹(−1) = −45° のままにしない）。必ず複素平面に点 (<i>a</i>, <i>b</i>) を描いて象限を確かめること。</p>
+    </div></section>
+
+<section class="slide" id="sl-pr-convert-do" data-title="変換練習（採点つき）"><div class="inner">
+      <span class="tag2 tag-do">操作</span>
+      <p class="kicker">確認</p>
+      <h1 class="tt">変換練習：極形式 ⇔ 直交形式</h1>
+      <div class="grid2">
+        <div>
+          <p class="steps"><strong>練習A（極 → 直交）</strong><br><i>z</i> = 2<i>e</i><sup>j60°</sup> の実部 <i>a</i>・虚部 <i>b</i> は？（小数第2位まで）</p>
+          <div class="prfields">
+            <div class="prf"><span><i>a</i> = </span><input type="number" id="pc-qa-r" step="any" inputmode="decimal"><span class="prmark" id="pc-qa-r-m"></span></div>
+            <div class="prf"><span><i>b</i> = </span><input type="number" id="pc-qa-i" step="any" inputmode="decimal"><span class="prmark" id="pc-qa-i-m"></span></div>
+          </div>
+          <div class="prbtns"><button type="button" class="btn pr-primary" id="pc-ga">採点</button><button type="button" class="btn" id="pc-ra">答えを見る</button><button type="button" class="btn" id="pc-ta">やり直す</button></div>
+          <div class="prresult" id="pc-resa"></div>
+          <div class="reveal" id="pc-reva"><i>a</i> = 2cos60° = 2×0.5 = <strong>1.00</strong>、<i>b</i> = 2sin60° = √3 ≈ <strong>1.73</strong>。</div>
+        </div>
+        <div>
+          <p class="steps"><strong>練習B（直交 → 極）</strong><br><i>z</i> = −1 + <i>j</i> の大きさ |<i>z</i>|（小数第2位）と偏角 <i>θ</i>（度・整数）は？</p>
+          <div class="prfields">
+            <div class="prf"><span>|<i>z</i>| = </span><input type="number" id="pc-qb-m" step="any" inputmode="decimal"><span class="prmark" id="pc-qb-m-m"></span></div>
+            <div class="prf"><span><i>θ</i> = </span><input type="number" id="pc-qb-t" step="any" inputmode="decimal"><span class="prmark" id="pc-qb-t-m"></span><span>°</span></div>
+          </div>
+          <div class="prbtns"><button type="button" class="btn pr-primary" id="pc-gb">採点</button><button type="button" class="btn" id="pc-rb">答えを見る</button><button type="button" class="btn" id="pc-tb">やり直す</button></div>
+          <div class="prresult" id="pc-resb"></div>
+          <div class="reveal" id="pc-revb">|<i>z</i>| = √(1+1) = √2 ≈ <strong>1.41</strong>。点 (−1, 1) は<strong>第2象限</strong>なので <i>θ</i> = 180° − 45° = <strong>135°</strong>（tan⁻¹(−1) = −45° のままにしない）。</div>
+        </div>
+      </div>
     </div></section>
 
 <section class="slide" id="sl-ex88" data-title="例題8.8 5sin(ωt−30°)を極形式に"><div class="inner">
@@ -467,6 +526,21 @@
 
 (function(){var root=$('#sched'); if(!root)return;var SCHEDULE={year:2026, note:'スケジュールは進捗に合わせて変更する可能性があります', current:10, rows:[[1,'4/13（月）','基本素子'],[2,'4/20（月）','微分方程式の解法'],[3,'4/27（月）','固有振動'],[4,'5/11（月）','初期条件と時定数'],[5,'5/18（月）','不連続な変化'],[6,'5/25（月）','演習'],[7,'6/3（水）','中間テスト','exam'],[8,'6/8（月）','複素数'],[9,'6/15（月）','中間振り返り'],[10,'6/22（月）','正弦波の複素数表示'],[11,'6/29（月）','正弦波交流回路'],[12,'7/6（月）','ベクトル図・電力'],[13,'7/13（月）','総合演習'],[14,'7/23（木）','期末試験','exam'],[15,'7/27（月）','自己点検']]};var y=$('#sch-year'); if(y)y.textContent=SCHEDULE.year;var n=$('#sch-note'); if(n)n.textContent=SCHEDULE.note;var rows=SCHEDULE.rows, half=Math.ceil(rows.length/2);function cell(r){var c='schrow'; if(r[3]==='exam')c+=' exam'; if(r[0]===SCHEDULE.current)c+=' cur';return '<div class="'+c+'"><span class="sn">'+r[0]+'</span><span class="sd">'+r[1]+'</span><span class="st">'+r[2]+'</span></div>';}var L='',R=''; rows.forEach(function(r,i){ if(i<half)L+=cell(r); else R+=cell(r); });root.innerHTML='<div class="schcol">'+L+'</div><div class="schcol">'+R+'</div>';reg('sl-schedule',{show:function(){},redraw:function(){}});})();
 
+(function(){var cv=$('#cv-eu'); if(!cv)return; var pl=makePlane(cv,3.4,3.4);
+    var sl=$('#s-eua'), vo=$('#v-eua'), eq=$('#eq-eu');
+    function draw(){var ad=sl?parseFloat(sl.value):60; var a=ad*Math.PI/180;
+      var x=Math.cos(a), y=Math.sin(a);
+      pl.fit(); pl.clear(); pl.axes();
+      var ctx=pl.ctx, o=pl.PX(0,0);
+      ctx.beginPath(); ctx.arc(o[0],o[1],pl.s,0,Math.PI*2); ctx.strokeStyle=cssv('--ref'); ctx.lineWidth=1.5; ctx.globalAlpha=.6; ctx.stroke(); ctx.globalAlpha=1;
+      if(Math.abs(a)>0.01){ ctx.beginPath(); ctx.arc(o[0],o[1],0.45*pl.s,0,-a,a>0); ctx.strokeStyle=cssv('--thr'); ctx.lineWidth=2; ctx.stroke(); }
+      pl.vec(x,y,cssv('--act'),{proj:true,w:3.2});
+      pl.dot(x,0,cssv('--re'),5); pl.dot(0,y,cssv('--im'),5);
+      if(eq) eq.innerHTML='<i>e</i><sup>j·'+fmt(ad,0)+'°</sup> = <span class="re">'+fmt(x,2)+'</span> + <i>j</i>(<span class="im">'+fmt(y,2)+'</span>)<br>cos '+fmt(ad,0)+'° = <span class="re">'+fmt(x,2)+'</span>　　sin '+fmt(ad,0)+'° = <span class="im">'+fmt(y,2)+'</span><br>|<i>e</i><sup>jα</sup>| = 1（常に）';
+      if(vo)vo.textContent=fmt(ad,0);}
+    if(sl)sl.addEventListener('input',draw);
+    reg('sl-euler',{show:draw,redraw:draw});})();
+
 (function(){var cv=$('#cv-phr'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI; function draw(){c.fit(); var m=drawTimeAxes(c,1.15); plotFn(c,m,function(t){return Math.cos(t+Math.PI/2);},cssv('--cos'),2.4); plotFn(c,m,function(t){return Math.cos(t-Math.PI/2);},cssv('--ref'),2.4); plotFn(c,m,function(t){return Math.cos(t);},cssv('--zr'),3);} reg('sl-phase-read',{show:draw,redraw:draw});})();
 
 (function(){var cv=$('#cv-phd'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI; var phi=0; var el=$('#s-phi'),o=$('#v-phi'); function upd(){o.textContent=fmt(phi,2); var st; if(phi>0.02)st='φ>0: 位相が進む（左へ）'; else if(phi<-0.02)st='φ<0: 遅れる（右へ）'; else st='φ=0: 同相'; $('#eq-phd').innerHTML='<span class="big">cos( <i>t</i> + φ )</span><br>φ = '+fmt(phi,2)+' rad<br>'+st;} function draw(){c.fit(); var m=drawTimeAxes(c,1.15); plotFn(c,m,function(t){return Math.cos(t);},cssv('--zr'),1.8); plotFn(c,m,function(t){return Math.cos(t+phi);},cssv('--act'),3);} if(el)el.addEventListener('input',function(){phi=parseFloat(el.value); upd(); draw();}); upd(); reg('sl-phase-do',{show:draw,redraw:draw});})();
@@ -560,6 +634,36 @@
       ctx.fillStyle=cssv('--sin'); ctx.fillText('sin x', m.X(Math.PI/2+0.15), m.Y(1.05));
       ctx.fillStyle=cssv('--cos'); ctx.fillText('cos x', m.X(2*Math.PI+0.15), m.Y(1.05));}
     reg('sl-sincos',{show:draw,redraw:draw});})();
+
+(function(){var root=$('#sl-pr-convert-do'); if(!root)return;
+  function judge(inputId, ans, dp){ var inp=$('#'+inputId), mk=$('#'+inputId+'-m'); if(!inp||!mk)return null;
+    mk.className='prmark'; var raw=inp.value.trim();
+    if(raw===''){ mk.textContent=''; return null; }
+    var v=parseFloat(raw); if(isNaN(v)){ mk.textContent='✕'; mk.classList.add('bad'); return false; }
+    var ok=(roundTo(v,dp)===roundTo(ans,dp));
+    mk.textContent=ok?'○':'✕'; mk.classList.add(ok?'good':'bad'); return ok; }
+  function summary(resId, marks, fields){ var res=$('#'+resId); if(!res)return;
+    var done=marks.filter(function(m){return m!==null;}).length;
+    if(done===0){ res.className='prresult'; res.textContent='数値を入力してから採点してください。'; return; }
+    var hint=''; for(var i=0;i<fields.length;i++){ var inp=$('#'+fields[i][0]); if(inp&&inp.value.trim()!==''&&decimals(inp.value)>fields[i][2]){ hint='（指定の桁数に四捨五入して入力しよう）'; break; } }
+    var good=marks.filter(function(m){return m===true;}).length, all=marks.length;
+    if(good===all){ res.className='prresult good'; res.textContent='全問正解！ '+good+' / '+all; }
+    else { res.className='prresult bad'; res.textContent='正解 '+good+' / '+all+'　もう一度確かめよう。'+hint; } }
+  function bindReveal(btnId, revId){ var b=$('#'+btnId), r=$('#'+revId); if(b&&r) b.addEventListener('click',function(){ r.classList.toggle('show'); b.textContent=r.classList.contains('show')?'答えを隠す':'答えを見る'; }); }
+  function bindRetry(btnId, fields, resId, revId, revBtnId){ var b=$('#'+btnId); if(!b)return;
+    b.addEventListener('click',function(){
+      fields.forEach(function(f){ var inp=$('#'+f[0]); if(inp)inp.value=''; var mk=$('#'+f[0]+'-m'); if(mk){mk.textContent=''; mk.className='prmark';} });
+      var res=$('#'+resId); if(res){res.textContent=''; res.className='prresult';}
+      var rev=$('#'+revId); if(rev) rev.classList.remove('show');
+      var rb=$('#'+revBtnId); if(rb) rb.textContent='答えを見る'; }); }
+  (function(){ var F=[['pc-qa-r',1,2],['pc-qa-i',1.73,2]];
+    var g=$('#pc-ga'); if(g) g.addEventListener('click',function(){ var m=F.map(function(f){return judge(f[0],f[1],f[2]);}); summary('pc-resa',m,F); });
+    bindReveal('pc-ra','pc-reva'); bindRetry('pc-ta',F,'pc-resa','pc-reva','pc-ra'); })();
+  (function(){ var F=[['pc-qb-m',1.41,2],['pc-qb-t',135,0]];
+    var g=$('#pc-gb'); if(g) g.addEventListener('click',function(){ var m=F.map(function(f){return judge(f[0],f[1],f[2]);}); summary('pc-resb',m,F); });
+    bindReveal('pc-rb','pc-revb'); bindRetry('pc-tb',F,'pc-resb','pc-revb','pc-rb'); })();
+  reg('sl-pr-convert-do',{show:function(){},redraw:function(){}});
+})();
 
 (function(){var cv=$('#cv-ex88'); if(!cv)return; var pl=makePlane(cv,14,14);
     var th=-120*Math.PI/180, R=5; var zx=R*Math.cos(th), zy=R*Math.sin(th);

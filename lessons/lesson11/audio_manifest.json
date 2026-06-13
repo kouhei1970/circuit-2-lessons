@@ -1,0 +1,132 @@
+[
+  {
+    "id": "sl-title",
+    "file": "audio/sl-title.mp3",
+    "duration": 53.06
+  },
+  {
+    "id": "sl-ondemand",
+    "file": "audio/sl-ondemand.mp3",
+    "duration": 84.19
+  },
+  {
+    "id": "sl-schedule",
+    "file": "audio/sl-schedule.mp3",
+    "duration": 64.34
+  },
+  {
+    "id": "sl-roadmap",
+    "file": "audio/sl-roadmap.mp3",
+    "duration": 86.35
+  },
+  {
+    "id": "sl-phasor-recap",
+    "file": "audio/sl-phasor-recap.mp3",
+    "duration": 82.34
+  },
+  {
+    "id": "sl-phasor-play",
+    "file": "audio/sl-phasor-play.mp3",
+    "duration": 52.18
+  },
+  {
+    "id": "sl-vi-phasor",
+    "file": "audio/sl-vi-phasor.mp3",
+    "duration": 78.6
+  },
+  {
+    "id": "sl-deriv-rule",
+    "file": "audio/sl-deriv-rule.mp3",
+    "duration": 83.45
+  },
+  {
+    "id": "sl-rlc-relations",
+    "file": "audio/sl-rlc-relations.mp3",
+    "duration": 92.64
+  },
+  {
+    "id": "sl-jw-deriv-play",
+    "file": "audio/sl-jw-deriv-play.mp3",
+    "duration": 56.02
+  },
+  {
+    "id": "sl-rl-solve",
+    "file": "audio/sl-rl-solve.mp3",
+    "duration": 80.38
+  },
+  {
+    "id": "sl-polar-current",
+    "file": "audio/sl-polar-current.mp3",
+    "duration": 74.66
+  },
+  {
+    "id": "sl-rl-phasor-play",
+    "file": "audio/sl-rl-phasor-play.mp3",
+    "duration": 48.62
+  },
+  {
+    "id": "sl-impedance-def",
+    "file": "audio/sl-impedance-def.mp3",
+    "duration": 87.5
+  },
+  {
+    "id": "sl-reactance",
+    "file": "audio/sl-reactance.mp3",
+    "duration": 74.4
+  },
+  {
+    "id": "sl-reactance-freq-play",
+    "file": "audio/sl-reactance-freq-play.mp3",
+    "duration": 60.53
+  },
+  {
+    "id": "sl-inductive-z",
+    "file": "audio/sl-inductive-z.mp3",
+    "duration": 79.99
+  },
+  {
+    "id": "sl-capacitive-z",
+    "file": "audio/sl-capacitive-z.mp3",
+    "duration": 79.37
+  },
+  {
+    "id": "sl-rl-rc-phasor-play",
+    "file": "audio/sl-rl-rc-phasor-play.mp3",
+    "duration": 53.78
+  },
+  {
+    "id": "sl-pure-L-phase",
+    "file": "audio/sl-pure-L-phase.mp3",
+    "duration": 64.8
+  },
+  {
+    "id": "sl-pure-C-phase",
+    "file": "audio/sl-pure-C-phase.mp3",
+    "duration": 56.95
+  },
+  {
+    "id": "sl-lc-wave-play",
+    "file": "audio/sl-lc-wave-play.mp3",
+    "duration": 63.5
+  },
+  {
+    "id": "sl-z-combine",
+    "file": "audio/sl-z-combine.mp3",
+    "duration": 76.42
+  },
+  {
+    "id": "sl-practice-z",
+    "file": "audio/sl-practice-z.mp3",
+    "duration": 78.53
+  },
+  {
+    "id": "sl-practice-rl",
+    "file": "audio/sl-practice-rl.mp3",
+    "duration": 68.83
+  },
+  {
+    "id": "sl-summary",
+    "file": "audio/sl-summary.mp3",
+    "duration": 98.64
+  }
+]

@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>正弦波交流回路</title>
+<!-- interactive-lecture deck template — assemble.py が SLIDES と HOOKS の差し込み口に中身を挿入する。
+     外部依存ゼロ・単一HTML。詳細は reference/framework.md。 -->
+<style>
+  :root{
+    --bg:#faf9f5; --surface:#ffffff; --surface2:#f1efe8; --panel:#ece9e0;
+    --ink:#1f1e1c; --mut:#6b6a64; --grd:rgba(0,0,0,0.10); --line:rgba(0,0,0,0.14);
+    --ref:#378ADD; --act:#D85A30; --thr:#639922;
+    --sin:#7E57C2; --cos:#2E9E6B; --z1:#3FA34D; --z2:#D85A30; --zr:#7E57C2; --ax:#46443e;
+    --re:#C0392B; --im:#2E6FB0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1a1915; --surface:#23221d; --surface2:#2b2a24; --panel:#201f1a;
+      --ink:#ecebe4; --mut:#a3a299; --grd:rgba(255,255,255,0.12); --line:rgba(255,255,255,0.16);
+      --ref:#85B7EB; --act:#F0997B; --thr:#97C459;
+      --sin:#B39DDB; --cos:#7BD0A3; --z1:#7BD0A3; --z2:#F0997B; --zr:#B39DDB; --ax:#c9c7bd;
+      --re:#F08A7A; --im:#7FB2E8;
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%; overflow:hidden;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Yu Gothic UI",sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;}
+  i{font-family:Georgia,"Times New Roman",serif;}
+  .deck{position:fixed; inset:0; bottom:52px;}
+  .slide{position:absolute; inset:0; display:flex; flex-direction:column; justify-content:safe center;
+    overflow-y:auto; padding:2vh clamp(16px,4vw,70px); opacity:0; visibility:hidden; transition:opacity .2s;}
+  .slide.active{opacity:1; visibility:visible;}
+  /* master scale + 型スケール（フォント共通ルール）。全体拡縮は .inner、相対比は --fs-* を変更 */
+  .inner{ font-size:clamp(16px, 2.05vh, 32px); width:100%; max-width:62em; margin:0 auto; line-height:1.6;}
+  :root{
+    --fs-display:2.4em; --fs-h1:1.5em; --fs-lead:1.22em; --fs-body:1.32em; --fs-eq:1.38em; --fs-eq-lg:1.7em;
+    --fs-note:1.13em; --fs-table:1.15em; --fs-ui:.85em; --fs-label:.68em; --fs-tag:.6em; --fs-micro:.72em;
+  }
+  .tag2{display:inline-block; font-size:var(--fs-tag); font-weight:700; letter-spacing:.04em; padding:.15em .6em; border-radius:999px; margin:0 .3em .5em 0;}
+  .tag-ex{color:var(--thr); border:1px solid var(--thr);} .tag-do{color:var(--act); border:1px solid var(--act);} .tag-fig{color:var(--ref); border:1px solid var(--ref);}
+  .kicker{font-size:var(--fs-label); letter-spacing:.06em; color:var(--act); font-weight:700; margin:0 0 .25em;}
+  h1.tt{font-size:var(--fs-h1); font-weight:700; margin:0 0 .15em; line-height:1.2;}
+  .desc{font-size:var(--fs-lead); color:var(--mut); margin:.35em 0 .8em;}
+  canvas{width:100%; display:block; background:var(--surface); border:1px solid var(--line); border-radius:12px;}
+  .plot{height:clamp(150px,33vh,330px);} .plane{height:clamp(180px,42vh,400px);} .figc{height:clamp(150px,32vh,300px);}
+  .titlewave{height:clamp(96px,16vh,180px)!important;} .confirm .plane{height:clamp(150px,30vh,290px);}
+  .row{display:flex; align-items:center; gap:.7em; margin:.5em 0;}
+  .row label{font-size:var(--fs-ui); color:var(--mut); width:7.4em; flex:none;}
+  .row .val{font-size:var(--fs-ui); font-weight:700; min-width:3.6em; text-align:right; font-variant-numeric:tabular-nums;}
+  input[type=range]{flex:1; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px; background:var(--line); outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:1.1em; height:1.1em; border-radius:50%; background:var(--act); cursor:pointer; border:2px solid var(--surface);}
+  input[type=range]::-moz-range-thumb{width:1.1em; height:1.1em; border-radius:50%; background:var(--act); cursor:pointer; border:2px solid var(--surface);}
+  .grid2{display:grid; grid-template-columns:1fr; gap:1em;} @media(min-width:760px){ .grid2{grid-template-columns:1.05fr .95fr;} }
+  .twocol{display:grid; grid-template-columns:1fr; gap:.9em; align-items:center;} @media(min-width:720px){ .twocol{grid-template-columns:.9fr 1.1fr;} }
+  .eq{background:var(--surface2); border-radius:10px; padding:.6em .8em; font-size:var(--fs-eq); margin:.55em 0; line-height:1.85;}
+  .eq.big{font-size:var(--fs-eq-lg);}
+  .steps{font-size:var(--fs-body); line-height:1.95; margin:.4em 0;} .steps .lead2{color:var(--mut); font-size:.85em;}
+  .ex{font-size:var(--fs-body); color:var(--mut); background:var(--surface2); border-left:3px solid var(--act); border-radius:0 8px 8px 0; padding:.5em .75em; margin:.55em 0;}
+  .note{font-size:var(--fs-note); color:var(--mut); margin-top:.7em; line-height:1.65;}
+  .re{color:var(--re); font-weight:700;} .im{color:var(--im); font-weight:700;}
+  .deftbl{width:100%; border-collapse:collapse; font-size:var(--fs-table); margin:.5em 0;}
+  .deftbl th,.deftbl td{border:1px solid var(--line); padding:.4em .65em; text-align:left;} .deftbl th{background:var(--surface2); font-weight:700; white-space:nowrap;}
+  .figbox{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:.8em; text-align:center;}
+  .figcap{font-size:var(--fs-micro); color:var(--mut); margin-top:.4em;}
+  .fig{display:block; width:100%; max-width:20em; height:auto; margin:0 auto;}
+  /* スケジュール表（表紙の次に置く sl-schedule 用。SCHEDULE データを JS で描画） */
+  .schnote{color:var(--act); font-size:var(--fs-note); margin:.3em 0 .7em;}
+  .sched{display:grid; grid-template-columns:1fr; gap:.3em 2.6em; max-width:56em; margin:.3em auto 0;}
+  @media(min-width:680px){ .sched{grid-template-columns:1fr 1fr;} }
+  .schcol{display:flex; flex-direction:column;}
+  .schrow{display:grid; grid-template-columns:2em 7.2em 1fr; gap:.5em; align-items:baseline; font-size:var(--fs-table); padding:.32em .5em; border-radius:6px;}
+  .schrow .sn{color:var(--mut); text-align:right;} .schrow .sd{font-variant-numeric:tabular-nums; color:var(--mut);}
+  .schrow.cur{background:var(--surface2); font-weight:700; box-shadow:inset 0 0 0 1.5px var(--act);}
+  .schrow.exam{color:var(--act); font-weight:600;}
+  .fig .w{fill:none; stroke:var(--ink); stroke-width:2; stroke-linecap:round; stroke-linejoin:round;}
+  .fig .cur{fill:none; stroke:var(--ref); stroke-width:2.4;} .fig .curf{fill:var(--ref); stroke:none;}
+  .fig text{fill:var(--ink); font-family:Georgia,serif; font-style:italic; font-size:15px;}
+  .seg{display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; margin:.4em 0;}
+  .seg button{border:none; background:transparent; color:var(--mut); font-size:var(--fs-ui); padding:.45em .9em; cursor:pointer;} .seg button.on{background:var(--act); color:#fff;}
+  .legend{display:flex; gap:1em; flex-wrap:wrap; font-size:var(--fs-ui); color:var(--mut); margin:.5em 0 0;}
+  .sw{display:inline-block; width:.8em; height:.8em; border-radius:3px; vertical-align:-1px; margin-right:.3em;}
+  .btn{border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:9px; padding:.5em .9em; font-size:var(--fs-ui); cursor:pointer;} .btn:hover{background:var(--surface2);}
+  .reveal{margin-top:.7em; padding:.7em .9em; border-radius:10px; background:var(--surface2); font-size:var(--fs-body); display:none; line-height:1.85;} .reveal.show{display:block;}
+  ul.lead{font-size:var(--fs-body); padding-left:1.2em; margin:.3em 0;} ul.lead li{margin:.4em 0;}
+  .hero{justify-content:center;}
+  .back{display:inline-block; font-size:var(--fs-micro); color:var(--mut); text-decoration:none; margin-bottom:.6em;} .back:hover{color:var(--ink);}
+  .confirm{margin-top:.7em; padding-top:.6em; border-top:1px dashed var(--line);} .confirm .lab{font-size:var(--fs-micro); font-weight:700; color:var(--act); letter-spacing:.04em;}
+  /* 採点つき練習 */
+  .prfields{display:flex; flex-direction:column; gap:.5em; margin:.7em 0;}
+  .prf{display:flex; align-items:center; gap:.6em; font-size:var(--fs-note);} .prf>span:first-child{min-width:9.5em; color:var(--mut);}
+  .prf input{width:8.5em; height:2.1em; font-size:1em; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); padding:0 .55em;} .prf input:focus{outline:none; border-color:var(--act);}
+  .prmark{font-weight:700; font-size:1.3em; min-width:1em;} .prmark.good{color:var(--thr);} .prmark.bad{color:var(--act);}
+  .prbtns{display:flex; gap:.5em; flex-wrap:wrap; margin:.8em 0 .3em;}
+  .pr-primary{background:var(--act); color:#fff; border-color:var(--act); font-weight:700;}
+  .prresult{font-weight:700; font-size:var(--fs-note); min-height:1.5em; margin:.3em 0;} .prresult.good{color:var(--thr);} .prresult.bad{color:var(--act);}
+  /* nav / 解説ボタン */
+  .nav{position:fixed; left:0; right:0; bottom:0; height:52px; background:var(--surface); border-top:1px solid var(--line); display:flex; align-items:center; gap:10px; padding:0 12px; z-index:20;}
+  .nav button.arw{width:38px; height:34px; border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:8px; cursor:pointer; font-size:15px;} .nav button.arw:hover{background:var(--surface2);} .nav button.arw:disabled{opacity:.35; cursor:default;}
+  .nav select{flex:1; min-width:0; height:34px; border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:8px; padding:0 10px; font-size:13px;}
+  .nav .count{font-size:12.5px; color:var(--mut); font-variant-numeric:tabular-nums; white-space:nowrap;}
+  .prog{position:fixed; left:0; bottom:52px; height:3px; background:var(--act); width:0; z-index:21; transition:width .2s;}
+  .narrbtn{position:fixed; top:max(10px,1.4vh); right:max(12px,1.2vw); z-index:25; display:inline-flex; align-items:center; gap:.4em;
+    border:1px solid var(--act); background:var(--surface); color:var(--act); border-radius:999px; padding:.4em .9em; font-size:clamp(13px,1.7vh,22px); font-weight:700; cursor:pointer; box-shadow:0 1px 5px rgba(0,0,0,.10);} .narrbtn:hover{background:var(--surface2);} .narrbtn.playing{background:var(--act); color:#fff;}
+</style>
+</head>
+<body>
+
+<div class="prog" id="prog"></div>
+<div class="deck" id="deck">
+  <!-- SLIDES:START -->
+<section class="slide" id="sl-title" data-title="正弦波交流回路">
+  <div class="inner hero">
+    <p class="kicker">電気回路Ⅱ 第11回（6月29日・オンデマンド）</p>
+    <h1 class="tt" style="font-size:var(--fs-display);">正弦波交流回路</h1>
+    <p class="desc" style="font-size:.95em;">R・L・C それぞれの電圧と電流の関係を複素数で表し、交流回路を「インピーダンス」で解く</p>
+    <canvas id="cv-title" class="titlewave"></canvas>
+    <p class="note">→／Space で進みます。右上の <strong>🔊 解説</strong> で各ページの音声解説、右下の ⛶ で全画面。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-ondemand" data-title="オンデマンド回の受け方">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">はじめに</p>
+    <h1 class="tt">オンデマンド回の受け方</h1>
+    <p class="desc">6月29日（月）は教室での講義を行いません。<strong>この教材が授業そのもの</strong>です。</p>
+    <ul class="lead">
+      <li>スライドを<strong>順番に</strong>進めてください。右上の <strong>🔊 解説</strong> ボタンで、そのスライドの音声解説が流れます。必ず聞きながら進めてください。</li>
+      <li>左上に「<span style="color:var(--act); font-weight:700;">操作</span>」バッジの付いたスライドでは、スライダーや矢印を<strong>自分の手で動かして</strong>、式の意味を確かめてください。</li>
+      <li>質問はいつもどおり担当教員へ（メール等で受け付けます）。</li>
+    </ul>
+    <div class="eq" style="border:2px solid var(--act);">
+      <strong style="color:var(--act);">出席の扱い：</strong>当日中（<strong>6月29日中</strong>）に LMS のクイズを提出すると<strong style="color:var(--act);">出席扱い</strong>になります。<strong>未提出は欠席扱い</strong>です。教材を見終えたら、忘れないうちに提出してください。
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-schedule" data-title="全体スケジュールと今日の位置づけ">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">位置づけ</p>
+    <h1 class="tt">全体スケジュールと今日の位置づけ</h1>
+    <p class="schnote">スケジュールは進捗に合わせて変更する可能性があります</p>
+    <div class="sched" id="sched"></div>
+    <p class="note">前回（第10回）で学んだ「正弦波の複素数表現」を、今日はいよいよ回路を解く道具として使います。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-roadmap" data-title="今日の流れ">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">見通し</p>
+    <h1 class="tt">今日の流れ</h1>
+    <p class="desc">教科書 9 章（9.1 正弦波解の意味／9.2 正弦波交流回路の計算／9.3 インピーダンス）に対応します。</p>
+    <ol class="steps" style="line-height:2.0; padding-left:1.5em; margin:.3em 0;">
+      <li><strong>正弦波 ↔ 複素数の対応</strong> — 前回の復習。cos の波を <i>e</i><sup>&thinsp;j(<i>ωt</i>+<i>θ</i>)</sup> の実部とみなす</li>
+      <li><strong>微分の置き換え</strong> — d/d<i>t</i> が「j<i>ω</i> を掛ける」だけになる</li>
+      <li><strong>R・L・C の複素式</strong> — 3 つの素子の電圧・電流関係を複素数で書く</li>
+      <li><strong>回路を解く</strong> — 微分方程式を立てずに、RL 回路などを代数計算で解く</li>
+      <li><strong>インピーダンス</strong> — 交流版の「抵抗」 <i>Z</i> = <i>V̇</i>／<i>İ</i> を定義する</li>
+      <li><strong>位相差</strong> — 電圧と電流の波のずれを <i>Z</i> の偏角から読み取る</li>
+    </ol>
+    <p class="note">土台は、複素数の計算（第8回）と正弦波の複素数表現（第10回）です。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-phasor-recap" data-title="正弦波を複素数で表す（復習）">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">正弦波交流回路</p>
+    <h1 class="tt">正弦波を複素数で表す（復習）</h1>
+    <p class="desc">正弦波は複素指数関数に対応させて扱える。これが前回までの土台。</p>
+    <div class="eq big" style="text-align:center;">|<i>z</i>| cos(<i>ωt</i> + <i>θ</i>) &nbsp;⟷&nbsp; |<i>z</i>| e<sup> j(<i>ωt</i>+<i>θ</i>)</sup></div>
+    <p class="steps" style="text-align:center;">↓ 周波数がひとつだけの交流回路では、全員に共通の回転 e<sup> j<i>ωt</i></sup> を省略できる</p>
+    <div class="eq big" style="text-align:center;">|<i>z</i>| cos <i>θ</i> &nbsp;⟷&nbsp; |<i>z</i>| e<sup> j<i>θ</i></sup></div>
+    <p class="note">大きさ |<i>z</i>| と位相 <i>θ</i> だけを持つ複素数 |<i>z</i>|e<sup> j<i>θ</i></sup> を<strong>フェーザ</strong>（正弦波を 1 本の複素数の矢印で表したもの）と呼ぶ。周波数の違う波が混ざる回路では、この省略は使えない点に注意。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-phasor-play" data-title="振幅と位相を動かす">
+  <div class="inner">
+    <span class="tag2 tag-do">操作</span>
+    <p class="kicker">確認</p>
+    <h1 class="tt">振幅と位相を動かす</h1>
+    <div class="confirm" style="margin-top:.2em; border-top:none; padding-top:0;">
+      <span class="lab">さわって確認 — フェーザの長さ＝振幅、角度＝位相</span>
+      <div class="grid2" style="margin-top:.4em;">
+        <div>
+          <canvas id="cv-ppl" class="plane"></canvas>
+          <div class="legend">
+            <span><span class="sw" style="background:var(--z2);"></span>フェーザ <i>A</i> e<sup> j<i>θ</i></sup></span>
+            <span><span class="sw" style="background:var(--mut);"></span>基準（<i>A</i>=1, <i>θ</i>=0）</span>
+          </div>
+        </div>
+        <div>
+          <canvas id="cv-ppw" class="plot"></canvas>
+          <div class="row"><label>振幅 <i>A</i></label><input type="range" id="s-pp-a" min="0.2" max="2" step="0.1" value="1"><span class="val" id="v-pp-a">1.0</span></div>
+          <div class="row"><label>位相 <i>θ</i> [°]</label><input type="range" id="s-pp-th" min="-180" max="180" step="5" value="0"><span class="val" id="v-pp-th">0°</span></div>
+          <div class="eq" id="eq-pp"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-vi-phasor" data-title="交流電圧・電流のフェーザ表記">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">正弦波交流回路</p>
+    <h1 class="tt">交流電圧・電流のフェーザ表記</h1>
+    <p class="desc">時間の波形と複素数（フェーザ）は 1 対 1 に対応する。</p>
+    <div class="eq big" style="text-align:center;"><i>v</i>(<i>t</i>) = <i>V</i> cos(<i>ωt</i> + <i>θ</i>) &nbsp;⟷&nbsp; <i>V̇</i> = <i>V</i> e<sup> j<i>θ</i></sup></div>
+    <div class="eq big" style="text-align:center;"><i>i</i>(<i>t</i>) = <i>I</i> cos(<i>ωt</i> + <i>φ</i>) &nbsp;⟷&nbsp; <i>İ</i> = <i>I</i> e<sup> j<i>φ</i></sup></div>
+    <table class="deftbl">
+      <tr><th>記号</th><th>意味</th></tr>
+      <tr><td><i>v</i>(<i>t</i>), <i>i</i>(<i>t</i>)（小文字）</td><td>瞬時値。時間とともに変化する実数の波形</td></tr>
+      <tr><td><i>V</i>, <i>I</i>（大文字）</td><td>振幅。波の大きさを表す実数</td></tr>
+      <tr><td><i>V̇</i>, <i>İ</i>（大文字＋上ドット）</td><td>フェーザ（複素数）。振幅と位相をまとめて持つ</td></tr>
+    </table>
+    <p class="note">上ドットが付いたら複素数、というのがこの先ずっと使う記法ルール。波形に戻すには e<sup> j<i>ωt</i></sup> を掛けて実部を取ればよい。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-deriv-rule" data-title="微分は jω 倍に置き換わる">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">複素交流の計算規則</p>
+    <h1 class="tt">微分は jω 倍に置き換わる</h1>
+    <p class="desc">電圧・電流をフェーザ（大きさと位相をひとまとめにした複素数）で表すと、時間微分 d/dt はただの「jω を掛ける」操作になる。</p>
+    <div class="eq"><i>v</i>(<i>t</i>) = <i>V̇</i>e<sup>jω<i>t</i></sup> を時間 <i>t</i> で微分 → d<i>v</i>/d<i>t</i> = jω・<i>V̇</i>e<sup>jω<i>t</i></sup><br><span style="color:var(--mut); font-size:.85em;">指数関数は微分しても形が変わらない。肩の係数 jω が前に出るだけ</span></div>
+    <div class="eq big" style="text-align:center;">d<i>v</i>(<i>t</i>)/d<i>t</i> ⟶ <strong style="color:var(--act);">jω<i>V̇</i></strong>　　　d<i>i</i>(<i>t</i>)/d<i>t</i> ⟶ <strong style="color:var(--act);">jω<i>İ</i></strong></div>
+    <ul class="lead">
+      <li><i>V̇</i>・<i>İ</i> は時間 <i>t</i> を含まない複素数。だから微分では「jω 倍」しか起きない</li>
+      <li>回路方程式から微分が消え、微分方程式が代数方程式（足し算・掛け算だけの式）に変わる</li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide" id="sl-rlc-relations" data-title="R・L・C の複素関係式">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+    <p class="kicker">基本受動素子で練習</p>
+    <h1 class="tt">R・L・C の複素関係式</h1>
+    <p class="desc">時間の式の d/dt を jω に置き換えるだけ。3素子とも同じ形に揃う。</p>
+    <div style="display:grid; grid-template-columns:9.5em 1fr; gap:.45em .9em; align-items:center; margin:.4em 0;">
+      <div class="figbox" style="padding:.3em .5em;">
+        <svg class="fig" viewBox="0 0 200 64" role="img" aria-label="抵抗R">
+          <path class="w" d="M10 32 H70 M130 32 H190"/>
+          <rect class="w" x="70" y="20" width="60" height="24"/>
+          <line class="cur" x1="22" y1="32" x2="46" y2="32"/><polygon class="curf" points="46,27 46,37 55,32"/>
+          <text x="26" y="20">İ</text><text x="94" y="60">R</text>
+        </svg>
+      </div>
+      <div class="eq" style="margin:0;"><i>v</i> = <i>Ri</i>　⟶　<strong style="color:var(--act);"><i>V̇</i> = <i>Rİ</i></strong></div>
+      <div class="figbox" style="padding:.3em .5em;">
+        <svg class="fig" viewBox="0 0 200 64" role="img" aria-label="コイルL">
+          <path class="w" d="M10 32 H55 M145 32 H190"/>
+          <path class="w" d="M55 32 q11.25 -24 22.5 0 q11.25 -24 22.5 0 q11.25 -24 22.5 0 q11.25 -24 22.5 0"/>
+          <line class="cur" x1="14" y1="32" x2="34" y2="32"/><polygon class="curf" points="34,27 34,37 43,32"/>
+          <text x="18" y="20">İ</text><text x="94" y="60">L</text>
+        </svg>
+      </div>
+      <div class="eq" style="margin:0;"><i>v</i> = <i>L</i>(d<i>i</i>/d<i>t</i>)　⟶　<strong style="color:var(--act);"><i>V̇</i> = jω<i>Lİ</i></strong></div>
+      <div class="figbox" style="padding:.3em .5em;">
+        <svg class="fig" viewBox="0 0 200 64" role="img" aria-label="コンデンサC">
+          <path class="w" d="M10 32 H92 M108 32 H190"/>
+          <line class="w" x1="92" y1="12" x2="92" y2="52"/>
+          <line class="w" x1="108" y1="12" x2="108" y2="52"/>
+          <line class="cur" x1="22" y1="32" x2="46" y2="32"/><polygon class="curf" points="46,27 46,37 55,32"/>
+          <text x="26" y="20">İ</text><text x="124" y="60">C</text>
+        </svg>
+      </div>
+      <div class="eq" style="margin:0;"><i>i</i> = <i>C</i>(d<i>v</i>/d<i>t</i>)　⟶　<strong style="color:var(--act);"><i>İ</i> = jω<i>CV̇</i></strong>　すなわち　<strong style="color:var(--act);"><i>V̇</i> = <i>İ</i>/(jω<i>C</i>)</strong></div>
+    </div>
+    <p class="note">3つとも「<i>V̇</i> = ○ × <i>İ</i>」というオームの法則と同じ形。○は R／jωL／1/(jωC)。この○が次回学ぶインピーダンス（交流での「抵抗」にあたる量）の正体。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-jw-deriv-play" data-title="jω倍は90°回転と確認">
+  <div class="inner">
+    <span class="tag2 tag-do">操作</span>
+    <p class="kicker">確認</p>
+    <h1 class="tt">jω 倍＝大きさ ω 倍・向き +90°</h1>
+    <p class="desc">緑の矢印 İ（点線の輪がつまみ）をドラッグ。微分結果 jωİ（赤）がどう連動するか見てみよう。</p>
+    <div class="grid2">
+      <div><canvas id="cv-jwplay" class="plane"></canvas></div>
+      <div>
+        <div class="row"><label>角周波数 ω</label><input type="range" id="s-om-jw" min="0.5" max="2" step="0.1" value="1"><span class="val" id="v-om-jw">1.0</span></div>
+        <div class="eq" id="eq-jw"></div>
+        <p class="note">İ をどこへ動かしても jωİ は必ず反時計回りに 90° 先を向き、ω を変えると長さだけが変わる。「微分＝位相を 90° 進めて大きさを ω 倍」。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-rl-solve" data-title="RL直列回路を複素式で解く">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">実際の回路で使ってみる</p>
+    <h1 class="tt">RL直列回路を複素式で解く</h1>
+    <div class="twocol">
+      <div class="figbox">
+        <svg class="fig" viewBox="0 0 320 215" role="img" aria-label="RL直列回路：交流電源にコイルLと抵抗Rを直列接続">
+          <path class="w" d="M60 40 H113 M173 40 H260 M60 40 V97 M60 133 V185 M60 185 H260 M260 185 V130 M260 84 V40"/>
+          <circle class="w" cx="60" cy="115" r="18"/>
+          <path class="w" d="M51 115 q4.5 -7 9 0 q4.5 7 9 0"/>
+          <path class="w" d="M113 40 q7.5 -17 15 0 q7.5 -17 15 0 q7.5 -17 15 0 q7.5 -17 15 0"/>
+          <rect class="w" x="252" y="84" width="16" height="46"/>
+          <path class="cur" d="M132 134 A34 34 0 1 1 188 134" fill="none"/>
+          <polygon class="curf" points="183,128 194,130 186,139"/>
+          <text x="30" y="94">+</text><text x="32" y="148">−</text>
+          <text x="4" y="120">v(t)</text>
+          <text x="138" y="18">L</text>
+          <text x="278" y="112">R</text>
+          <text x="146" y="118" style="fill:var(--ref);">i(t)</text>
+        </svg>
+        <div class="figcap">RL直列回路：電源 <i>v</i>(<i>t</i>) = <i>V</i> cos(<i>ωt</i> + <i>θ</i>) → フェーザ V&#775; = <i>V</i>e<sup>jθ</sup></div>
+      </div>
+      <div>
+        <p class="steps">
+          <span class="lead2">回路方程式（時間の世界の微分方程式）</span><br>
+          <i>L</i> d<i>i</i>/d<i>t</i> + <i>R i</i> = <i>v</i>(<i>t</i>)<br>
+          <span class="lead2">複素数式変換：d/d<i>t</i> → ×j<i>ω</i> に化ける</span><br>
+          j<i>ωL</i> I&#775; + <i>R</i> I&#775; = V&#775;<br>
+          <span class="lead2">I&#775; でくくる → ただの一次式</span><br>
+          (<i>R</i> + j<i>ωL</i>) I&#775; = V&#775;
+        </p>
+        <div class="eq big" style="text-align:center;">I&#775; = V&#775; / (<i>R</i> + j<i>ωL</i>)</div>
+        <p class="note">微分方程式が、掛け算・割り算だけの代数計算（文字式の四則演算）に変わった。ここが今回の山場。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-polar-current" data-title="電流を極形式で読む">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">複素交流電流</p>
+    <h1 class="tt">電流を極形式で読む</h1>
+    <div class="grid2">
+      <div>
+        <canvas id="cv-polar" class="plane"></canvas>
+        <div class="figcap">分母 <i>R</i> + j<i>ωL</i> は複素平面の1本の矢印。大きさ <i>B</i> と偏角 <i>φ</i>（実軸から測った角度）で <i>B</i>e<sup>jφ</sup> と書ける＝極形式</div>
+      </div>
+      <div>
+        <p class="steps">
+          I&#775; = <i>V</i>e<sup>jθ</sup> / (<i>R</i> + j<i>ωL</i>)<br>
+          <span class="lead2">分母を極形式 <i>B</i>e<sup>jφ</sup> に直すと、割り算は「大きさは割る・角度は引く」</span><br>
+          I&#775; = <i>V</i>e<sup>jθ</sup> / <i>B</i>e<sup>jφ</sup> = (<i>V</i>/<i>B</i>) e<sup>j(θ−φ)</sup>
+        </p>
+        <div class="eq" style="text-align:center;"><i>i</i>(<i>t</i>) = (<i>V</i>/<i>B</i>) cos(<i>ωt</i> + <i>θ</i> − <i>φ</i>)</div>
+        <p class="note">振幅 <i>V</i>/<i>B</i>・位相 <i>θ</i> − <i>φ</i> の正弦波に戻せた。つまり回路は解けたことになる。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-rl-phasor-play" data-title="R+jωL のフェーザを合成する">
+  <div class="inner">
+    <span class="tag2 tag-do">操作</span>
+    <p class="kicker">確認</p>
+    <h1 class="tt"><i>R</i> + j<i>ωL</i> のフェーザを合成する</h1>
+    <p class="desc">スライダーで <i>R</i> と <i>ωL</i> を変えて、合成ベクトルの大きさ <i>B</i> と偏角 <i>φ</i> がどう動くか確かめよう。</p>
+    <div class="grid2">
+      <div><canvas id="cv-zplay" class="plane"></canvas></div>
+      <div>
+        <div class="row"><label>抵抗 <i>R</i></label><input type="range" id="s-zr" min="0.5" max="4" step="0.1" value="3"><span class="val" id="v-zr">3.0</span></div>
+        <div class="row"><label>リアクタンス <i>ωL</i></label><input type="range" id="s-zx" min="0.5" max="4" step="0.1" value="2"><span class="val" id="v-zx">2.0</span></div>
+        <div class="eq" id="eq-zplay"></div>
+        <p class="note">実軸に <i>R</i>、虚軸方向に <i>ωL</i> を積むと直角三角形ができる。斜辺が <i>B</i> = √(<i>R</i>² + (<i>ωL</i>)²)、傾きが <i>φ</i> = atan(<i>ωL</i>/<i>R</i>)。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-impedance-def" data-title="インピーダンスとは">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">正弦波交流回路</p>
+    <h1 class="tt">インピーダンスとは</h1>
+    <p class="desc">交流回路における「電気の流れにくさ」。記号は <i>Z</i>、単位は Ω（直流の抵抗と同じ）。</p>
+    <div class="eq big" style="text-align:center;"><i>Ż</i> = <i>V̇</i> / <i>İ</i>　（電圧フェーザ ÷ 電流フェーザ）</div>
+    <p class="steps">直流の抵抗とちがって、インピーダンスは<strong>複素数</strong>で表す。</p>
+    <div class="eq big" style="text-align:center;"><span style="color:var(--re);"><i>Z</i></span> = <span style="color:var(--thr);"><i>R</i></span> + <i>j</i><span style="color:var(--im);"><i>X</i></span></div>
+    <table class="deftbl">
+      <tr><th>記号</th><th>名前</th><th>意味</th><th>単位</th></tr>
+      <tr><td style="color:var(--re); font-weight:700;"><i>Z</i></td><td>インピーダンス</td><td>交流回路全体の流れにくさ</td><td>Ω</td></tr>
+      <tr><td style="color:var(--thr); font-weight:700;"><i>R</i></td><td>レジスタンス（抵抗）</td><td>実部。これまでの抵抗と同じ</td><td>Ω</td></tr>
+      <tr><td style="color:var(--im); font-weight:700;"><i>X</i></td><td>リアクタンス</td><td>虚部。コイル・コンデンサによる流れにくさ</td><td>Ω</td></tr>
+    </table>
+    <p class="note">リアクタンス＝コイルやコンデンサがつくる「流れにくさ」。抵抗との違いは、電圧と電流の位相をずらす働きを持つこと。だから虚部 <i>jX</i> として現れる。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-reactance" data-title="誘導性・容量性リアクタンス">
+  <div class="inner">
+    <span class="tag2 tag-fig">図</span><span class="tag2 tag-ex">解説</span>
+    <p class="kicker">正弦波交流回路</p>
+    <h1 class="tt">誘導性・容量性リアクタンス</h1>
+    <p class="desc">リアクタンス <i>X</i> を生むのはコイルとコンデンサ。どちらも単位は Ω で、角周波数 ω に依存する。</p>
+    <div class="grid2">
+      <div class="figbox">
+        <svg class="fig" viewBox="0 0 220 110" role="img" aria-label="コイルの回路記号">
+          <path class="w" d="M15 65 H40 A13 13 0 0 1 66 65 A13 13 0 0 1 92 65 A13 13 0 0 1 118 65 A13 13 0 0 1 144 65 H170 H205"/>
+          <text x="86" y="36">L</text>
+          <text x="100" y="36" style="font-style:normal; font-size:11px; fill:var(--mut);">［H］</text>
+        </svg>
+        <div class="figcap">コイル：インダクタンス <i>L</i>（巻線の性質の強さ）</div>
+        <div class="eq" style="text-align:center;"><i>X</i> = <i>ωL</i>　[Ω]</div>
+        <p class="note" style="margin-top:.2em; text-align:center;"><strong>誘導性リアクタンス</strong>：ω が大きいほど大きい</p>
+      </div>
+      <div class="figbox">
+        <svg class="fig" viewBox="0 0 220 110" role="img" aria-label="コンデンサの回路記号">
+          <path class="w" d="M15 65 H95 M125 65 H205 M95 35 V95 M125 35 V95"/>
+          <text x="104" y="24">C</text>
+          <text x="118" y="24" style="font-style:normal; font-size:11px; fill:var(--mut);">［F］</text>
+        </svg>
+        <div class="figcap">コンデンサ：キャパシタンス <i>C</i>（電荷をためる能力）</div>
+        <div class="eq" style="text-align:center;"><i>X</i> = 1 / <i>ωC</i>　[Ω]</div>
+        <p class="note" style="margin-top:.2em; text-align:center;"><strong>容量性リアクタンス</strong>：ω が大きいほど小さい</p>
+      </div>
+    </div>
+    <p class="note">同じ「リアクタンス」でも、周波数に対する性質は正反対。コイルは高い周波数を通しにくく、コンデンサは高い周波数ほどよく通す。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-reactance-freq-play" data-title="周波数でリアクタンスはどう変わる">
+  <div class="inner">
+    <span class="tag2 tag-do">操作</span>
+    <p class="kicker">確認</p>
+    <h1 class="tt">周波数でリアクタンスはどう変わる</h1>
+    <p class="desc">ω のスライダーを動かして、<i>ωL</i>（右上がり）と 1/<i>ωC</i>（右下がり）の変化を見比べよう。</p>
+    <div class="grid2">
+      <div>
+        <canvas id="cv-xfreq" class="plot"></canvas>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--act);"></span><i>ωL</i>（誘導性）</span>
+          <span><span class="sw" style="background:var(--ref);"></span>1/<i>ωC</i>（容量性）</span>
+        </div>
+      </div>
+      <div>
+        <div class="row"><label>角周波数 ω</label><input type="range" id="s-om" min="20" max="1000" step="10" value="200"><span class="val"><span id="v-om">200</span> rad/s</span></div>
+        <div class="row"><label><i>L</i> [mH]</label><input type="range" id="s-lv" min="20" max="200" step="5" value="100"><span class="val"><span id="v-lv">100</span> mH</span></div>
+        <div class="row"><label><i>C</i> [µF]</label><input type="range" id="s-cv2" min="10" max="100" step="5" value="50"><span class="val"><span id="v-cv2">50</span> µF</span></div>
+        <div class="eq" id="eq-xfreq"></div>
+        <p class="note">2本の線が交わる点では <i>ωL</i> = 1/<i>ωC</i>。この特別な ω が、のちに学ぶ「共振」の鍵になる。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-inductive-z" data-title="誘導性インピーダンス（RL）">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">インピーダンスの中身</p>
+    <h1 class="tt">誘導性インピーダンス — RL直列回路</h1>
+    <div class="twocol">
+      <div class="figbox">
+        <svg class="fig" viewBox="0 0 300 195" role="img" aria-label="RL直列回路">
+          <path class="w" d="M60 35 H240 M60 160 H240 M60 35 V83 M60 117 V160 M240 35 V55 M240 91 V101 M240 143 V160"/>
+          <circle class="w" cx="60" cy="100" r="17"/>
+          <path class="w" d="M52 100 q4 -6 8 0 q4 6 8 0"/>
+          <rect class="w" x="232" y="55" width="16" height="36"/>
+          <path class="w" d="M240 101 a7 7 0 0 1 0 14 a7 7 0 0 1 0 14 a7 7 0 0 1 0 14"/>
+          <line x1="128" y1="35" x2="164" y2="35" style="stroke:var(--act);stroke-width:2.4"/>
+          <polygon points="164,30 164,40 173,35" style="fill:var(--act)"/>
+          <text x="14" y="105" style="fill:var(--ref)">V&#775;</text>
+          <text x="140" y="26" style="fill:var(--act)">I&#775;</text>
+          <text x="256" y="78">R</text>
+          <text x="256" y="128">j&#969;L</text>
+        </svg>
+        <svg class="fig" viewBox="0 0 300 155" role="img" aria-label="RL回路のベクトル図">
+          <line x1="15" y1="55" x2="280" y2="55" style="stroke:var(--ax);stroke-width:1.5"/>
+          <polygon points="280,50 280,60 289,55" style="fill:var(--ax)"/>
+          <line x1="70" y1="145" x2="70" y2="15" style="stroke:var(--ax);stroke-width:1.5"/>
+          <polygon points="65,15 75,15 70,6" style="fill:var(--ax)"/>
+          <line x1="70" y1="55" x2="215" y2="55" style="stroke:var(--ref);stroke-width:3.4"/>
+          <polygon points="215,49 215,61 226,55" style="fill:var(--ref)"/>
+          <line x1="70" y1="55" x2="186" y2="128" style="stroke:var(--act);stroke-width:3.4"/>
+          <polygon points="183.1,132.7 188.9,123.3 195.3,133.8" style="fill:var(--act)"/>
+          <path d="M112 55 A42 42 0 0 1 105.6 77.3" style="fill:none;stroke:var(--act);stroke-width:1.6"/>
+          <text x="230" y="50" style="fill:var(--ref)">V&#775;</text>
+          <text x="192" y="146" style="fill:var(--act)">I&#775;</text>
+          <text x="116" y="82" style="fill:var(--act);font-size:12px;font-style:normal">&#8722;&#952;（遅れ）</text>
+        </svg>
+        <div class="figcap">RL回路とそのベクトル図（V&#775; を基準に I&#775; は &#952; 遅れる）</div>
+      </div>
+      <div>
+        <p class="steps">電圧則で式を立て、<i>I&#775;</i> でくくる：<br>
+        <i>V&#775;</i> = <i>V&#775;</i><sub>R</sub> + <i>V&#775;</i><sub>L</sub> = <i>R</i><i>I&#775;</i> + j<i>&#969;L</i><i>I&#775;</i> = (<i>R</i> + j<i>&#969;L</i>)<i>I&#775;</i></p>
+        <div class="eq big"><i>Z</i> = <i>R</i> + j<i>&#969;L</i>　<span style="font-size:.55em;color:var(--mut);">← 虚部が＋：<strong>誘導性</strong>インピーダンス（コイルが効く回路）</span></div>
+        <div class="eq">|<i>Z</i>| = &#8730;(<i>R</i>&#178; + (<i>&#969;L</i>)&#178;)，　<i>&#952;</i> = tan<sup>&#8722;1</sup>(<i>&#969;L</i>/<i>R</i>) &gt; 0</div>
+        <p class="note"><i>I&#775;</i> = (<i>V</i>/|<i>Z</i>|)e<sup>&#8722;j&#952;</sup> となるので、電流は電圧より位相が <strong>&#952; だけ遅れる</strong>。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-capacitive-z" data-title="容量性インピーダンス（RC）">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">インピーダンスの中身</p>
+    <h1 class="tt">容量性インピーダンス — RC直列回路</h1>
+    <div class="twocol">
+      <div class="figbox">
+        <svg class="fig" viewBox="0 0 300 195" role="img" aria-label="RC直列回路">
+          <path class="w" d="M60 35 H240 M60 160 H240 M60 35 V83 M60 117 V160 M240 35 V55 M240 91 V115 M240 127 V160"/>
+          <circle class="w" cx="60" cy="100" r="17"/>
+          <path class="w" d="M52 100 q4 -6 8 0 q4 6 8 0"/>
+          <rect class="w" x="232" y="55" width="16" height="36"/>
+          <path class="w" d="M226 115 H254 M226 127 H254"/>
+          <line x1="128" y1="35" x2="164" y2="35" style="stroke:var(--act);stroke-width:2.4"/>
+          <polygon points="164,30 164,40 173,35" style="fill:var(--act)"/>
+          <text x="14" y="105" style="fill:var(--ref)">V&#775;</text>
+          <text x="140" y="26" style="fill:var(--act)">I&#775;</text>
+          <text x="256" y="78">R</text>
+          <text x="258" y="126">1/j&#969;C</text>
+        </svg>
+        <svg class="fig" viewBox="0 0 300 155" role="img" aria-label="RC回路のベクトル図">
+          <line x1="15" y1="100" x2="280" y2="100" style="stroke:var(--ax);stroke-width:1.5"/>
+          <polygon points="280,95 280,105 289,100" style="fill:var(--ax)"/>
+          <line x1="70" y1="145" x2="70" y2="15" style="stroke:var(--ax);stroke-width:1.5"/>
+          <polygon points="65,15 75,15 70,6" style="fill:var(--ax)"/>
+          <line x1="70" y1="100" x2="215" y2="100" style="stroke:var(--ref);stroke-width:3.4"/>
+          <polygon points="215,94 215,106 226,100" style="fill:var(--ref)"/>
+          <line x1="70" y1="100" x2="186" y2="27" style="stroke:var(--act);stroke-width:3.4"/>
+          <polygon points="188.9,31.7 183.1,22.3 195.3,21.2" style="fill:var(--act)"/>
+          <path d="M112 100 A42 42 0 0 0 105.6 77.7" style="fill:none;stroke:var(--act);stroke-width:1.6"/>
+          <text x="230" y="95" style="fill:var(--ref)">V&#775;</text>
+          <text x="192" y="24" style="fill:var(--act)">I&#775;</text>
+          <text x="116" y="80" style="fill:var(--act);font-size:12px;font-style:normal">+&#952;（進み）</text>
+        </svg>
+        <div class="figcap">RC回路とそのベクトル図（V&#775; を基準に I&#775; は &#952; 進む）</div>
+      </div>
+      <div>
+        <p class="steps">コンデンサ分は 1/(j<i>&#969;C</i>)。1/j = &#8722;j を使って整理する：<br>
+        <i>V&#775;</i> = <i>R</i><i>I&#775;</i> + (1/j<i>&#969;C</i>)<i>I&#775;</i> = (<i>R</i> &#8722; j·1/(<i>&#969;C</i>))<i>I&#775;</i></p>
+        <div class="eq big"><i>Z</i> = <i>R</i> &#8722; j/(<i>&#969;C</i>)　<span style="font-size:.55em;color:var(--mut);">← 虚部が−：<strong>容量性</strong>インピーダンス（コンデンサが効く回路）</span></div>
+        <div class="eq">|<i>Z</i>| = &#8730;(<i>R</i>&#178; + (1/<i>&#969;C</i>)&#178;)，　<i>&#952;</i> = &#8722;tan<sup>&#8722;1</sup>(1/(<i>&#969;CR</i>)) &lt; 0</div>
+        <p class="note">&#952; &lt; 0 なので電流は電圧より位相が <strong>|&#952;| だけ進む</strong>。RLと虚部の符号がちょうど逆 → 遅れ・進みも逆になる。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-rl-rc-phasor-play" data-title="RL・RCのフェーザ図を動かす">
+  <div class="inner">
+    <span class="tag2 tag-do">操作</span>
+    <p class="kicker">確認</p>
+    <h1 class="tt">RL・RCのフェーザ図を動かす</h1>
+    <p class="desc">モードとスライダーでインピーダンス三角形を組み替え、偏角 &#952; の符号と「電流の遅れ・進み」の対応を確かめる。</p>
+    <div class="grid2">
+      <div><canvas id="cv-zplay2" class="plane"></canvas></div>
+      <div>
+        <div class="seg"><button id="btn-zrl" class="on">RL（誘導性）</button><button id="btn-zrc">RC（容量性）</button></div>
+        <div class="row"><label><i>R</i> [&#937;]</label><input type="range" id="s-zr2" min="0.5" max="5" step="0.1" value="3"><span class="val" id="v-zr2">3.0</span></div>
+        <div class="row"><label id="lb-zx"><i>&#969;L</i> [&#937;]</label><input type="range" id="s-zx2" min="0" max="5" step="0.1" value="2"><span class="val" id="v-zx2">2.0</span></div>
+        <div class="eq" id="eq-zplay2"></div>
+        <p class="note" id="msg-zplay"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-pure-L-phase" data-title="純コイルの電流は電圧より90°遅れる">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">正弦波交流回路</p>
+    <h1 class="tt">純コイルの電流は電圧より90°遅れる</h1>
+    <div class="grid2">
+      <div>
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 320 200" style="max-width:13em;" role="img" aria-label="インダクタンス回路">
+            <path class="w" d="M70 40 H250 M70 170 H250 M70 40 V87 M70 123 V170 M250 40 V70 M250 142 V170"/>
+            <circle class="w" cx="70" cy="105" r="18"/><path class="w" d="M61 105 q4.5 -7 9 0 q4.5 7 9 0"/>
+            <path class="w" d="M250 70 a9 9 0 0 1 0 18 a9 9 0 0 1 0 18 a9 9 0 0 1 0 18 a9 9 0 0 1 0 18"/>
+            <line class="cur" x1="148" y1="40" x2="183" y2="40"/><polygon class="curf" points="181,34 181,46 192,40"/>
+            <text x="10" y="110">v(t)</text><text x="270" y="111">L</text><text x="152" y="28">i(t)</text>
+          </svg>
+          <div class="figcap">インダクタンス回路（コイルのみ）</div>
+        </div>
+        <div class="eq"><i>L</i> d<i>i</i>/d<i>t</i> = <i>v</i>(<i>t</i>)，　<i>v</i>(<i>t</i>) = <i>V</i> cos <i>ωt</i><br><span style="color:var(--mut);font-size:.85em;">↓ 複素交流に変換（d/d<i>t</i> → j<i>ω</i>）</span><br>j<i>ωL</i> <i>I&#x307;</i> = <i>V&#x307;</i></div>
+      </div>
+      <div>
+        <div class="eq big"><i>I&#x307;</i> = <i>V&#x307;</i>/(j<i>ωL</i>) = (<i>V</i>/<i>ωL</i>) <i>e</i><sup>j(<i>θ</i>−π/2)</sup></div>
+        <canvas id="cv-lwv" class="figc"></canvas>
+        <div class="legend"><span><span class="sw" style="background:var(--ref);"></span><i>v</i>(<i>t</i>) = <i>V</i> cos <i>ωt</i></span><span><span class="sw" style="background:var(--act);"></span><i>i</i>(<i>t</i>) = (<i>V</i>/<i>ωL</i>) cos(<i>ωt</i> − π/2)</span></div>
+      </div>
+    </div>
+    <p class="note">1/j = <i>e</i><sup>−jπ/2</sup> なので「j で割る」＝大きさはそのまま、位相を 90°（π/2）<strong>遅らせる</strong>こと。波形では電流の山が電圧の山より <strong>1/4 周期あと</strong>に来る。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-pure-C-phase" data-title="純コンデンサの電流は電圧より90°進む">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">正弦波交流回路</p>
+    <h1 class="tt">純コンデンサの電流は電圧より90°進む</h1>
+    <div class="grid2">
+      <div>
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 320 200" style="max-width:13em;" role="img" aria-label="キャパシタンス回路">
+            <path class="w" d="M70 40 H250 M70 170 H250 M70 40 V87 M70 123 V170 M250 40 V96 M250 114 V170"/>
+            <circle class="w" cx="70" cy="105" r="18"/><path class="w" d="M61 105 q4.5 -7 9 0 q4.5 7 9 0"/>
+            <path class="w" d="M230 96 H270 M230 114 H270"/>
+            <line class="cur" x1="148" y1="40" x2="183" y2="40"/><polygon class="curf" points="181,34 181,46 192,40"/>
+            <text x="10" y="110">v(t)</text><text x="278" y="110">C</text><text x="152" y="28">i(t)</text>
+          </svg>
+          <div class="figcap">キャパシタンス回路（コンデンサのみ）</div>
+        </div>
+        <div class="eq"><i>C</i> d<i>v</i>/d<i>t</i> = <i>i</i>(<i>t</i>)，　<i>v</i>(<i>t</i>) = <i>V</i> cos <i>ωt</i><br><span style="color:var(--mut);font-size:.85em;">↓ 複素交流に変換（d/d<i>t</i> → j<i>ω</i>）</span><br>j<i>ωC</i> <i>V&#x307;</i> = <i>I&#x307;</i></div>
+      </div>
+      <div>
+        <div class="eq big"><i>I&#x307;</i> = j<i>ωC</i> <i>V&#x307;</i> = <i>ωCV</i> <i>e</i><sup>j(<i>θ</i>+π/2)</sup></div>
+        <canvas id="cv-cwv" class="figc"></canvas>
+        <div class="legend"><span><span class="sw" style="background:var(--ref);"></span><i>v</i>(<i>t</i>) = <i>V</i> cos <i>ωt</i></span><span><span class="sw" style="background:var(--act);"></span><i>i</i>(<i>t</i>) = <i>ωCV</i> cos(<i>ωt</i> + π/2)</span></div>
+      </div>
+    </div>
+    <p class="note">j = <i>e</i><sup>jπ/2</sup> なので「j を掛ける」＝位相を 90°（π/2）<strong>進める</strong>こと。電流の山は電圧の山より <strong>1/4 周期さき</strong>に来る。コイル（90°遅れ）とちょうど真逆。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-lc-wave-play" data-title="電圧と電流の位相ずれを波形で確認">
+  <div class="inner">
+    <span class="tag2 tag-do">操作</span>
+    <p class="kicker">確認</p>
+    <h1 class="tt">電圧と電流の位相ずれを波形で確認</h1>
+    <p class="desc">素子と角周波数 <i>ω</i> を切り替えて、電流の山が電圧の山からどちらへずれるかを見る（<i>V</i> = 1, <i>L</i> = 1, <i>C</i> = 1 とする）。</p>
+    <canvas id="cv-lcplay" class="plot"></canvas>
+    <div class="legend"><span><span class="sw" style="background:var(--ref);"></span><i>v</i>(<i>t</i>) = cos <i>ωt</i>（基準）</span><span><span class="sw" style="background:var(--act);"></span><i>i</i>(<i>t</i>)</span><span>点線＝となり合う山の位置</span></div>
+    <div class="row"><label>素子</label><div class="seg"><button id="b-lc-L" class="on">コイル L</button><button id="b-lc-C">コンデンサ C</button></div><button class="btn" id="b-lc-play">⏸ 停止</button></div>
+    <div class="row"><label>角周波数 <i>ω</i></label><input type="range" id="s-lc-w" min="0.5" max="2" step="0.1" value="1"><span class="val" id="v-lc-w">1.0</span></div>
+    <div class="eq" id="eq-lc"></div>
+  </div>
+</section>
+
+<section class="slide" id="sl-z-combine" data-title="インピーダンスの直列・並列合成">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">9.3 インピーダンス</p>
+    <h1 class="tt">インピーダンスの直列・並列合成</h1>
+    <p class="desc">Z を「複素数の抵抗」とみなせば、抵抗回路の合成計算がそのまま使える。</p>
+    <div class="grid2">
+      <div>
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 340 165" role="img" aria-label="インピーダンスの直列結合">
+            <path class="w" d="M60 40 H115 M165 40 H195 M245 40 H300 M60 130 H300 M60 40 V72 M60 108 V130 M300 40 V130"/>
+            <circle class="w" cx="60" cy="90" r="18"/><path class="w" d="M51 90 q4.5 -7 9 0 q4.5 7 9 0"/>
+            <rect class="w" x="115" y="30" width="50" height="20"/>
+            <rect class="w" x="195" y="30" width="50" height="20"/>
+            <text x="128" y="76">Z&#8321;</text><text x="208" y="76">Z&#8322;</text>
+            <text x="10" y="95">v(t)</text>
+          </svg>
+          <div class="figcap">直列結合</div>
+        </div>
+        <div class="eq" style="text-align:center;"><i>Z</i> = <i>Z</i>&#8321; + <i>Z</i>&#8322; + <i>Z</i>&#8323; + &#8943;</div>
+      </div>
+      <div>
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 340 165" role="img" aria-label="インピーダンスの並列結合">
+            <path class="w" d="M60 40 H300 M60 130 H300 M60 40 V72 M60 108 V130 M180 40 V60 M180 110 V130 M260 40 V60 M260 110 V130"/>
+            <circle class="w" cx="60" cy="90" r="18"/><path class="w" d="M51 90 q4.5 -7 9 0 q4.5 7 9 0"/>
+            <rect class="w" x="170" y="60" width="20" height="50"/>
+            <rect class="w" x="250" y="60" width="20" height="50"/>
+            <text x="196" y="92">Z&#8321;</text><text x="276" y="92">Z&#8322;</text>
+            <text x="10" y="95">v(t)</text>
+          </svg>
+          <div class="figcap">並列結合</div>
+        </div>
+        <div class="eq" style="text-align:center;">1/<i>Z</i> = 1/<i>Z</i>&#8321; + 1/<i>Z</i>&#8322; + 1/<i>Z</i>&#8323; + &#8943;</div>
+      </div>
+    </div>
+    <p class="note">直流回路の抵抗の合成則とまったく同じ形。違いは <i>Z</i> が複素数という一点だけで、オームの法則・分圧・分流もそのまま通用する。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-practice-z" data-title="練習：インピーダンスから電流を求める">
+  <div class="inner">
+    <span class="tag2 tag-do">操作</span>
+    <p class="kicker">練習問題 問1</p>
+    <h1 class="tt">インピーダンスから電流を求める</h1>
+    <div class="grid2">
+      <div>
+        <p class="steps">右図の回路でインピーダンスが <i>Z</i> = &#8730;2 + <i>j</i>&#8730;2 [&#937;] のとき、次の値を求めよう。</p>
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 320 180" role="img" aria-label="交流電源とインピーダンスZの回路">
+            <path class="w" d="M70 40 H250 M70 150 H250 M70 40 V72 M70 108 V150 M250 40 V70 M250 120 V150"/>
+            <circle class="w" cx="70" cy="90" r="18"/><path class="w" d="M61 90 q4.5 -7 9 0 q4.5 7 9 0"/>
+            <rect class="w" x="242" y="70" width="16" height="50"/>
+            <path class="cur" d="M135 113 A30 30 0 1 1 185 113" fill="none"/>
+            <polygon class="curf" points="180,107 191,109 183,118"/>
+            <text x="40" y="70">+</text><text x="42" y="122">&#8722;</text>
+            <text x="8" y="95">v(t)</text><text x="272" y="100">Z</text>
+            <text x="148" y="98" style="fill:var(--ref);">i(t)</text>
+          </svg>
+          <div class="figcap"><i>v</i>(<i>t</i>) = 200 cos 150<i>t</i> [V]</div>
+        </div>
+      </div>
+      <div>
+        <div class="prfields">
+          <div class="prf"><span>(1) 大きさ |<i>Z</i>| [&#937;]</span><input type="number" id="pz-mag" step="any"><span class="prmark" id="pz-mag-m"></span></div>
+          <div class="prf"><span>(2) 偏角 <i>&#952;</i> [rad]</span><input type="number" id="pz-arg" step="any"><span class="prmark" id="pz-arg-m"></span></div>
+          <div class="prf"><span>(3) 電流の振幅 [A]</span><input type="number" id="pz-amp" step="any"><span class="prmark" id="pz-amp-m"></span></div>
+        </div>
+        <p class="note">求めた値で <i>i</i>(<i>t</i>) = (振幅) cos(150<i>t</i> &#8722; <i>&#952;</i>) [A] と書ける。小数は四捨五入した桁まで一致すれば正解（例: 0.79）。</p>
+        <div class="prbtns">
+          <button class="btn pr-primary" id="pz-grade">採点</button>
+          <button class="btn" id="pz-show">答えを見る</button>
+          <button class="btn" id="pz-reset">やり直す</button>
+        </div>
+        <div class="prresult" id="pz-res"></div>
+        <div class="reveal" id="pz-rev">
+          (1) |<i>Z</i>| = &#8730;(2 + 2) = <strong>2 &#937;</strong>&emsp;
+          (2) <i>&#952;</i> = arctan(&#8730;2/&#8730;2) = &#960;/4 &#8776; <strong>0.79 rad</strong><br>
+          (3) 振幅 = 200/2 = <strong>100 A</strong>&emsp;よって <i>i</i>(<i>t</i>) = 100 cos(150<i>t</i> &#8722; &#960;/4) [A]
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-practice-rl" data-title="練習：RL回路の電流">
+  <div class="inner">
+    <span class="tag2 tag-do">操作</span>
+    <p class="kicker">練習問題 問2</p>
+    <h1 class="tt">RL回路の電流（採点つき）</h1>
+    <div class="grid2">
+      <div>
+        <p class="steps">右図の RL 直列回路について、次の値を求めよう。まず <i>&#969;</i> を波形の式から読み取るのがこつ。</p>
+        <div class="figbox">
+          <svg class="fig" viewBox="0 0 320 190" role="img" aria-label="RL直列回路（R=4Ω, L=1H）">
+            <path class="w" d="M60 40 H250 M60 160 H250 M60 40 V82 M60 118 V160 M250 40 V58 M250 92 V104 M250 137 V160"/>
+            <circle class="w" cx="60" cy="100" r="18"/><path class="w" d="M51 100 q4.5 -7 9 0 q4.5 7 9 0"/>
+            <rect class="w" x="242" y="58" width="16" height="34"/>
+            <path class="w" d="M250 104 q13 5.5 0 11 q-13 5.5 0 11 q13 5.5 0 11"/>
+            <path class="cur" d="M130 120 A30 30 0 1 1 180 120" fill="none"/>
+            <polygon class="curf" points="175,114 186,116 178,125"/>
+            <text x="30" y="80">+</text><text x="32" y="132">&#8722;</text>
+            <text x="2" y="105">v(t)</text>
+            <text x="266" y="80" style="font-size:13px;">R = 4&#937;</text>
+            <text x="266" y="125" style="font-size:13px;">L = 1H</text>
+            <text x="142" y="105" style="fill:var(--ref);">i(t)</text>
+          </svg>
+          <div class="figcap"><i>v</i>(<i>t</i>) = 115 cos 100&#960;<i>t</i> [V]</div>
+        </div>
+      </div>
+      <div>
+        <div class="prfields">
+          <div class="prf"><span>(1) 大きさ |<i>Z</i>| [&#937;]</span><input type="number" id="prl-mag" step="any"><span class="prmark" id="prl-mag-m"></span></div>
+          <div class="prf"><span>(2) 偏角 <i>&#952;</i> [rad]</span><input type="number" id="prl-arg" step="any"><span class="prmark" id="prl-arg-m"></span></div>
+          <div class="prf"><span>(3) 電流の振幅 [A]</span><input type="number" id="prl-amp" step="any"><span class="prmark" id="prl-amp-m"></span></div>
+        </div>
+        <p class="note"><i>Z</i> = <i>R</i> + <i>j&#969;L</i>。<i>&#969;</i> = 100&#960; rad/s に注意。小数は四捨五入した桁まで一致すれば正解（例: 314.2）。</p>
+        <div class="prbtns">
+          <button class="btn pr-primary" id="prl-grade">採点</button>
+          <button class="btn" id="prl-show">答えを見る</button>
+          <button class="btn" id="prl-reset">やり直す</button>
+        </div>
+        <div class="prresult" id="prl-res"></div>
+        <div class="reveal" id="prl-rev">
+          <i>&#969;L</i> = 100&#960; &#8776; 314.16 &#937; なので <i>Z</i> = 4 + <i>j</i>100&#960;。<br>
+          (1) |<i>Z</i>| = &#8730;(4&#178; + (100&#960;)&#178;) &#8776; <strong>314.18 &#937;</strong>&emsp;
+          (2) <i>&#952;</i> = arctan(100&#960;/4) &#8776; <strong>1.56 rad</strong>（ほぼ &#960;/2）<br>
+          (3) 振幅 = 115/|<i>Z</i>| &#8776; <strong>0.37 A</strong>&emsp;よって <i>i</i>(<i>t</i>) &#8776; 0.37 cos(100&#960;<i>t</i> &#8722; 1.56) [A]
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="sl-summary" data-title="まとめと今日のクイズ">
+  <div class="inner">
+    <p class="kicker">第11回 まとめ</p>
+    <h1 class="tt">まとめと今日のクイズ</h1>
+    <ul class="lead">
+      <li>正弦波をフェーザ（複素数）で表すと、<strong>微分は j<i>&#969;</i> 倍</strong>の掛け算に変わる</li>
+      <li>素子の複素関係式：<span class="eq" style="display:inline-block;padding:.15em .5em;margin:0 .2em;">V&#775; = <i>R</i>İ</span>
+        <span class="eq" style="display:inline-block;padding:.15em .5em;margin:0 .2em;">V&#775; = j<i>&#969;L</i>İ</span>
+        <span class="eq" style="display:inline-block;padding:.15em .5em;margin:0 .2em;">V&#775; = İ/(j<i>&#969;C</i>)</span></li>
+      <li>インピーダンス <i>Z</i> = V&#775;/İ = <i>R</i> + j<i>X</i>（単位 &#937;）。直列・並列の合成は抵抗と同じ規則</li>
+      <li>位相差：コイルは電流が <strong>90&#176; 遅れ</strong>、コンデンサは <strong>90&#176; 進む</strong></li>
+    </ul>
+    <div class="ex" style="border-left:4px solid var(--act);">
+      <strong style="color:var(--act);">出席について（オンデマンド回）</strong><br>
+      本日 <strong>6/29（月）中に LMS のクイズを提出</strong>すると出席扱いになります。未提出は欠席扱いです。教材を見終えたら、忘れずに提出してください。
+    </div>
+    <p class="note">クイズの内容は今日の教材の範囲から出題。練習問題のページに戻って復習してから挑戦するのがおすすめ。</p>
+  </div>
+</section>
+  <!-- SLIDES:END -->
+</div>
+
+<audio id="narr" preload="none"></audio>
+<button id="narrbtn" class="narrbtn" aria-label="解説音声" style="display:none;">🔊 解説</button>
+
+<nav class="nav">
+  <button class="arw" id="prev" aria-label="前へ">◀</button>
+  <select id="jump" aria-label="スライド選択"></select>
+  <span class="count" id="count">1 / 1</span>
+  <button class="arw" id="fs" aria-label="全画面" title="全画面">⛶</button>
+  <button class="arw" id="next" aria-label="次へ">▶</button>
+</nav>
+
+<script>
+(function(){
+  "use strict";
+  var TAU=Math.PI*2;
+  function $(s,r){return (r||document).querySelector(s);}
+  function cssv(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+  function fmt(v,d){d=d==null?2:d; return (Math.round(v*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);}
+  function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+  function roundTo(v,dp){var f=Math.pow(10,dp); return Math.round(v*f)/f;}            // 採点: 四捨五入
+  function decimals(s){s=String(s).trim(); if(s.indexOf('.')<0)return 0; s=s.replace(/0+$/,''); var i=s.indexOf('.'); return i<0?0:(s.length-i-1);} // 採点: 小数桁
+  function vbnd(pl){var m=14/pl.s; return {x:(pl.W/2)/pl.s-m, y:(pl.H/2)/pl.s-m};}    // ドラッグ可動域（表示端まで）
+
+  // ---- スライドエンジン ----
+  var slides=[].slice.call(document.querySelectorAll('.slide')), N=slides.length, cur=0;
+  var hooks=slides.map(function(){return {};});
+  function idx(id){for(var i=0;i<slides.length;i++){if(slides[i].id===id)return i;} return -1;}
+  function reg(id,h){var i=idx(id); if(i>=0)hooks[i]=h;}
+  function goId(id){go(idx(id));}
+  var jump=$('#jump');
+  slides.forEach(function(s,i){var o=document.createElement('option'); o.value=i; o.textContent=(i+1)+'. '+(s.getAttribute('data-title')||s.id); jump.appendChild(o);});
+  $('#count').textContent='1 / '+N;
+  function go(i){
+    i=clamp(i,0,N-1); if(i===cur && slides[cur].classList.contains('active'))return;
+    if(hooks[cur].hide)hooks[cur].hide();
+    stopNarr();
+    slides[cur].classList.remove('active'); cur=i; slides[cur].classList.add('active');
+    jump.value=cur; $('#count').textContent=(cur+1)+' / '+N;
+    $('#prev').disabled=cur===0; $('#next').disabled=cur===N-1;
+    $('#prog').style.width=(cur/(N-1||1)*100)+'%'; slides[cur].scrollTop=0;
+    try{history.replaceState(null,'','#'+(cur+1));}catch(e){}
+    if(hooks[cur].show)hooks[cur].show();
+    syncNarrBtn();
+  }
+  $('#prev').onclick=function(){go(cur-1);}; $('#next').onclick=function(){go(cur+1);};
+  jump.onchange=function(){go(+jump.value);};
+  $('#fs').onclick=function(){ if(!document.fullscreenElement){ if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen(); } else { if(document.exitFullscreen)document.exitFullscreen(); } };
+  document.addEventListener('keydown',function(e){
+    if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+    if(e.target.tagName==='BUTTON'&&(e.key===' '||e.key==='Enter'))return;
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){go(cur+1);e.preventDefault();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){go(cur-1);e.preventDefault();}
+    else if(e.key==='Home'){go(0);} else if(e.key==='End'){go(N-1);}
+    else if(e.key==='f'||e.key==='F'){$('#fs').click();}
+  });
+  window.addEventListener('resize',function(){var h=hooks[cur]; if(h&&h.redraw)h.redraw();});
+
+  function anim(draw){var run=false;function loop(){if(!run)return;draw();requestAnimationFrame(loop);}return{start:function(){if(!run){run=true;loop();}},stop:function(){run=false;}};}
+
+  // ---- 解説ナレーション音声（単一プレーヤを使い回す） ----
+  var NARR_DIR='audio/';
+  var NARR=new Set(slides.map(function(s){return s.id;}));
+  var _audio=$('#narr'), _narrBtn=$('#narrbtn'), _playing=null;
+  function syncNarrBtn(){ var id=slides[cur].id, on=(_playing===id && !_audio.paused);
+    if(NARR.has(id)){ _narrBtn.style.display='inline-flex'; _narrBtn.textContent=on?'⏸ 停止':'🔊 解説'; _narrBtn.classList.toggle('playing',on);} else _narrBtn.style.display='none'; }
+  function stopNarr(){ try{_audio.pause(); _audio.currentTime=0;}catch(e){} _playing=null; }
+  function playNarr(id){ if(!NARR.has(id))return; stopNarr(); _audio.src=NARR_DIR+id+'.mp3'; _playing=id;
+    var p=_audio.play(); if(p&&p.catch)p.catch(function(){ NARR.delete(id); _playing=null; syncNarrBtn(); }); syncNarrBtn(); }
+  _narrBtn.onclick=function(e){ e.stopPropagation(); this.blur(); var id=slides[cur].id; if(_playing===id&&!_audio.paused){stopNarr();}else{playNarr(id);} syncNarrBtn(); };
+  _audio.addEventListener('ended',function(){_playing=null;syncNarrBtn();});
+  _audio.addEventListener('pause',function(){syncNarrBtn();});
+
+  // ---- 複素平面ヘルパー ----
+  function makePlane(cv, spanX, spanY){
+    var ctx=cv.getContext('2d'), dpr=window.devicePixelRatio||1, W=0,H=0,s=1,cx=0,cy=0, sx=spanX, sy=spanY;
+    function setSpan(a,b){sx=a; sy=(b==null?a:b);}
+    function fit(){var w=cv.clientWidth,h=cv.clientHeight; cv.width=w*dpr; cv.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); W=w;H=h; s=Math.min(w/sx,h/sy); cx=w/2; cy=h/2;}
+    function PX(x,y){return [cx+x*s, cy-y*s];} function UN(px,py){return [(px-cx)/s,(cy-py)/s];}
+    function clear(){ctx.clearRect(0,0,W,H);}
+    function axes(opt){opt=opt||{}; var xr=(W/2)/s, yr=(H/2)/s, i,p;
+      ctx.strokeStyle=cssv('--grd'); ctx.lineWidth=1; ctx.font='11px sans-serif'; ctx.fillStyle=cssv('--mut');
+      for(i=Math.ceil(-xr);i<=xr;i++){if(i===0)continue; p=PX(i,0); ctx.globalAlpha=.55; ctx.beginPath(); ctx.moveTo(p[0],0); ctx.lineTo(p[0],H); ctx.stroke();}
+      for(i=Math.ceil(-yr);i<=yr;i++){if(i===0)continue; p=PX(0,i); ctx.globalAlpha=.55; ctx.beginPath(); ctx.moveTo(0,p[1]); ctx.lineTo(W,p[1]); ctx.stroke();}
+      ctx.globalAlpha=1; ctx.strokeStyle=cssv('--ax'); ctx.lineWidth=1.5; var o=PX(0,0);
+      ctx.beginPath(); ctx.moveTo(0,o[1]); ctx.lineTo(W,o[1]); ctx.stroke(); ctx.beginPath(); ctx.moveTo(o[0],H); ctx.lineTo(o[0],0); ctx.stroke();
+      ctx.fillStyle=cssv('--mut'); ctx.fillText(opt.reLabel||'Re', W-26, o[1]-7); ctx.fillText(opt.imLabel||'Im', o[0]+7, 14);}
+    function head(x1,y1,x2,y2,color,L){L=L||10; var a=Math.atan2(y2-y1,x2-x1); ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-L*Math.cos(a-.42),y2-L*Math.sin(a-.42)); ctx.lineTo(x2-L*Math.cos(a+.42),y2-L*Math.sin(a+.42)); ctx.closePath(); ctx.fill();}
+    function arrow(ux1,uy1,ux2,uy2,color,w){var a=PX(ux1,uy1),b=PX(ux2,uy2); ctx.strokeStyle=color; ctx.lineWidth=w||3; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); head(a[0],a[1],b[0],b[1],color);}
+    function vec(x,y,color,opt){opt=opt||{}; arrow(0,0,x,y,color,opt.w||3.2);
+      if(opt.proj){var t=PX(x,y),ax=PX(x,0),ay=PX(0,y); ctx.save(); ctx.strokeStyle=color; ctx.globalAlpha=.5; ctx.setLineDash([4,4]); ctx.lineWidth=1.2;
+        ctx.beginPath(); ctx.moveTo(t[0],t[1]); ctx.lineTo(ax[0],ax[1]); ctx.stroke(); ctx.beginPath(); ctx.moveTo(t[0],t[1]); ctx.lineTo(ay[0],ay[1]); ctx.stroke(); ctx.restore();}
+      if(opt.label){var t2=PX(x,y); ctx.fillStyle=color; ctx.font='bold 14px Georgia,serif'; ctx.fillText(opt.label, t2[0]+8, t2[1]-6);}}
+    function dot(x,y,color,r){var p=PX(x,y); ctx.fillStyle=color; ctx.beginPath(); ctx.arc(p[0],p[1],r||4,0,TAU); ctx.fill();}
+    function handle(x,y,color){var p=PX(x,y); ctx.save(); ctx.globalAlpha=.16; ctx.fillStyle=color;
+      ctx.beginPath(); ctx.arc(p[0],p[1],17,0,TAU); ctx.arc(p[0],p[1],11,0,TAU,true); ctx.fill(); ctx.globalAlpha=1;
+      ctx.strokeStyle=color; ctx.lineWidth=1.6; ctx.setLineDash([3.5,3.5]); ctx.beginPath(); ctx.arc(p[0],p[1],15,0,TAU); ctx.stroke(); ctx.restore();}
+    return {ctx:ctx, fit:fit, setSpan:setSpan, PX:PX, UN:UN, clear:clear, axes:axes, arrow:arrow, vec:vec, dot:dot, handle:handle, get s(){return s;}, get W(){return W;}, get H(){return H;}};
+  }
+  function dragger(cv, plane, getPts, onMove){
+    var ix=-1;
+    function rel(e){var r=cv.getBoundingClientRect(); return plane.UN(e.clientX-r.left, e.clientY-r.top);}
+    function pick(u){var pts=getPts(),best=-1,bd=1e9; for(var i=0;i<pts.length;i++){var a=plane.PX(pts[i].x,pts[i].y),b=plane.PX(u[0],u[1]); var d=Math.hypot(a[0]-b[0],a[1]-b[1]); if(d<bd){bd=d;best=i;}} return bd<34?best:-1;}
+    cv.style.touchAction='none';
+    cv.addEventListener('pointerdown',function(e){var u=rel(e); ix=pick(u); if(ix>=0){cv.setPointerCapture(e.pointerId); onMove(ix,u[0],u[1]); e.preventDefault();}});
+    cv.addEventListener('pointermove',function(e){if(ix<0)return; var u=rel(e); onMove(ix,u[0],u[1]); e.preventDefault();});
+    function end(){ix=-1;} cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
+  }
+
+  // ---- 時間波形ヘルパー ----
+  function timeCtx(cv){var ctx=cv.getContext('2d'),dpr=window.devicePixelRatio||1,W=0,H=0;
+    function fit(){var w=cv.clientWidth,h=cv.clientHeight;cv.width=w*dpr;cv.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);W=w;H=h;}
+    return {ctx:ctx,fit:fit,get W(){return W;},get H(){return H;}};}
+  function drawTimeAxes(c,ymax){var ctx=c.ctx,W=c.W,H=c.H,padL=34,padB=20,padT=10,padR=10;
+    function X(t){return padL+t/c._tmax*(W-padL-padR);} function Y(v){return padT+(ymax-v)/(2*ymax)*(H-padT-padB);}
+    ctx.clearRect(0,0,W,H); ctx.strokeStyle=cssv('--grd'); ctx.fillStyle=cssv('--mut'); ctx.font='10px sans-serif'; ctx.lineWidth=1;
+    for(var g=-ymax;g<=ymax+1e-9;g+=ymax/2){ctx.globalAlpha=g===0?.85:.4; ctx.beginPath(); ctx.moveTo(padL,Y(g)); ctx.lineTo(W-padR,Y(g)); ctx.stroke(); ctx.globalAlpha=1; ctx.fillText(fmt(g,g%1?1:0),4,Y(g)+3);}
+    return {X:X,Y:Y};}
+  function plotFn(c,m,fn,color,w){var ctx=c.ctx,W=c.W; ctx.strokeStyle=color; ctx.lineWidth=w||2.4; ctx.lineJoin='round'; ctx.beginPath(); var first=true;
+    for(var px=34;px<=W-10;px+=2){var t=(px-34)/(W-44)*c._tmax; var y=fn(t); var X=m.X(t),Y=m.Y(y); if(first){ctx.moveTo(X,Y);first=false;}else ctx.lineTo(X,Y);} ctx.stroke();}
+
+  /* HOOKS:START */
+// ===== 表紙: 位相のずれた2つの波（電圧と電流のイメージ）
+// Title wave: two sinusoids with a phase lag (voltage vs current)
+(function(){var cv=$('#cv-title'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI;
+  var A=anim(function(){c.fit(); var m=drawTimeAxes(c,1.2); var ph=performance.now()/700;
+    plotFn(c,m,function(t){return Math.cos(t-ph);},cssv('--act'),3);
+    plotFn(c,m,function(t){return 0.75*Math.cos(t-ph-Math.PI/2);},cssv('--ref'),2.2);});
+  reg('sl-title',{show:A.start,hide:A.stop});})();
+
+// ===== スケジュール表の描画（当週=11を枠表示、試験は赤）
+// Render the schedule table (current week boxed, exams in red)
+(function(){var el=$('#sched'); if(!el)return;
+  var SCHEDULE={year:2026, current:11, rows:[
+    [1,'4月13日（月）','基本素子'],
+    [2,'4月20日（月）','微分方程式の解法'],
+    [3,'4月27日（月）','固有振動'],
+    [4,'5月11日（月）','初期条件と時定数'],
+    [5,'5月18日（月）','不連続な変化'],
+    [6,'5月25日（月）','演習'],
+    [7,'6月 3日（水）','中間テスト','exam'],
+    [8,'6月 8日（月）','複素数'],
+    [9,'6月15日（月）','中間振り返り'],
+    [10,'6月22日（月）','正弦波の複素数表現'],
+    [11,'6月29日（月）','正弦波交流回路'],
+    [12,'7月 6日（月）','ベクトル図・電力'],
+    [13,'7月13日（月）','総合演習'],
+    [14,'7月23日（木）','期末試験','exam'],
+    [15,'7月27日（月）','自己点検']]};
+  var half=Math.ceil(SCHEDULE.rows.length/2), html='';
+  [SCHEDULE.rows.slice(0,half), SCHEDULE.rows.slice(half)].forEach(function(col){
+    html+='<div class="schcol">';
+    col.forEach(function(r){var cls='schrow'+(r[0]===SCHEDULE.current?' cur':'')+(r[3]==='exam'?' exam':'');
+      html+='<div class="'+cls+'"><span class="sn">'+r[0]+'</span><span class="sd">'+r[1]+'</span><span>'+r[2]+'</span></div>';});
+    html+='</div>';});
+  el.innerHTML=html;})();
+
+(function(){
+  var cvp=$('#cv-ppl'), cvw=$('#cv-ppw'); if(!cvp||!cvw)return;
+  var pl=makePlane(cvp,4.6,4.6); var c=timeCtx(cvw); c._tmax=4*Math.PI;
+  var A=1, thd=0;
+  var sa=$('#s-pp-a'), st=$('#s-pp-th'), va=$('#v-pp-a'), vt=$('#v-pp-th');
+  sa.addEventListener('input',function(){A=parseFloat(sa.value); va.textContent=fmt(A,1); draw();});
+  st.addEventListener('input',function(){thd=parseFloat(st.value); vt.textContent=fmt(thd,0)+'\u00B0'; draw();});
+  function draw(){
+    var th=thd*Math.PI/180;
+    // 複素平面: フェーザ（基準矢印＋角度の弧＋本体）
+    // Complex plane: phasor (reference arrow + angle arc + main vector)
+    pl.fit(); pl.clear(); pl.axes();
+    pl.ctx.save(); pl.ctx.globalAlpha=.4; pl.arrow(0,0,1,0,cssv('--mut'),1.8); pl.ctx.restore();
+    if(Math.abs(th)>1e-6){var o=pl.PX(0,0); pl.ctx.strokeStyle=cssv('--z2'); pl.ctx.lineWidth=1.6;
+      pl.ctx.beginPath(); pl.ctx.arc(o[0],o[1],24,0,-th,th>0); pl.ctx.stroke();}
+    pl.vec(A*Math.cos(th),A*Math.sin(th),cssv('--z2'),{proj:true,w:3.4});
+    // 時間波形: 基準 cos ωt と A cos(ωt+θ)
+    // Time waveform: reference cos(t) and A cos(t+theta)
+    c.fit(); var m=drawTimeAxes(c,2.2);
+    plotFn(c,m,function(t){return Math.cos(t);},cssv('--mut'),1.5);
+    plotFn(c,m,function(t){return A*Math.cos(t+th);},cssv('--act'),3);
+    var sgn=thd>=0?' + ':' \u2212 ';
+    $('#eq-pp').innerHTML='<i>v</i> = '+fmt(A,1)+' cos(<i>\u03C9t</i>'+sgn+fmt(Math.abs(thd),0)+'\u00B0) \u27F7 '+fmt(A,1)+' e<sup> j('+fmt(thd,0)+'\u00B0)</sup>';
+  }
+  reg('sl-phasor-play',{show:draw,redraw:draw});
+})();
+
+(function(){var cv=$('#cv-jwplay'); if(!cv)return; var pl=makePlane(cv,10,10); var I={x:2,y:1}, w=1;
+  var el=$('#s-om-jw'), vo=$('#v-om-jw');
+  if(el)el.addEventListener('input',function(){w=parseFloat(el.value); vo.textContent=fmt(w,1); draw();});
+  function draw(){pl.fit(); pl.clear(); pl.axes();
+    var dx=-w*I.y, dy=w*I.x, mag=Math.hypot(I.x,I.y), a0=Math.atan2(I.y,I.x);
+    if(mag>0.01){var ctx=pl.ctx, o=pl.PX(0,0), r=0.85*pl.s;
+      ctx.save(); ctx.strokeStyle=cssv('--mut'); ctx.lineWidth=1.4; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.arc(o[0],o[1],r,-a0,-(a0+Math.PI/2),true); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=cssv('--mut'); ctx.font='bold 12px sans-serif';
+      var am=a0+Math.PI/4; ctx.fillText('+90°', o[0]+1.3*r*Math.cos(am)-12, o[1]-1.3*r*Math.sin(am)+4);
+      ctx.restore();}
+    pl.vec(dx,dy,cssv('--act'),{label:'jωİ',w:3.4});
+    pl.vec(I.x,I.y,cssv('--z1'),{label:'İ',w:3.4});
+    pl.handle(I.x,I.y,cssv('--z1'));
+    $('#eq-jw').innerHTML='<span style="color:var(--z1); font-weight:700;"><i>İ</i></span> = '+fmt(I.x,1)+(I.y>=0?' + j ':' − j ')+fmt(Math.abs(I.y),1)
+      +'<br><span style="color:var(--act); font-weight:700;">jω<i>İ</i></span> = '+fmt(dx,1)+(dy>=0?' + j ':' − j ')+fmt(Math.abs(dy),1)
+      +'<br>大きさ: '+fmt(mag,2)+' → '+fmt(w*mag,2)+'（ω = '+fmt(w,1)+' 倍）／ 向き: +90°';}
+  dragger(cv,pl,function(){return [I];},function(i,x,y){var b=vbnd(pl); I.x=clamp(Math.round(x*2)/2,-b.x,b.x); I.y=clamp(Math.round(y*2)/2,-b.y,b.y); if(I.x===0&&I.y===0)I.x=0.5; draw();});
+  reg('sl-jw-deriv-play',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-polar'); if(!cv)return; var pl=makePlane(cv,8.4,8.4); var R=3,X=2;
+  function draw(){pl.fit(); pl.clear(); pl.axes(); var ctx=pl.ctx;
+    // R + jωL を直角三角形として描く / draw R + jωL as a right triangle
+    pl.arrow(0,0,R,0,cssv('--re'),2.6);
+    pl.arrow(R,0,R,X,cssv('--im'),2.6);
+    pl.vec(R,X,cssv('--z2'),{w:3.4});
+    pl.dot(R,X,cssv('--z2'),4);
+    // 偏角 φ の弧 / angle arc for φ
+    var o=pl.PX(0,0), a=Math.atan2(X,R);
+    ctx.strokeStyle=cssv('--act'); ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(o[0],o[1],30,0,-a,true); ctx.stroke();
+    ctx.font='bold 14px Georgia,serif';
+    ctx.fillStyle=cssv('--act'); ctx.fillText('\u03c6', o[0]+38*Math.cos(a/2), o[1]-38*Math.sin(a/2)+5);
+    var pr=pl.PX(R/2,0); ctx.fillStyle=cssv('--re'); ctx.fillText('R', pr[0]-4, pr[1]+20);
+    var px=pl.PX(R,X/2); ctx.fillStyle=cssv('--im'); ctx.fillText('j\u03c9L', px[0]+10, px[1]+4);
+    var pb=pl.PX(R/2,X/2); ctx.fillStyle=cssv('--z2'); ctx.fillText('R+j\u03c9L = B e^j\u03c6', pb[0]-30, pb[1]-14);
+  }
+  reg('sl-polar-current',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-zplay'); if(!cv)return; var pl=makePlane(cv,11,11); var R=3,X=2;
+  var er=$('#s-zr'), ex=$('#s-zx'), vr=$('#v-zr'), vx=$('#v-zx');
+  function upd(){var B=Math.hypot(R,X), ph=Math.atan2(X,R)*180/Math.PI;
+    $('#eq-zplay').innerHTML='<i>B</i> = \u221a('+fmt(R,1)+'\u00b2 + '+fmt(X,1)+'\u00b2) = <strong>'+fmt(B,2)+'</strong><br><i>\u03c6</i> = atan('+fmt(X,1)+'/'+fmt(R,1)+') = <strong>'+fmt(ph,1)+'\u00b0</strong>';}
+  function draw(){pl.fit(); pl.clear(); pl.axes(); var ctx=pl.ctx;
+    // R（実軸）→ ωL（虚軸方向）→ 合成 / R along Re, ωL up, then the sum vector
+    pl.arrow(0,0,R,0,cssv('--re'),3);
+    pl.arrow(R,0,R,X,cssv('--im'),3);
+    pl.vec(R,X,cssv('--z2'),{w:3.6});
+    pl.dot(R,X,cssv('--z2'),4);
+    // 直角マーク / right-angle marker at (R,0)
+    var d=0.32, p1=pl.PX(R-d,0), p2=pl.PX(R-d,d), p3=pl.PX(R,d);
+    ctx.strokeStyle=cssv('--mut'); ctx.lineWidth=1.4; ctx.beginPath(); ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p2[0],p2[1]); ctx.lineTo(p3[0],p3[1]); ctx.stroke();
+    // 偏角 φ の弧 / arc for the argument φ
+    var o=pl.PX(0,0), a=Math.atan2(X,R);
+    ctx.strokeStyle=cssv('--act'); ctx.lineWidth=1.6; ctx.beginPath(); ctx.arc(o[0],o[1],28,0,-a,true); ctx.stroke();
+    ctx.font='bold 14px Georgia,serif';
+    ctx.fillStyle=cssv('--act'); ctx.fillText('\u03c6', o[0]+36*Math.cos(a/2), o[1]-36*Math.sin(a/2)+5);
+    var pr=pl.PX(R/2,0); ctx.fillStyle=cssv('--re'); ctx.fillText('R', pr[0]-4, pr[1]+20);
+    var px2=pl.PX(R,X/2); ctx.fillStyle=cssv('--im'); ctx.fillText('j\u03c9L', px2[0]+10, px2[1]+4);
+    var pb=pl.PX(R/2,X/2); ctx.fillStyle=cssv('--z2'); ctx.fillText('R+j\u03c9L', pb[0]-34, pb[1]-12);
+    upd();}
+  if(er)er.addEventListener('input',function(){R=parseFloat(er.value); vr.textContent=fmt(R,1); draw();});
+  if(ex)ex.addEventListener('input',function(){X=parseFloat(ex.value); vx.textContent=fmt(X,1); draw();});
+  reg('sl-rl-phasor-play',{show:draw,redraw:draw});})();
+
+(function(){
+  var cv=$('#cv-xfreq'); if(!cv)return;
+  var c=timeCtx(cv);
+  var om=200, L=0.100, C=50e-6;            // ω[rad/s], L[H], C[F]
+  var OMAX=1000, XMAX=100;                  // 表示範囲 / display range
+  function XL(w){return w*L;}
+  function XC(w){return 1/(w*C);}
+  function draw(){
+    c.fit();
+    var ctx=c.ctx, W=c.W, H=c.H, padL=44, padR=14, padT=16, padB=26;
+    function PXw(w){return padL+w/OMAX*(W-padL-padR);}
+    function PYx(x){return padT+(1-x/XMAX)*(H-padT-padB);}
+    ctx.clearRect(0,0,W,H);
+    // grid + labels / 目盛り
+    ctx.font='10px sans-serif'; ctx.lineWidth=1;
+    var gx,gy;
+    for(gx=0;gx<=OMAX;gx+=200){ctx.strokeStyle=cssv('--grd'); ctx.globalAlpha=(gx===0)?.9:.4; ctx.beginPath(); ctx.moveTo(PXw(gx),padT); ctx.lineTo(PXw(gx),H-padB); ctx.stroke(); ctx.globalAlpha=1; ctx.fillStyle=cssv('--mut'); ctx.fillText(String(gx),PXw(gx)-(gx?11:3),H-padB+14);}
+    for(gy=0;gy<=XMAX;gy+=25){ctx.strokeStyle=cssv('--grd'); ctx.globalAlpha=(gy===0)?.9:.4; ctx.beginPath(); ctx.moveTo(padL,PYx(gy)); ctx.lineTo(W-padR,PYx(gy)); ctx.stroke(); ctx.globalAlpha=1; ctx.fillStyle=cssv('--mut'); ctx.fillText(String(gy),8,PYx(gy)+3);}
+    ctx.fillStyle=cssv('--mut'); ctx.fillText('ω [rad/s]',W-66,H-6); ctx.fillText('X [Ω]',padL+4,padT-4);
+    // 2 curves / 2曲線
+    function curve(fn,color){ctx.strokeStyle=color; ctx.lineWidth=2.6; ctx.lineJoin='round'; ctx.beginPath(); var first=true,px,w,v;
+      for(px=padL;px<=W-padR;px+=2){w=(px-padL)/(W-padL-padR)*OMAX; if(w<5)w=5; v=fn(w); if(v>XMAX){first=true; continue;} if(first){ctx.moveTo(px,PYx(v)); first=false;} else ctx.lineTo(px,PYx(v));} ctx.stroke();}
+    curve(XL,cssv('--act'));
+    curve(XC,cssv('--ref'));
+    // crossing point (resonance preview) / 交点（共振の予告）
+    var w0=1/Math.sqrt(L*C);
+    if(w0<=OMAX && XL(w0)<=XMAX){var qx=PXw(w0),qy=PYx(XL(w0));
+      ctx.strokeStyle=cssv('--thr'); ctx.lineWidth=2; ctx.beginPath(); ctx.arc(qx,qy,6,0,TAU); ctx.stroke();
+      ctx.fillStyle=cssv('--thr'); ctx.font='bold 11px sans-serif';
+      var tx=(qx>W-110)?qx-104:qx+9; ctx.fillText('ωL = 1/ωC',tx,qy-9);}
+    // current ω marker / 現在のωのマーカー
+    ctx.save(); ctx.strokeStyle=cssv('--mut'); ctx.setLineDash([4,4]); ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(PXw(om),padT); ctx.lineTo(PXw(om),H-padB); ctx.stroke(); ctx.restore();
+    var vl=XL(om), vc=XC(om);
+    if(vl<=XMAX){ctx.fillStyle=cssv('--act'); ctx.beginPath(); ctx.arc(PXw(om),PYx(vl),5,0,TAU); ctx.fill();}
+    if(vc<=XMAX){ctx.fillStyle=cssv('--ref'); ctx.beginPath(); ctx.arc(PXw(om),PYx(vc),5,0,TAU); ctx.fill();}
+    $('#eq-xfreq').innerHTML='ω = '+Math.round(om)+' rad/s のとき<br><span style="color:var(--act); font-weight:700;">ωL = '+fmt(vl,1)+' Ω</span><br><span style="color:var(--ref); font-weight:700;">1/ωC = '+fmt(vc,1)+' Ω</span>';
+  }
+  $('#s-om').addEventListener('input',function(){om=parseFloat(this.value); $('#v-om').textContent=String(Math.round(om)); draw();});
+  $('#s-lv').addEventListener('input',function(){L=parseFloat(this.value)/1000; $('#v-lv').textContent=this.value; draw();});
+  $('#s-cv2').addEventListener('input',function(){C=parseFloat(this.value)*1e-6; $('#v-cv2').textContent=this.value; draw();});
+  reg('sl-reactance-freq-play',{show:draw,redraw:draw});
+})();
+
+(function(){
+  var cv=$('#cv-zplay2'); if(!cv)return;
+  var pl=makePlane(cv,13,13);
+  var mode='RL', R=3, X=2;
+  var bRL=$('#btn-zrl'), bRC=$('#btn-zrc'), sR=$('#s-zr2'), sX=$('#s-zx2'), lbX=$('#lb-zx');
+  function setMode(m){ mode=m;
+    bRL.classList.toggle('on',m==='RL'); bRC.classList.toggle('on',m==='RC');
+    lbX.innerHTML = (m==='RL') ? '<i>\u03c9L</i> [\u03a9]' : '1/<i>\u03c9C</i> [\u03a9]';
+    draw(); }
+  bRL.onclick=function(){setMode('RL');}; bRC.onclick=function(){setMode('RC');};
+  sR.addEventListener('input',function(){R=parseFloat(sR.value); $('#v-zr2').textContent=fmt(R,1); draw();});
+  sX.addEventListener('input',function(){X=parseFloat(sX.value); $('#v-zx2').textContent=fmt(X,1); draw();});
+  function draw(){
+    pl.fit(); pl.clear(); pl.axes();
+    var y=(mode==='RL'? X : -X), ctx=pl.ctx;
+    // 成分ベクトル: R（実軸）と jX（虚軸方向） / Component vectors
+    pl.arrow(0,0,R,0,cssv('--re'),2.6);
+    if(Math.abs(y)>0.01) pl.arrow(R,0,R,y,cssv('--im'),2.6);
+    pl.vec(R,y,cssv('--act'),{w:3.6,label:'Z'});
+    // 偏角の弧 / angle arc
+    var th=Math.atan2(y,R), o=pl.PX(0,0);
+    if(Math.abs(th)>0.02){
+      ctx.strokeStyle=cssv('--act'); ctx.lineWidth=1.6;
+      ctx.beginPath(); ctx.arc(o[0],o[1],38,0,-th,th>0); ctx.stroke();
+      ctx.fillStyle=cssv('--act'); ctx.font='bold 13px Georgia,serif';
+      ctx.fillText('\u03b8', o[0]+50*Math.cos(th/2)-3, o[1]-50*Math.sin(th/2)+4);
+    }
+    // 成分ラベル / component labels
+    ctx.font='bold 13px Georgia,serif';
+    ctx.fillStyle=cssv('--re'); var pr=pl.PX(R/2,0); ctx.fillText('R', pr[0]-4, pr[1]+(y>=0?18:-10));
+    if(Math.abs(y)>0.01){ ctx.fillStyle=cssv('--im'); var pxx=pl.PX(R,y/2);
+      ctx.fillText(mode==='RL'?'j\u03c9L':'\u2212j/\u03c9C', pxx[0]+8, pxx[1]+4); }
+    var mag=Math.hypot(R,y), deg=th*180/Math.PI;
+    $('#eq-zplay2').innerHTML='<i>Z</i> = '+fmt(R,1)+(y>=0?' + j':' \u2212 j')+fmt(Math.abs(y),1)+' \u03a9<br>|<i>Z</i>| = '+fmt(mag,2)+' \u03a9\u3000<i>\u03b8</i> = '+fmt(deg,1)+'\u00b0';
+    var msg=$('#msg-zplay');
+    if(Math.abs(y)<0.01){ msg.innerHTML='\u03b8 = 0\uff1a純抵抗。電流と電圧は<strong>同相</strong>。'; }
+    else if(y>0){ msg.innerHTML='\u03b8 &gt; 0（誘導性）\uff1a電流は電圧より位相が <strong>\u03b8 だけ遅れる</strong>。'; }
+    else { msg.innerHTML='\u03b8 &lt; 0（容量性）\uff1a電流は電圧より位相が <strong>|\u03b8| だけ進む</strong>。'; }
+  }
+  setMode('RL');
+  reg('sl-rl-rc-phasor-play',{show:draw,redraw:draw});
+})();
+
+(function(){var cv=$('#cv-lwv'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI;
+  function draw(){c.fit(); var m=drawTimeAxes(c,1.2), ctx=c.ctx;
+    plotFn(c,m,function(t){return Math.cos(t);},cssv('--ref'),2.6);
+    plotFn(c,m,function(t){return 0.72*Math.cos(t-Math.PI/2);},cssv('--act'),2.6);
+    var tv=2*Math.PI, ti=tv+Math.PI/2;
+    ctx.save(); ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+    ctx.strokeStyle=cssv('--ref'); ctx.beginPath(); ctx.moveTo(m.X(tv),m.Y(1.2)); ctx.lineTo(m.X(tv),m.Y(-1.2)); ctx.stroke();
+    ctx.strokeStyle=cssv('--act'); ctx.beginPath(); ctx.moveTo(m.X(ti),m.Y(1.2)); ctx.lineTo(m.X(ti),m.Y(-1.2)); ctx.stroke();
+    ctx.restore(); ctx.font='bold 12px sans-serif'; ctx.fillStyle=cssv('--ink');
+    ctx.fillText('π/2 遅れ',(m.X(tv)+m.X(ti))/2-24,m.Y(1.2)+13);
+    ctx.font='italic bold 13px Georgia,serif';
+    ctx.fillStyle=cssv('--ref'); ctx.fillText('v(t)',m.X(0.15)+4,m.Y(1.0)-6);
+    ctx.fillStyle=cssv('--act'); ctx.fillText('i(t)',m.X(Math.PI/2+0.15),m.Y(0.72)-6);}
+  reg('sl-pure-L-phase',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-cwv'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI;
+  function draw(){c.fit(); var m=drawTimeAxes(c,1.2), ctx=c.ctx;
+    plotFn(c,m,function(t){return Math.cos(t);},cssv('--ref'),2.6);
+    plotFn(c,m,function(t){return 0.72*Math.cos(t+Math.PI/2);},cssv('--act'),2.6);
+    var tv=2*Math.PI, ti=tv-Math.PI/2;
+    ctx.save(); ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+    ctx.strokeStyle=cssv('--ref'); ctx.beginPath(); ctx.moveTo(m.X(tv),m.Y(1.2)); ctx.lineTo(m.X(tv),m.Y(-1.2)); ctx.stroke();
+    ctx.strokeStyle=cssv('--act'); ctx.beginPath(); ctx.moveTo(m.X(ti),m.Y(1.2)); ctx.lineTo(m.X(ti),m.Y(-1.2)); ctx.stroke();
+    ctx.restore(); ctx.font='bold 12px sans-serif'; ctx.fillStyle=cssv('--ink');
+    ctx.fillText('π/2 進み',(m.X(tv)+m.X(ti))/2-24,m.Y(1.2)+13);
+    ctx.font='italic bold 13px Georgia,serif';
+    ctx.fillStyle=cssv('--ref'); ctx.fillText('v(t)',m.X(0.15)+4,m.Y(1.0)-6);
+    ctx.fillStyle=cssv('--act'); ctx.fillText('i(t)',m.X(3*Math.PI/2+0.15),m.Y(0.72)-6);}
+  reg('sl-pure-C-phase',{show:draw,redraw:draw});})();
+
+(function(){var cv=$('#cv-lcplay'); if(!cv)return; var c=timeCtx(cv); c._tmax=4*Math.PI;
+  var mode='L', w=1.0, ph=0, playing=true, lastT=0;
+  var bL=$('#b-lc-L'), bC=$('#b-lc-C'), bP=$('#b-lc-play'), sl=$('#s-lc-w'), vw=$('#v-lc-w'), eq=$('#eq-lc');
+  function iamp(){return mode==='L'?1/w:w;}
+  function sh(){return mode==='L'?-Math.PI/2:Math.PI/2;}
+  function updEq(){
+    if(mode==='L'){eq.innerHTML='<i>i</i>(<i>t</i>) = (1/<i>\u03c9</i>) cos(<i>\u03c9t</i> \u2212 \u03c0/2)\u3000振幅 '+fmt(iamp(),2)+'\u3000— 電流は <strong>90\u00b0遅れ</strong>（山が右へずれる）';}
+    else{eq.innerHTML='<i>i</i>(<i>t</i>) = <i>\u03c9</i> cos(<i>\u03c9t</i> + \u03c0/2)\u3000振幅 '+fmt(iamp(),2)+'\u3000— 電流は <strong>90\u00b0進み</strong>（山が左へずれる）';}}
+  function draw(){c.fit(); var m=drawTimeAxes(c,2.4), ctx=c.ctx;
+    plotFn(c,m,function(t){return Math.cos(w*t-ph);},cssv('--ref'),2.6);
+    plotFn(c,m,function(t){return iamp()*Math.cos(w*t-ph+sh());},cssv('--act'),2.6);
+    var k=Math.round((w*c._tmax/2-ph)/(2*Math.PI)), tv=(ph+2*Math.PI*k)/w, ti=tv-sh()/w;
+    function vl(t,col){if(t<0.2||t>c._tmax-0.2)return; ctx.save(); ctx.strokeStyle=col; ctx.setLineDash([5,4]); ctx.lineWidth=1.4;
+      ctx.beginPath(); ctx.moveTo(m.X(t),m.Y(2.4)); ctx.lineTo(m.X(t),m.Y(-2.4)); ctx.stroke(); ctx.restore();}
+    vl(tv,cssv('--ref')); vl(ti,cssv('--act'));
+    ctx.fillStyle=cssv('--ink'); ctx.font='bold 12px sans-serif';
+    ctx.fillText((mode==='L'?'遅れ':'進み')+' \u03c0/2',(m.X(tv)+m.X(ti))/2-22,m.Y(2.4)+13);}
+  var A=anim(function(){var now=performance.now(); if(playing)ph+=(now-lastT)/1000*1.7; lastT=now; draw();});
+  bL.onclick=function(){mode='L'; bL.classList.add('on'); bC.classList.remove('on'); updEq();};
+  bC.onclick=function(){mode='C'; bC.classList.add('on'); bL.classList.remove('on'); updEq();};
+  bP.onclick=function(){playing=!playing; bP.textContent=playing?'\u23f8 停止':'\u25b6 再生';};
+  if(sl)sl.addEventListener('input',function(){w=parseFloat(sl.value); vw.textContent=fmt(w,1); updEq();});
+  updEq();
+  reg('sl-lc-wave-play',{show:function(){lastT=performance.now(); A.start();},hide:A.stop,redraw:draw});})();
+
+(function(){
+  var Q=[{id:'pz-mag',ans:2},{id:'pz-arg',ans:Math.PI/4},{id:'pz-amp',ans:100}];
+  function el(s){return $('#'+s);}
+  if(!el('pz-grade'))return;
+  function grade(){var done=0,ok=0;
+    Q.forEach(function(q){var s=el(q.id).value.trim(),mk=el(q.id+'-m');
+      if(s===''){mk.textContent='';mk.className='prmark';return;} done++;
+      var dp=decimals(s);
+      if(dp>5){mk.textContent='桁が多い';mk.className='prmark bad';return;}
+      var v=parseFloat(s);
+      if(isFinite(v)&&Math.abs(v-roundTo(q.ans,dp))<1e-9){mk.textContent='○';mk.className='prmark good';ok++;}
+      else{mk.textContent='✕';mk.className='prmark bad';}});
+    var r=el('pz-res');
+    if(done===0){r.textContent='数値を入力してから採点してください。';r.className='prresult';}
+    else if(ok===Q.length){r.textContent='全問正解！よくできました。';r.className='prresult good';}
+    else{r.textContent=ok+' / '+Q.length+' 問正解。考え直してみよう。';r.className='prresult bad';}}
+  el('pz-grade').onclick=grade;
+  el('pz-show').onclick=function(){el('pz-rev').classList.add('show');};
+  el('pz-reset').onclick=function(){Q.forEach(function(q){el(q.id).value='';var mk=el(q.id+'-m');mk.textContent='';mk.className='prmark';});
+    var r=el('pz-res');r.textContent='';r.className='prresult';el('pz-rev').classList.remove('show');};
+  reg('sl-practice-z',{});
+})();
+
+(function(){
+  var WL=100*Math.PI;
+  var Q=[{id:'prl-mag',ans:Math.hypot(4,WL)},{id:'prl-arg',ans:Math.atan(WL/4)},{id:'prl-amp',ans:115/Math.hypot(4,WL)}];
+  function el(s){return $('#'+s);}
+  if(!el('prl-grade'))return;
+  function grade(){var done=0,ok=0;
+    Q.forEach(function(q){var s=el(q.id).value.trim(),mk=el(q.id+'-m');
+      if(s===''){mk.textContent='';mk.className='prmark';return;} done++;
+      var dp=decimals(s);
+      if(dp>5){mk.textContent='桁が多い';mk.className='prmark bad';return;}
+      var v=parseFloat(s);
+      if(isFinite(v)&&Math.abs(v-roundTo(q.ans,dp))<1e-9){mk.textContent='○';mk.className='prmark good';ok++;}
+      else{mk.textContent='✕';mk.className='prmark bad';}});
+    var r=el('prl-res');
+    if(done===0){r.textContent='数値を入力してから採点してください。';r.className='prresult';}
+    else if(ok===Q.length){r.textContent='全問正解！RL回路はもう大丈夫。';r.className='prresult good';}
+    else{r.textContent=ok+' / '+Q.length+' 問正解。ωの読み取りから見直そう。';r.className='prresult bad';}}
+  el('prl-grade').onclick=grade;
+  el('prl-show').onclick=function(){el('prl-rev').classList.add('show');};
+  el('prl-reset').onclick=function(){Q.forEach(function(q){el(q.id).value='';var mk=el(q.id+'-m');mk.textContent='';mk.className='prmark';});
+    var r=el('prl-res');r.textContent='';r.className='prresult';el('prl-rev').classList.remove('show');};
+  reg('sl-practice-rl',{});
+})();
+  /* HOOKS:END */
+
+  // ---- 起動 ----
+  var start=0, h=parseInt((location.hash||'').replace('#',''),10); if(h>=1&&h<=N)start=h-1;
+  go(start);
+})();
+</script>
+</body>
+</html>
