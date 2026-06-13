@@ -7,7 +7,7 @@
   {
     "id": "sl-schedule",
     "file": "audio/sl-schedule.mp3",
-    "duration": 66.62
+    "duration": 56.9
   },
   {
     "id": "sl-agenda",
@@ -17,77 +17,77 @@
   {
     "id": "sl-vi-relations",
     "file": "audio/sl-vi-relations.mp3",
-    "duration": 81.0
+    "duration": 69.19
   },
   {
     "id": "sl-rl-transient",
     "file": "audio/sl-rl-transient.mp3",
-    "duration": 80.14
+    "duration": 75.05
   },
   {
     "id": "sl-rc-transient",
     "file": "audio/sl-rc-transient.mp3",
-    "duration": 77.81
+    "duration": 72.5
   },
   {
     "id": "sl-complex-plot",
     "file": "audio/sl-complex-plot.mp3",
-    "duration": 70.27
+    "duration": 79.63
   },
   {
     "id": "sl-arg-mag",
     "file": "audio/sl-arg-mag.mp3",
-    "duration": 63.79
+    "duration": 74.95
   },
   {
     "id": "sl-complex-arith",
     "file": "audio/sl-complex-arith.mp3",
-    "duration": 71.28
+    "duration": 57.22
   },
   {
     "id": "sl-polar-form",
     "file": "audio/sl-polar-form.mp3",
-    "duration": 63.43
+    "duration": 74.4
   },
   {
     "id": "sl-angfreq-phase",
     "file": "audio/sl-angfreq-phase.mp3",
-    "duration": 63.02
+    "duration": 70.3
   },
   {
     "id": "sl-rationalize",
     "file": "audio/sl-rationalize.mp3",
-    "duration": 66.86
+    "duration": 71.06
   },
   {
     "id": "sl-phasor-convert",
     "file": "audio/sl-phasor-convert.mp3",
-    "duration": 73.03
+    "duration": 66.98
   },
   {
     "id": "sl-ac-impedance",
     "file": "audio/sl-ac-impedance.mp3",
-    "duration": 74.38
+    "duration": 70.82
   },
   {
     "id": "sl-rms-amp",
     "file": "audio/sl-rms-amp.mp3",
-    "duration": 69.82
+    "duration": 76.99
   },
   {
     "id": "sl-power",
     "file": "audio/sl-power.mp3",
-    "duration": 73.03
+    "duration": 75.84
   },
   {
     "id": "sl-power-confirm",
     "file": "audio/sl-power-confirm.mp3",
-    "duration": 80.42
+    "duration": 75.65
   },
   {
     "id": "sl-exam-intro",
     "file": "audio/sl-exam-intro.mp3",
-    "duration": 73.82
+    "duration": 53.71
   },
   {
     "id": "sl-exam-vi",
@@ -107,21 +107,21 @@
   {
     "id": "sl-exam-rc-ode",
     "file": "audio/sl-exam-rc-ode.mp3",
-    "duration": 72.34
+    "duration": 69.58
   },
   {
     "id": "sl-exam-rl-ode",
     "file": "audio/sl-exam-rl-ode.mp3",
-    "duration": 79.97
+    "duration": 80.66
   },
   {
     "id": "sl-exam-switch",
     "file": "audio/sl-exam-switch.mp3",
-    "duration": 73.7
+    "duration": 77.62
   },
   {
     "id": "sl-summary",
     "file": "audio/sl-summary.mp3",
-    "duration": 91.85
+    "duration": 95.78
   }
 ]

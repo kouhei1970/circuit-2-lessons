@@ -2,121 +2,136 @@
   {
     "id": "sl-title",
     "file": "audio/sl-title.mp3",
-    "duration": 71.42
+    "duration": 59.95
   },
   {
     "id": "sl-schedule",
     "file": "audio/sl-schedule.mp3",
-    "duration": 67.54
+    "duration": 48.0
   },
   {
     "id": "sl-agenda",
     "file": "audio/sl-agenda.mp3",
-    "duration": 77.4
+    "duration": 65.14
   },
   {
     "id": "sl-euler",
     "file": "audio/sl-euler.mp3",
-    "duration": 81.86
+    "duration": 68.21
   },
   {
     "id": "sl-phase-read",
     "file": "audio/sl-phase-read.mp3",
-    "duration": 78.96
+    "duration": 67.75
   },
   {
     "id": "sl-phase-do",
     "file": "audio/sl-phase-do.mp3",
-    "duration": 69.19
+    "duration": 59.93
   },
   {
     "id": "sl-rotvec",
     "file": "audio/sl-rotvec.mp3",
-    "duration": 85.15
+    "duration": 75.38
   },
   {
     "id": "sl-rotvec-do",
     "file": "audio/sl-rotvec-do.mp3",
-    "duration": 71.45
+    "duration": 68.5
   },
   {
     "id": "sl-time-conv",
     "file": "audio/sl-time-conv.mp3",
-    "duration": 78.86
+    "duration": 74.04
   },
   {
     "id": "sl-zform",
     "file": "audio/sl-zform.mp3",
-    "duration": 96.91
+    "duration": 73.39
   },
   {
     "id": "sl-realpart",
     "file": "audio/sl-realpart.mp3",
-    "duration": 80.66
+    "duration": 76.97
   },
   {
     "id": "sl-realpart-do",
     "file": "audio/sl-realpart-do.mp3",
-    "duration": 75.6
+    "duration": 63.43
   },
   {
     "id": "sl-phase-mean",
     "file": "audio/sl-phase-mean.mp3",
-    "duration": 75.58
+    "duration": 66.77
   },
   {
     "id": "sl-phase-mean-do",
     "file": "audio/sl-phase-mean-do.mp3",
-    "duration": 66.89
+    "duration": 57.02
   },
   {
     "id": "sl-drop-omega",
     "file": "audio/sl-drop-omega.mp3",
-    "duration": 100.22
+    "duration": 81.79
   },
   {
     "id": "sl-sincos",
     "file": "audio/sl-sincos.mp3",
-    "duration": 77.09
+    "duration": 64.46
   },
   {
     "id": "sl-pr-convert",
     "file": "audio/sl-pr-convert.mp3",
-    "duration": 97.8
+    "duration": 86.95
   },
   {
     "id": "sl-pr-convert-do",
     "file": "audio/sl-pr-convert-do.mp3",
-    "duration": 81.1
+    "duration": 66.0
   },
   {
     "id": "sl-ex88",
     "file": "audio/sl-ex88.mp3",
-    "duration": 93.91
+    "duration": 74.93
   },
   {
     "id": "sl-ex88-do",
     "file": "audio/sl-ex88-do.mp3",
-    "duration": 71.64
+    "duration": 56.23
   },
   {
     "id": "sl-ex89",
     "file": "audio/sl-ex89.mp3",
-    "duration": 103.32
+    "duration": 99.48
   },
   {
     "id": "sl-ex89-do",
     "file": "audio/sl-ex89-do.mp3",
-    "duration": 82.34
+    "duration": 70.97
   },
   {
     "id": "sl-practice",
     "file": "audio/sl-practice.mp3",
-    "duration": 86.3
+    "duration": 72.94
+  },
+  {
+    "id": "sl-add-ex36",
+    "file": "audio/sl-add-ex36.mp3",
+    "duration": 72.26
+  },
+  {
+    "id": "sl-add-subtract",
+    "file": "audio/sl-add-subtract.mp3",
+    "duration": 78.65
+  },
+  {
+    "id": "sl-add-pr",
+    "file": "audio/sl-add-pr.mp3",
+    "duration": 68.5
   },
   {
     "id": "sl-summary",
     "file": "audio/sl-summary.mp3",
-    "duration": 108.5
+    "duration": 85.08
   }
 ]

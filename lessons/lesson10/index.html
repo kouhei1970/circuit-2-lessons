@@ -391,6 +391,111 @@
 
 <section class="slide" id="sl-practice" data-title="練習問題（課題1〜4・採点つき）"><div class="inner"><span class="tag2 tag-do">操作</span><p class="kicker">8.7 正弦波の複素数表示</p><h1 class="tt">練習問題</h1><p class="desc">課題1〜4を順に解こう。数値を入力して<strong>採点</strong>を押すと、各欄に ○／✕ が付く。困ったら<strong>答えを見る</strong>。</p><div class="seg" id="pr-seg"><button type="button" class="on" data-p="pr-p1">課題1</button><button type="button" data-p="pr-p2">課題2</button><button type="button" data-p="pr-p3">課題3</button><button type="button" data-p="pr-p4">課題4</button></div><div class="pr-panel" id="pr-p1"><p class="steps"><strong>課題1</strong>　50Hz の交流について以下に答えなさい。<br>（1）周波数 50Hz の交流の角周波数は何 rad/s か。<br>（2）位相 <i>π</i>/3 (rad) は何 (s) に相当するか。</p><div class="prfields"><div class="prf"><span>(1) <i>ω</i> = ［　］ × <i>π</i>　[rad/s]</span><input type="number" id="pr-q1a" step="any" inputmode="decimal"><span class="prmark" id="pr-q1a-m"></span></div><div class="prf"><span>(2) <i>t</i> = ［　］　ms（小数第2位まで）</span><input type="number" id="pr-q1b" step="any" inputmode="decimal"><span class="prmark" id="pr-q1b-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g1">採点</button><button type="button" class="btn" id="pr-r1">答えを見る</button><button type="button" class="btn" id="pr-t1">やり直す</button></div><div class="prresult" id="pr-res1"></div><div class="reveal" id="pr-rev1"><i>ω</i> = 2<i>πf</i> = 2<i>π</i>·50 = 100<i>π</i> ≈ 314.2 rad/s。位相の時間換算 <i>t</i> = <i>θ</i>/<i>ω</i> = (<i>π</i>/3)/(100<i>π</i>) = 1/300 s ≈ 3.33×10⁻³ s ＝ 3.33 ms。</div></div><div class="pr-panel" id="pr-p2" style="display:none;"><p class="steps"><strong>課題2（復習）</strong>　次の複素数を有理化（複素数の除算）し、<span class="re">実部</span>・<span class="im">虚部</span>を答えなさい。</p><div class="prfields"><div class="prf"><span>(1) 1/<i>j</i>　実部</span><input type="number" id="pr-q2-1r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-1r-m"></span></div><div class="prf"><span>(1) 1/<i>j</i>　虚部</span><input type="number" id="pr-q2-1i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-1i-m"></span></div><div class="prf"><span>(2) 1/(2+3<i>j</i>)　実部</span><input type="number" id="pr-q2-2r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-2r-m"></span></div><div class="prf"><span>(2) 1/(2+3<i>j</i>)　虚部</span><input type="number" id="pr-q2-2i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-2i-m"></span></div><div class="prf"><span>(3) 1/(3−<i>j</i>)　実部</span><input type="number" id="pr-q2-3r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-3r-m"></span></div><div class="prf"><span>(3) 1/(3−<i>j</i>)　虚部</span><input type="number" id="pr-q2-3i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-3i-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g2">採点</button><button type="button" class="btn" id="pr-r2">答えを見る</button><button type="button" class="btn" id="pr-t2">やり直す</button></div><div class="prresult" id="pr-res2"></div><div class="reveal" id="pr-rev2">分母の共役を分母・分子に掛けて実数化する。<br>(1) 1/<i>j</i> = (1·(−<i>j</i>))/(<i>j</i>·(−<i>j</i>)) = −<i>j</i>　→ 実部 0、虚部 −1。<br>(2) 1/(2+3<i>j</i>) = (2−3<i>j</i>)/(2²+3²) = (2−3<i>j</i>)/13　→ 実部 2/13 ≈ 0.15、虚部 −3/13 ≈ −0.23。<br>(3) 1/(3−<i>j</i>) = (3+<i>j</i>)/(3²+1²) = (3+<i>j</i>)/10　→ 実部 3/10 = 0.30、虚部 1/10 = 0.10。</div></div><div class="pr-panel" id="pr-p3" style="display:none;"><p class="steps"><strong>課題3</strong>　次の正弦波を複素交流（極形式 <i>A</i> e<sup><i>jθ</i></sup>）にしなさい。振幅 <i>A</i> と位相 <i>θ</i>（度）を答えよ。</p><div class="prfields"><div class="prf"><span>(1) cos(<i>ωt</i>+<i>π</i>/3)　振幅 <i>A</i></span><input type="number" id="pr-q3-1a" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-1a-m"></span></div><div class="prf"><span>(1) 位相 <i>θ</i>　[度]</span><input type="number" id="pr-q3-1t" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-1t-m"></span></div><div class="prf"><span>(2) sin(<i>ωt</i>+<i>π</i>/3)　振幅 <i>A</i></span><input type="number" id="pr-q3-2a" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-2a-m"></span></div><div class="prf"><span>(2) 位相 <i>θ</i>　[度]</span><input type="number" id="pr-q3-2t" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-2t-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g3">採点</button><button type="button" class="btn" id="pr-r3">答えを見る</button><button type="button" class="btn" id="pr-t3">やり直す</button></div><div class="prresult" id="pr-res3"></div><div class="reveal" id="pr-rev3">複素交流の基準は cos。すべて cos に統一して位相を読み取る。<br>(1) cos(<i>ωt</i>+<i>π</i>/3) はそのまま 1·e<sup><i>j</i>60°</sup>（= e<sup><i>jπ</i>/3</sup>）。よって <i>A</i>=1、<i>θ</i>=60°。<br>(2) sin → cos へは −90度：sin(<i>ωt</i>+<i>π</i>/3) = cos(<i>ωt</i>+<i>π</i>/3−<i>π</i>/2) = cos(<i>ωt</i>−<i>π</i>/6) = 1·e<sup>−<i>j</i>30°</sup>（= e<sup>−<i>jπ</i>/6</sup>）。よって <i>A</i>=1、<i>θ</i>=−30°。</div></div><div class="pr-panel" id="pr-p4" style="display:none;"><p class="steps"><strong>課題4</strong>　次の複素交流（極形式 <i>A</i> e<sup><i>jθ</i></sup>）を正弦波にしなさい（角周波数は <i>ω</i> とする）。<br><span class="eq big" style="display:inline-block;margin:.3em 0;">4 e<sup><i>j</i>(<i>π</i>/3)</sup></span><br>振幅と位相（度）を答えよ。</p><div class="prfields"><div class="prf"><span>振幅 <i>A</i></span><input type="number" id="pr-q4a" step="any" inputmode="decimal"><span class="prmark" id="pr-q4a-m"></span></div><div class="prf"><span>位相 <i>θ</i>　[度]</span><input type="number" id="pr-q4t" step="any" inputmode="decimal"><span class="prmark" id="pr-q4t-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g4">採点</button><button type="button" class="btn" id="pr-r4">答えを見る</button><button type="button" class="btn" id="pr-t4">やり直す</button></div><div class="prresult" id="pr-res4"></div><div class="reveal" id="pr-rev4">複素交流の実部をとって正弦波（cos）に戻す。4 e<sup><i>j</i>(<i>π</i>/3)</sup> → 4 cos(<i>ωt</i> + <i>π</i>/3)。よって振幅 4、位相 +<i>π</i>/3（= 60°）。</div></div></div></section>
 
+<section class="slide" id="sl-add-ex36" data-title="例題:3cosωt−4sinωtの合成"><div class="inner">
+      <span class="tag2 tag-ex">解説</span>
+      <p class="kicker">もう一題（フェーザ合成）</p>
+      <h1 class="tt">3 cos <i>ωt</i> − 4 sin <i>ωt</i> を合成する</h1>
+      <p class="desc">例題8.9と同じ手順を、<strong>引き算で sin 項が入る別配置</strong>でもう一度。手が動くまで反復するのが狙い。</p>
+      <div class="twocol">
+        <div>
+          <p class="steps"><span class="lead2">① まず全て cos に統一（sin α = cos(α − π/2)）</span><br>− 4 sin <i>ωt</i> = − 4 cos(<i>ωt</i> − π/2)<br>＝ 4 cos(<i>ωt</i> − π/2 + π) ＝ 4 cos(<i>ωt</i> + π/2)<br><span class="lead2">マイナス1倍は位相を π（180°）ずらすのと同じ。</span></p>
+          <div class="eq"><span class="lead2">② それぞれフェーザに：</span><br>3 cos <i>ωt</i> = 3<i>e</i><sup><i>j</i>0</sup> = <span class="re">3</span><br>4 cos(<i>ωt</i>+π/2) = 4<i>e</i><sup><i>j</i>π/2</sup> = <span class="im">4<i>j</i></span></div>
+          <div class="eq"><span class="lead2">③ 複素数のまま足す：</span> <i>z</i> = <span class="re">3</span> + <span class="im">4<i>j</i></span><br><i>r</i> = √(3² + 4²) = <strong>5</strong>、　<i>θ</i> = tan⁻¹(4/3) ≈ <strong>+53°</strong></div>
+          <div class="eq big">∴ 5 cos(<i>ωt</i> + tan⁻¹(4/3))</div>
+        </div>
+        <div>
+          <div class="figbox">
+            <svg class="fig" viewBox="0 0 240 200" role="img" aria-label="第1象限の合成ベクトル">
+              <line class="w" x1="20" y1="160" x2="225" y2="160"/>
+              <line class="w" x1="40" y1="190" x2="40" y2="15"/>
+              <text x="212" y="178">Re</text><text x="46" y="24">Im</text>
+              <line x1="40" y1="160" x2="160" y2="160" stroke="var(--ref)" stroke-width="3"/>
+              <polygon points="160,160 150,155 150,165" fill="var(--ref)"/>
+              <text x="95" y="178" fill="var(--re)">3</text>
+              <line x1="40" y1="160" x2="40" y2="60" stroke="var(--ref)" stroke-width="3"/>
+              <polygon points="40,60 35,70 45,70" fill="var(--ref)"/>
+              <text x="12" y="110" fill="var(--im)">4j</text>
+              <line x1="40" y1="160" x2="160" y2="60" stroke="var(--act)" stroke-width="3.4"/>
+              <polygon points="160,60 148,62 154,72" fill="var(--act)"/>
+              <text x="150" y="52" fill="var(--act)">z = 3 + 4j</text>
+              <line x1="160" y1="160" x2="160" y2="60" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 3"/>
+            </svg>
+            <p class="figcap">第<strong>1</strong>象限の合成ベクトル <span class="re"><i>z</i></span> = 3 + 4<i>j</i>（例題8.9は第4象限だった点と対比）</p>
+          </div>
+        </div>
+      </div>
+      <p class="note">山場は①の符号処理。<strong>−sin = sin を −90° ではなく +90° ずらした波</strong>と覚えてもよい（−4 sin = 4 cos(<i>ωt</i>+π/2)）。例題8.9の <span style="white-space:nowrap;">4 − 3<i>j</i></span>（第4象限・位相が遅れ）に対し、こちらは <span style="white-space:nowrap;">3 + 4<i>j</i></span>（第1象限・位相が進み）。係数の符号で象限＝進み遅れが切り替わる。</p>
+    </div></section>
+
+<section class="slide" id="sl-add-subtract" data-title="つまずき:電圧の差はベクトルの差"><div class="inner">
+      <span class="tag2 tag-fig">図</span><span class="tag2 tag-ex">解説</span>
+      <p class="kicker">よくある誤解を一枚で解く</p>
+      <h1 class="tt">「電圧の差」は引き算してよい？ ── フェーザの減算</h1>
+      <p class="desc">直列の2点間電圧 <i>v₁</i> − <i>v₂</i> のように、<strong>正弦波どうしの引き算</strong>もフェーザなら機械的に解ける。次回の回路計算で必ず使う型。</p>
+      <div class="twocol">
+        <div>
+          <p class="steps"><strong>問</strong>　<i>v₁</i> = 4 cos <i>ωt</i>、<i>v₂</i> = 4 cos(<i>ωt</i> − π/2) のとき、差 <i>v₁</i> − <i>v₂</i> を求めよ。<br><span class="lead2">（同じ振幅4。よくある誤解は「同じ大きさだから差は0」）</span></p>
+          <div class="eq"><span class="lead2">フェーザに直す：</span><br><i>V₁</i> = 4<i>e</i><sup><i>j</i>0</sup> = <span class="re">4</span>、　<i>V₂</i> = 4<i>e</i><sup>−<i>j</i>π/2</sup> = <span class="im">−4<i>j</i></span></div>
+          <div class="eq"><span class="lead2">複素数のまま引く：</span><br><i>V₁</i> − <i>V₂</i> = 4 − (−4<i>j</i>) = <span class="re">4</span> + <span class="im">4<i>j</i></span></div>
+          <div class="eq big">|<i>V</i>| = √(4²+4²) = 4√2 ≈ 5.66<br><i>θ</i> = tan⁻¹(4/4) = +45°</div>
+          <p class="note" style="margin-top:.4em;">答え：<strong>4√2 cos(<i>ωt</i> + π/4)</strong>。大きさが同じでも位相が違えば差はゼロにならず、むしろ <strong>√2 倍に増える</strong>。これが交流ならではの落とし穴。</p>
+        </div>
+        <div>
+          <div class="figbox">
+            <svg class="fig" viewBox="0 0 240 210" role="img" aria-label="ベクトルの差の作図">
+              <line class="w" x1="20" y1="120" x2="225" y2="120"/>
+              <line class="w" x1="110" y1="200" x2="110" y2="15"/>
+              <text x="212" y="138">Re</text><text x="116" y="24">Im</text>
+              <line x1="110" y1="120" x2="190" y2="120" stroke="var(--ref)" stroke-width="3"/>
+              <polygon points="190,120 180,115 180,125" fill="var(--ref)"/>
+              <text x="150" y="138" fill="var(--ref)">V₁=4</text>
+              <line x1="110" y1="120" x2="110" y2="200" stroke="var(--thr)" stroke-width="3"/>
+              <polygon points="110,200 105,190 115,190" fill="var(--thr)"/>
+              <text x="78" y="180" fill="var(--thr)">V₂=−4j</text>
+              <line x1="190" y1="120" x2="190" y2="40" stroke="var(--thr)" stroke-width="2.4" stroke-dasharray="5 3"/>
+              <polygon points="190,40 185,50 195,50" fill="var(--thr)"/>
+              <text x="195" y="80" fill="var(--thr)">−V₂=+4j</text>
+              <line x1="110" y1="120" x2="190" y2="40" stroke="var(--act)" stroke-width="3.4"/>
+              <polygon points="190,40 178,44 184,52" fill="var(--act)"/>
+              <text x="135" y="62" fill="var(--act)">V₁−V₂</text>
+            </svg>
+            <p class="figcap">差 <i>V₁</i> − <i>V₂</i> は、<i>V₁</i> に <strong>−<i>V₂</i></strong>（<i>V₂</i> を180°回した矢印）を足すこと。直角三角形ができ、合成は 4√2・+45°。</p>
+          </div>
+        </div>
+      </div>
+      <p class="note"><strong>引き算 ＝ 180°回してから足す。</strong>　−<i>V₂</i> は <i>V₂</i> を逆向き（位相を π ずらす）にした矢印。だから「差を求める」も「和を求める」も、フェーザでは同じベクトル作図に帰着する。瞬時値の式（cos の引き算）を三角公式で展開する必要はもう無い。</p>
+    </div></section>
+
+<section class="slide" id="sl-add-pr" data-title="練習(採点つき):3cosωt−4sinωt"><div class="inner">
+      <span class="tag2 tag-do">操作</span>
+      <p class="kicker">確認（採点つき）</p>
+      <h1 class="tt">練習：合成して極形式に直す</h1>
+      <div class="grid2">
+        <div>
+          <p class="steps"><strong>練習A</strong>　3 cos <i>ωt</i> − 4 sin <i>ωt</i> をフェーザ <span style="white-space:nowrap;"><i>a</i> + <i>jb</i></span> にし、振幅 <i>r</i> と位相 <i>θ</i>（度・整数）を求めよ。</p>
+          <div class="prfields">
+            <div class="prf"><span>実部 <i>a</i> = </span><input type="number" id="ad-qa-a" step="any" inputmode="decimal"><span class="prmark" id="ad-qa-a-m"></span></div>
+            <div class="prf"><span>虚部 <i>b</i> = </span><input type="number" id="ad-qa-b" step="any" inputmode="decimal"><span class="prmark" id="ad-qa-b-m"></span></div>
+            <div class="prf"><span>振幅 <i>r</i> = </span><input type="number" id="ad-qa-r" step="any" inputmode="decimal"><span class="prmark" id="ad-qa-r-m"></span></div>
+            <div class="prf"><span>位相 <i>θ</i> = </span><input type="number" id="ad-qa-t" step="any" inputmode="decimal"><span class="prmark" id="ad-qa-t-m"></span><span>°</span></div>
+          </div>
+          <div class="prbtns"><button type="button" class="btn pr-primary" id="ad-ga">採点</button><button type="button" class="btn" id="ad-ra">答えを見る</button><button type="button" class="btn" id="ad-ta">やり直す</button></div>
+          <div class="prresult" id="ad-resa"></div>
+          <div class="reveal" id="ad-reva">−4 sin <i>ωt</i> = 4 cos(<i>ωt</i>+π/2) = 4<i>j</i>。3 cos <i>ωt</i> = 3。よって <i>z</i> = <strong>3 + 4<i>j</i></strong>（<i>a</i>=3, <i>b</i>=4）。<i>r</i> = √(9+16) = <strong>5</strong>、<i>θ</i> = tan⁻¹(4/3) ≈ <strong>53°</strong>（第1象限）。</div>
+        </div>
+        <div>
+          <p class="steps"><strong>練習B</strong>　<i>v₁</i> = 6 cos <i>ωt</i>、<i>v₂</i> = 6 cos(<i>ωt</i>+π/2) の差 <i>v₁</i> − <i>v₂</i> の振幅 |<i>V</i>|（小数第2位）と位相 <i>θ</i>（度・整数）は？</p>
+          <div class="prfields">
+            <div class="prf"><span>振幅 |<i>V</i>| = </span><input type="number" id="ad-qb-r" step="any" inputmode="decimal"><span class="prmark" id="ad-qb-r-m"></span></div>
+            <div class="prf"><span>位相 <i>θ</i> = </span><input type="number" id="ad-qb-t" step="any" inputmode="decimal"><span class="prmark" id="ad-qb-t-m"></span><span>°</span></div>
+          </div>
+          <div class="prbtns"><button type="button" class="btn pr-primary" id="ad-gb">採点</button><button type="button" class="btn" id="ad-rb">答えを見る</button><button type="button" class="btn" id="ad-tb">やり直す</button></div>
+          <div class="prresult" id="ad-resb"></div>
+          <div class="reveal" id="ad-revb"><i>V₁</i> = 6、<i>V₂</i> = 6<i>e</i><sup><i>j</i>π/2</sup> = 6<i>j</i>。差 = 6 − 6<i>j</i>。|<i>V</i>| = √(36+36) = 6√2 ≈ <strong>8.49</strong>、<i>θ</i> = tan⁻¹(−6/6) = <strong>−45°</strong>（第4象限）。</div>
+        </div>
+      </div>
+    </div></section>
+
 <section class="slide" id="sl-summary" data-title="まとめ"><div class="inner">
   <span class="tag2 tag-ex">解説</span>
   <p class="kicker">8.7 正弦波の複素数表示</p>
@@ -761,6 +866,36 @@
     var g=$('#pr-g4'); if(g) g.addEventListener('click',function(){ var m=F.map(function(f){return judge(f[0],f[1],f[2]);}); summary('pr-res4',m,F); });
     bindReveal('pr-r4','pr-rev4'); bindRetry('pr-t4','pr-p4','pr-res4','pr-rev4','pr-r4'); })();
   reg('sl-practice',{show:function(){},redraw:function(){}});
+})();
+
+(function(){var root=$('#sl-add-pr'); if(!root)return;
+  function judge(inputId, ans, dp){ var inp=$('#'+inputId), mk=$('#'+inputId+'-m'); if(!inp||!mk)return null;
+    mk.className='prmark'; var raw=inp.value.trim();
+    if(raw===''){ mk.textContent=''; return null; }
+    var v=parseFloat(raw); if(isNaN(v)){ mk.textContent='✕'; mk.classList.add('bad'); return false; }
+    var ok=(roundTo(v,dp)===roundTo(ans,dp));
+    mk.textContent=ok?'○':'✕'; mk.classList.add(ok?'good':'bad'); return ok; }
+  function summary(resId, marks, fields){ var res=$('#'+resId); if(!res)return;
+    var done=marks.filter(function(m){return m!==null;}).length;
+    if(done===0){ res.className='prresult'; res.textContent='数値を入力してから採点してください。'; return; }
+    var hint=''; for(var i=0;i<fields.length;i++){ var inp=$('#'+fields[i][0]); if(inp&&inp.value.trim()!==''&&decimals(inp.value)>fields[i][2]){ hint='（指定の桁数に四捨五入して入力しよう）'; break; } }
+    var good=marks.filter(function(m){return m===true;}).length, all=marks.length;
+    if(good===all){ res.className='prresult good'; res.textContent='全問正解！ '+good+' / '+all; }
+    else { res.className='prresult bad'; res.textContent='正解 '+good+' / '+all+'　もう一度確かめよう。'+hint; } }
+  function bindReveal(btnId, revId){ var b=$('#'+btnId), r=$('#'+revId); if(b&&r) b.addEventListener('click',function(){ r.classList.toggle('show'); b.textContent=r.classList.contains('show')?'答えを隠す':'答えを見る'; }); }
+  function bindRetry(btnId, fields, resId, revId, revBtnId){ var b=$('#'+btnId); if(!b)return;
+    b.addEventListener('click',function(){
+      fields.forEach(function(f){ var inp=$('#'+f[0]); if(inp)inp.value=''; var mk=$('#'+f[0]+'-m'); if(mk){mk.textContent=''; mk.className='prmark';} });
+      var res=$('#'+resId); if(res){res.textContent=''; res.className='prresult';}
+      var rev=$('#'+revId); if(rev) rev.classList.remove('show');
+      var rb=$('#'+revBtnId); if(rb) rb.textContent='答えを見る'; }); }
+  (function(){ var F=[['ad-qa-a',3,0],['ad-qa-b',4,0],['ad-qa-r',5,0],['ad-qa-t',53,0]];
+    var g=$('#ad-ga'); if(g) g.addEventListener('click',function(){ var m=F.map(function(f){return judge(f[0],f[1],f[2]);}); summary('ad-resa',m,F); });
+    bindReveal('ad-ra','ad-reva'); bindRetry('ad-ta',F,'ad-resa','ad-reva','ad-ra'); })();
+  (function(){ var F=[['ad-qb-r',8.49,2],['ad-qb-t',-45,0]];
+    var g=$('#ad-gb'); if(g) g.addEventListener('click',function(){ var m=F.map(function(f){return judge(f[0],f[1],f[2]);}); summary('ad-resb',m,F); });
+    bindReveal('ad-rb','ad-revb'); bindRetry('ad-tb',F,'ad-resb','ad-revb','ad-rb'); })();
+  reg('sl-add-pr',{show:function(){},redraw:function(){}});
 })();
   /* HOOKS:END */
 

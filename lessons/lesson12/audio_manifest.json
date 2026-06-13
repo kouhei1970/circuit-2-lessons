@@ -2,126 +2,126 @@
   {
     "id": "sl-title",
     "file": "audio/sl-title.mp3",
-    "duration": 81.29
+    "duration": 67.78
   },
   {
     "id": "sl-schedule",
     "file": "audio/sl-schedule.mp3",
-    "duration": 83.52
+    "duration": 54.34
   },
   {
     "id": "sl-agenda",
     "file": "audio/sl-agenda.mp3",
-    "duration": 100.1
+    "duration": 72.7
   },
   {
     "id": "sl-vector-def",
     "file": "audio/sl-vector-def.mp3",
-    "duration": 96.55
+    "duration": 72.84
   },
   {
     "id": "sl-vector-play",
     "file": "audio/sl-vector-play.mp3",
-    "duration": 94.01
+    "duration": 71.04
   },
   {
     "id": "sl-vector-sum",
     "file": "audio/sl-vector-sum.mp3",
-    "duration": 97.49
+    "duration": 78.34
   },
   {
     "id": "sl-vector-sum-play",
     "file": "audio/sl-vector-sum-play.mp3",
-    "duration": 92.86
+    "duration": 69.0
   },
   {
     "id": "sl-rlc-vector",
     "file": "audio/sl-rlc-vector.mp3",
-    "duration": 94.37
+    "duration": 76.92
   },
   {
     "id": "sl-rlc-play",
     "file": "audio/sl-rlc-play.mp3",
-    "duration": 100.08
+    "duration": 79.82
   },
   {
     "id": "sl-power-intro",
     "file": "audio/sl-power-intro.mp3",
-    "duration": 89.69
+    "duration": 73.63
   },
   {
     "id": "sl-inst-power",
     "file": "audio/sl-inst-power.mp3",
-    "duration": 86.93
+    "duration": 77.09
   },
   {
     "id": "sl-addition",
     "file": "audio/sl-addition.mp3",
-    "duration": 74.02
+    "duration": 69.19
   },
   {
     "id": "sl-avg-power",
     "file": "audio/sl-avg-power.mp3",
-    "duration": 85.08
+    "duration": 72.62
   },
   {
     "id": "sl-power-wave-play",
     "file": "audio/sl-power-wave-play.mp3",
-    "duration": 85.63
+    "duration": 71.04
   },
   {
     "id": "sl-rms",
     "file": "audio/sl-rms.mp3",
-    "duration": 93.29
+    "duration": 85.58
   },
   {
     "id": "sl-rms-why",
     "file": "audio/sl-rms-why.mp3",
-    "duration": 93.58
+    "duration": 79.22
   },
   {
     "id": "sl-rms-play",
     "file": "audio/sl-rms-play.mp3",
-    "duration": 90.98
+    "duration": 69.02
   },
   {
     "id": "sl-apparent",
     "file": "audio/sl-apparent.mp3",
-    "duration": 91.94
+    "duration": 74.78
   },
   {
     "id": "sl-pf-meaning",
     "file": "audio/sl-pf-meaning.mp3",
-    "duration": 83.83
+    "duration": 69.62
   },
   {
     "id": "sl-triangle",
     "file": "audio/sl-triangle.mp3",
-    "duration": 87.74
+    "duration": 79.3
   },
   {
     "id": "sl-triangle-play",
     "file": "audio/sl-triangle-play.mp3",
-    "duration": 88.97
+    "duration": 70.34
   },
   {
     "id": "sl-complex-power",
     "file": "audio/sl-complex-power.mp3",
-    "duration": 86.06
+    "duration": 81.46
   },
   {
     "id": "sl-practice1",
     "file": "audio/sl-practice1.mp3",
-    "duration": 84.58
+    "duration": 70.49
   },
   {
     "id": "sl-practice2",
     "file": "audio/sl-practice2.mp3",
-    "duration": 100.18
+    "duration": 86.04
   },
   {
     "id": "sl-summary",
     "file": "audio/sl-summary.mp3",
-    "duration": 104.62
+    "duration": 93.02
   }
 ]

@@ -777,6 +777,117 @@
   </div>
 </section>
 
+<section class="slide" id="lesson11-add-jrule" data-title="つまずき：1/j と虚数の有理化">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">つまずきポイント①</p>
+    <h1 class="tt">「1/j」と虚数の有理化でつまずかない</h1>
+    <p class="desc">コンデンサの式 <i>V̇</i> = <i>İ</i>/(j<i>ωC</i>) には分母に j が残る。ここでの符号ミスがインピーダンスを丸ごと間違える原因になりやすい。</p>
+    <div class="grid2">
+      <div>
+        <div class="eq big" style="text-align:center;">1/j = <span style="color:var(--act);">−j</span></div>
+        <p class="steps">なぜか。分母分子に j を掛けるだけ：<br>
+        1/j = j/(j·j) = j/j² = j/(−1) = <strong style="color:var(--act);">−j</strong><br>
+        <span class="lead2">（j² = −1 を使った。これが「有理化」＝分母から虚数を消す操作）</span></p>
+        <div class="eq">だから <i>V̇</i> = <i>İ</i>/(j<i>ωC</i>) = (1/j)·<i>İ</i>/(<i>ωC</i>) = <strong style="color:var(--act);">−j·<i>İ</i>/(<i>ωC</i>)</strong></div>
+      </div>
+      <div>
+        <p class="steps"><span class="lead2">分母が複素数のとき：共役を掛ける</span><br>
+        例 1/(2 + 3<i>j</i>) は分母の共役 (2 − 3<i>j</i>) を上下に掛ける：</p>
+        <div class="eq" style="line-height:2.1;">1/(2 + 3<i>j</i>) = (2 − 3<i>j</i>) / {(2 + 3<i>j</i>)(2 − 3<i>j</i>)}<br>= (2 − 3<i>j</i>) / (4 + 9) = <strong style="color:var(--act);">(2 − 3<i>j</i>)/13</strong></div>
+        <p class="note">分母の (<i>a</i> + <i>jb</i>)(<i>a</i> − <i>jb</i>) = <i>a</i>² + <i>b</i>² は必ず実数。これで分母から j を追い出せる。RC 回路で <i>Z</i> = <i>R</i> − j/(<i>ωC</i>) の <strong>マイナス</strong>が出てくるのは、この 1/j = −j が源。符号を取り違えると誘導性と容量性が逆になるので要注意。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="lesson11-add-sincos" data-title="例題：sin の波を cos に直してフェーザ化">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">つまずきポイント②・例題</p>
+    <h1 class="tt">sin の波を cos に直してフェーザにする</h1>
+    <p class="desc">この科目では <strong>cos を基準</strong>にフェーザを作る約束。電源が sin で与えられたら、まず cos に直してから複素数にする。</p>
+    <div class="eq" style="text-align:center;">基本公式：&nbsp; sin(<i>ωt</i> + <i>α</i>) = cos(<i>ωt</i> + <i>α</i> − π/2)　<span style="font-size:.7em; color:var(--mut);">（sin は cos より π/2 遅れている）</span></div>
+    <div class="grid2">
+      <div>
+        <p class="steps"><span class="lead2">例題：次の正弦波をフェーザ <i>A</i>e<sup>j<i>θ</i></sup> にせよ</span><br>
+        <i>v</i>(<i>t</i>) = cos(<i>ωt</i> + π/3)<br>
+        → そのまま <strong style="color:var(--act);"><i>V̇</i> = e<sup>jπ/3</sup></strong>　<span class="lead2">（cos は位相をそのまま書き写すだけ）</span></p>
+      </div>
+      <div>
+        <p class="steps"><span class="lead2">sin で与えられた場合</span><br>
+        <i>v</i>(<i>t</i>) = sin(<i>ωt</i> + π/3)<br>
+        = cos(<i>ωt</i> + π/3 − π/2) = cos(<i>ωt</i> − π/6)<br>
+        → <strong style="color:var(--act);"><i>V̇</i> = e<sup>−jπ/6</sup></strong></p>
+      </div>
+    </div>
+    <p class="note">逆向きも同じ。複素交流 4e<sup>jπ/3</sup> を波形に戻すと、角周波数 <i>ω</i> を補って <strong>4 cos(<i>ωt</i> + π/3)</strong>。フェーザ ↔ 波形の往復は「振幅は絶対値、位相は偏角」をそのまま写すだけ。ただし sin が混じったら必ず cos に揃えてから、というのが間違えないコツ。</p>
+  </div>
+</section>
+
+<section class="slide" id="lesson11-add-series" data-title="例題：RLC直列のインピーダンス合成">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">例題・直列合成</p>
+    <h1 class="tt">RLC直列のインピーダンスを合成する</h1>
+    <p class="desc">直列なら <i>Z</i> = <i>Z</i><sub>R</sub> + <i>Z</i><sub>L</sub> + <i>Z</i><sub>C</sub> と足すだけ。具体的な数値で最後まで計算してみよう。</p>
+    <div class="ex" style="border-left:4px solid var(--ref);">
+      <strong>条件：</strong><i>R</i> = 8 Ω，<i>ωL</i> = 10 Ω，1/(<i>ωC</i>) = 4 Ω（この <i>ω</i> での値）。これらを直列接続する。
+    </div>
+    <div class="grid2">
+      <div>
+        <p class="steps">
+          <span class="lead2">① 各素子のインピーダンス</span><br>
+          <i>Z</i><sub>R</sub> = 8，&nbsp; <i>Z</i><sub>L</sub> = j10，&nbsp; <i>Z</i><sub>C</sub> = −j4<br>
+          <span class="lead2">② 直列なので単純に足す（実部・虚部ごと）</span><br>
+          <i>Z</i> = 8 + j10 − j4 = <strong style="color:var(--act);">8 + j6 [Ω]</strong>
+        </p>
+        <p class="note">コイルの +j10 とコンデンサの −j4 は虚部どうしで打ち消し合い、差し引き +j6 が残る。虚部が <strong>正</strong>なので、この回路は全体として<strong>誘導性</strong>（コイルが勝っている）。</p>
+      </div>
+      <div>
+        <p class="steps">
+          <span class="lead2">③ 大きさと偏角</span><br>
+          |<i>Z</i>| = √(8² + 6²) = √100 = <strong style="color:var(--act);">10 Ω</strong><br>
+          <i>θ</i> = tan<sup>−1</sup>(6/8) = tan<sup>−1</sup>(0.75) ≈ <strong style="color:var(--act);">+37°</strong>（≈ 0.64 rad）
+        </p>
+        <div class="eq">電源 <i>V̇</i> = 100（振幅100 V, 位相0）なら<br><i>İ</i> = <i>V̇</i>/<i>Z</i> = 100/(10e<sup>j37°</sup>) = <strong>10 e<sup>−j37°</sup></strong></div>
+        <p class="note">電流の振幅は 10 A、位相は電圧より 37° 遅れる。3 と 4 と 5 の直角三角形がそのまま出るよう数値を選んだので、手計算でも検算しやすい。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="lesson11-add-parallel" data-title="例題：RL並列をインピーダンスで解く">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span><span class="tag2 tag-fig">図</span>
+    <p class="kicker">例題・並列合成</p>
+    <h1 class="tt">RL並列回路をインピーダンスで解く</h1>
+    <p class="desc">並列は逆数の和 1/<i>Z</i> = 1/<i>Z</i><sub>1</sub> + 1/<i>Z</i><sub>2</sub>。直流の抵抗の並列とまったく同じ手順で、中身が複素数になるだけ。</p>
+    <div class="twocol">
+      <div class="figbox">
+        <svg class="fig" viewBox="0 0 320 180" role="img" aria-label="RとLの並列回路">
+          <path class="w" d="M60 40 H300 M60 140 H300 M60 40 V70 M60 110 V140 M150 40 V60 M150 120 V140 M250 40 V60 M250 120 V140"/>
+          <circle class="w" cx="60" cy="90" r="18"/><path class="w" d="M51 90 q4.5 -7 9 0 q4.5 7 9 0"/>
+          <rect class="w" x="140" y="60" width="20" height="60"/>
+          <path class="w" d="M250 60 a8 8 0 0 1 0 16 a8 8 0 0 1 0 16 a8 8 0 0 1 0 16 a8 8 0 0 1 0 16"/>
+          <text x="8" y="95">v(t)</text><text x="166" y="95">R</text><text x="266" y="95">jωL</text>
+        </svg>
+        <div class="figcap">R と L の並列：<i>R</i> = 6 Ω，<i>ωL</i> = 8 Ω とする</div>
+      </div>
+      <div>
+        <p class="steps">
+          <span class="lead2">① 各枝のインピーダンス</span><br>
+          <i>Z</i><sub>1</sub> = 6，&nbsp; <i>Z</i><sub>2</sub> = j8<br>
+          <span class="lead2">② 並列の公式（積／和が便利）</span><br>
+          <i>Z</i> = <i>Z</i><sub>1</sub><i>Z</i><sub>2</sub>/(<i>Z</i><sub>1</sub> + <i>Z</i><sub>2</sub>) = (6·j8)/(6 + j8)
+        </p>
+        <div class="eq" style="line-height:2.0;">= j48/(6 + j8) = j48(6 − j8)/(6² + 8²)<br>= j48(6 − j8)/100 = (384 + j288)/100<br>= <strong style="color:var(--act);">3.84 + j2.88 [Ω]</strong></div>
+        <p class="note">分母の有理化（共役 6 − j8 を掛ける）が、さっきの「つまずき①」そのもの。結果は |<i>Z</i>| = √(3.84² + 2.88²) = 4.8 Ω、虚部が正なので並列でも全体は誘導性。並列にすると合成インピーダンスは各枝より小さくなる、という直流の感覚もそのまま生きている。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="slide" id="sl-summary" data-title="まとめと今日のクイズ">
   <div class="inner">
     <p class="kicker">第11回 まとめ</p>
