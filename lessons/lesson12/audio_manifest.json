@@ -1,0 +1,127 @@
+[
+  {
+    "id": "sl-title",
+    "file": "audio/sl-title.mp3",
+    "duration": 81.29
+  },
+  {
+    "id": "sl-schedule",
+    "file": "audio/sl-schedule.mp3",
+    "duration": 83.52
+  },
+  {
+    "id": "sl-agenda",
+    "file": "audio/sl-agenda.mp3",
+    "duration": 100.1
+  },
+  {
+    "id": "sl-vector-def",
+    "file": "audio/sl-vector-def.mp3",
+    "duration": 96.55
+  },
+  {
+    "id": "sl-vector-play",
+    "file": "audio/sl-vector-play.mp3",
+    "duration": 94.01
+  },
+  {
+    "id": "sl-vector-sum",
+    "file": "audio/sl-vector-sum.mp3",
+    "duration": 97.49
+  },
+  {
+    "id": "sl-vector-sum-play",
+    "file": "audio/sl-vector-sum-play.mp3",
+    "duration": 92.86
+  },
+  {
+    "id": "sl-rlc-vector",
+    "file": "audio/sl-rlc-vector.mp3",
+    "duration": 94.37
+  },
+  {
+    "id": "sl-rlc-play",
+    "file": "audio/sl-rlc-play.mp3",
+    "duration": 100.08
+  },
+  {
+    "id": "sl-power-intro",
+    "file": "audio/sl-power-intro.mp3",
+    "duration": 89.69
+  },
+  {
+    "id": "sl-inst-power",
+    "file": "audio/sl-inst-power.mp3",
+    "duration": 86.93
+  },
+  {
+    "id": "sl-addition",
+    "file": "audio/sl-addition.mp3",
+    "duration": 74.02
+  },
+  {
+    "id": "sl-avg-power",
+    "file": "audio/sl-avg-power.mp3",
+    "duration": 85.08
+  },
+  {
+    "id": "sl-power-wave-play",
+    "file": "audio/sl-power-wave-play.mp3",
+    "duration": 85.63
+  },
+  {
+    "id": "sl-rms",
+    "file": "audio/sl-rms.mp3",
+    "duration": 93.29
+  },
+  {
+    "id": "sl-rms-why",
+    "file": "audio/sl-rms-why.mp3",
+    "duration": 93.58
+  },
+  {
+    "id": "sl-rms-play",
+    "file": "audio/sl-rms-play.mp3",
+    "duration": 90.98
+  },
+  {
+    "id": "sl-apparent",
+    "file": "audio/sl-apparent.mp3",
+    "duration": 91.94
+  },
+  {
+    "id": "sl-pf-meaning",
+    "file": "audio/sl-pf-meaning.mp3",
+    "duration": 83.83
+  },
+  {
+    "id": "sl-triangle",
+    "file": "audio/sl-triangle.mp3",
+    "duration": 87.74
+  },
+  {
+    "id": "sl-triangle-play",
+    "file": "audio/sl-triangle-play.mp3",
+    "duration": 88.97
+  },
+  {
+    "id": "sl-complex-power",
+    "file": "audio/sl-complex-power.mp3",
+    "duration": 86.06
+  },
+  {
+    "id": "sl-practice1",
+    "file": "audio/sl-practice1.mp3",
+    "duration": 84.58
+  },
+  {
+    "id": "sl-practice2",
+    "file": "audio/sl-practice2.mp3",
+    "duration": 100.18
+  },
+  {
+    "id": "sl-summary",
+    "file": "audio/sl-summary.mp3",
+    "duration": 104.62
+  }
+]
