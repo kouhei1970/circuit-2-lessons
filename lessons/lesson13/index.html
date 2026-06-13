@@ -450,12 +450,12 @@
     <div class="twocol">
       <div class="figbox">
         <svg class="fig" viewBox="0 0 320 220" role="img" aria-label="RL直列回路">
-          <path class="w" d="M60 40 H150 M60 180 H150 M60 40 V72 M60 108 V180 M150 40 V60 M150 160 V180 M260 40 H150 M260 180 H150"/>
-          <circle class="w" cx="60" cy="90" r="18"/><path class="w" d="M51 90 q4.5 -7 9 0 q4.5 7 9 0"/>
-          <rect class="w" x="142" y="60" width="16" height="46"/>
-          <path class="w" d="M150 120 q9 -9 18 0 q9 9 18 0 q9 -9 18 0" transform="translate(-34,40) scale(1,1)"/>
-          <line class="cur" x1="175" y1="30" x2="215" y2="30"/><polygon class="curf" points="213,25 213,35 222,30"/>
-          <text x="8" y="95">v(t)</text><text x="166" y="88">R</text><text x="166" y="168">L</text><text x="180" y="22">i(t)</text>
+          <path class="w" d="M55 45 H110 M150 45 H170 M224 45 H265 M265 45 V185 M55 185 H265 M55 45 V92 M55 128 V185"/>
+          <circle class="w" cx="55" cy="110" r="18"/><path class="w" d="M46 110 q4.5 -7 9 0 q4.5 7 9 0"/>
+          <rect class="w" x="110" y="37" width="40" height="16"/>
+          <path class="w" d="M170 45 q9 -9 18 0 q9 -9 18 0 q9 -9 18 0"/>
+          <line class="cur" x1="72" y1="28" x2="103" y2="28"/><polygon class="curf" points="101,23 101,33 110,28"/>
+          <text x="4" y="114">v(t)</text><text x="123" y="72">R</text><text x="190" y="72">L</text><text x="74" y="21">i(t)</text>
         </svg>
         <div class="figcap">v(t)=5cos(4t+&pi;/3), R=10&Omega;, L=5H, &omega;=4</div>
       </div>
@@ -654,25 +654,25 @@
         <div class="figbox">
           <svg class="fig" viewBox="0 0 320 200" role="img" aria-label="5V電源、2Ω抵抗と1Fコンデンサの直列、初期電流2A">
             <!-- left source -->
-            <path class="w" d="M50 45 V80 M50 120 V160 M50 45 H120 M50 160 H230"/>
+            <path class="w" d="M50 45 V80 M50 120 V160 M50 45 H120 M50 160 H120"/>
             <path class="w" d="M40 85 H60 M44 95 H56 M40 105 H60 M44 115 H56"/>
             <text x="60" y="108">5V</text>
             <text x="32" y="50">+</text>
             <text x="32" y="160">−</text>
             <!-- top wire to resistor -->
-            <line class="cur" x1="140" y1="34" x2="185" y2="34"/>
-            <polygon class="curf" points="183,29 193,34 183,39"/>
-            <text x="150" y="28">i(t)</text>
+            <line class="cur" x1="60" y1="36" x2="98" y2="36"/>
+            <polygon class="curf" points="96,31 106,36 96,41"/>
+            <text x="64" y="30">i(t)</text>
             <!-- 2 ohm resistor -->
             <path class="w" d="M120 45 V60"/>
             <rect class="w" x="110" y="60" width="20" height="40"/>
             <text x="134" y="82">2Ω</text>
-            <text x="134" y="58">v_R</text>
+            <text x="134" y="58">v<tspan font-size="0.7em" dy="3">R</tspan></text>
             <!-- 1F capacitor -->
             <path class="w" d="M120 100 V118"/>
             <path class="w" d="M104 118 H136 M104 132 H136"/>
             <text x="134" y="130">1F</text>
-            <text x="134" y="150">v_C</text>
+            <text x="134" y="150">v<tspan font-size="0.7em" dy="3">C</tspan></text>
             <path class="w" d="M120 132 V160"/>
           </svg>
           <div class="figcap">5V電源・2Ω・1F の直列。<i>i</i>(0)=2A</div>
@@ -760,7 +760,7 @@
       <div class="twocol">
         <div>
           <div class="figbox" style="padding:.5em;">
-            <svg class="fig" style="max-width:14em;" viewBox="0 0 220 170" role="img" aria-label="図4 オン：6V、2Hコイル、2Ωと3Ωの並列、スイッチ閉">
+            <svg class="fig" style="max-width:15em;" viewBox="0 0 240 170" role="img" aria-label="図4 オン：6V、2Hコイル、2Ωと3Ωの並列、スイッチ閉">
               <circle class="w" cx="30" cy="95" r="14"/>
               <path class="w" d="M30 81 V109"/>
               <text x="4" y="99">6V</text>
@@ -782,14 +782,16 @@
               <path class="w" d="M190 40 V60 M190 96 V120"/>
               <path class="w" d="M30 109 V130 H130"/>
               <path class="w" d="M160 130 H190 V120"/>
-              <path class="w" d="M130 130 L158 120"/>
+              <path class="w" d="M130 130 H160"/>
+              <circle cx="130" cy="130" r="2.6" style="fill:var(--ink)"/>
+              <circle cx="160" cy="130" r="2.6" style="fill:var(--ink)"/>
             </svg>
             <div class="figcap">図4 オン（定常）</div>
           </div>
         </div>
         <div>
           <div class="figbox" style="padding:.5em;">
-            <svg class="fig" style="max-width:14em;" viewBox="0 0 220 170" role="img" aria-label="図5 オフ：スイッチ開、3Ω切り離し">
+            <svg class="fig" style="max-width:15em;" viewBox="0 0 240 170" role="img" aria-label="図5 オフ：スイッチ開、3Ω切り離し">
               <circle class="w" cx="30" cy="95" r="14"/>
               <path class="w" d="M30 81 V109"/>
               <text x="4" y="99">6V</text>
@@ -936,7 +938,7 @@
       for(i=Math.ceil(-yr);i<=yr;i++){if(i===0)continue; p=PX(0,i); ctx.globalAlpha=.55; ctx.beginPath(); ctx.moveTo(0,p[1]); ctx.lineTo(W,p[1]); ctx.stroke();}
       ctx.globalAlpha=1; ctx.strokeStyle=cssv('--ax'); ctx.lineWidth=1.5; var o=PX(0,0);
       ctx.beginPath(); ctx.moveTo(0,o[1]); ctx.lineTo(W,o[1]); ctx.stroke(); ctx.beginPath(); ctx.moveTo(o[0],H); ctx.lineTo(o[0],0); ctx.stroke();
-      ctx.fillStyle=cssv('--mut'); ctx.fillText(opt.reLabel||'Re', W-26, o[1]-7); ctx.fillText(opt.imLabel||'Im', o[0]+7, 14);}
+      ctx.fillStyle=cssv('--mut'); ctx.textAlign='right'; ctx.fillText(opt.reLabel||'Re', W-6, o[1]-7); ctx.textAlign='left'; ctx.fillText(opt.imLabel||'Im', o[0]+7, 14);}
     function head(x1,y1,x2,y2,color,L){L=L||10; var a=Math.atan2(y2-y1,x2-x1); ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-L*Math.cos(a-.42),y2-L*Math.sin(a-.42)); ctx.lineTo(x2-L*Math.cos(a+.42),y2-L*Math.sin(a+.42)); ctx.closePath(); ctx.fill();}
     function arrow(ux1,uy1,ux2,uy2,color,w){var a=PX(ux1,uy1),b=PX(ux2,uy2); ctx.strokeStyle=color; ctx.lineWidth=w||3; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); head(a[0],a[1],b[0],b[1],color);}
     function vec(x,y,color,opt){opt=opt||{}; arrow(0,0,x,y,color,opt.w||3.2);
@@ -1199,7 +1201,7 @@
 
 (function(){
   var cv=$('#l13cv-tri'); if(!cv)return;
-  var pl=makePlane(cv,12,12); var phi=0.7854; var S=10;
+  var pl=makePlane(cv,16,22); var phi=0.7854; var S=10;
   var sl=$('#l13s-phi'),vo=$('#l13v-phi');
   if(sl)sl.addEventListener('input',function(){phi=parseFloat(sl.value); vo.textContent=fmt(phi,2); draw();});
   function draw(){pl.fit(); pl.clear(); pl.axes({reLabel:'P [kVA]',imLabel:'Q [kVA]'});

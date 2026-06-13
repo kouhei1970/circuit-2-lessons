@@ -798,7 +798,7 @@
       for(i=Math.ceil(-yr);i<=yr;i++){if(i===0)continue; p=PX(0,i); ctx.globalAlpha=.55; ctx.beginPath(); ctx.moveTo(0,p[1]); ctx.lineTo(W,p[1]); ctx.stroke();}
       ctx.globalAlpha=1; ctx.strokeStyle=cssv('--ax'); ctx.lineWidth=1.5; var o=PX(0,0);
       ctx.beginPath(); ctx.moveTo(0,o[1]); ctx.lineTo(W,o[1]); ctx.stroke(); ctx.beginPath(); ctx.moveTo(o[0],H); ctx.lineTo(o[0],0); ctx.stroke();
-      ctx.fillStyle=cssv('--mut'); ctx.fillText(opt.reLabel||'Re', W-26, o[1]-7); ctx.fillText(opt.imLabel||'Im', o[0]+7, 14);}
+      ctx.fillStyle=cssv('--mut'); ctx.textAlign='right'; ctx.fillText(opt.reLabel||'Re', W-6, o[1]-7); ctx.textAlign='left'; ctx.fillText(opt.imLabel||'Im', o[0]+7, 14);}
     function head(x1,y1,x2,y2,color,L){L=L||10; var a=Math.atan2(y2-y1,x2-x1); ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(x2,y2); ctx.lineTo(x2-L*Math.cos(a-.42),y2-L*Math.sin(a-.42)); ctx.lineTo(x2-L*Math.cos(a+.42),y2-L*Math.sin(a+.42)); ctx.closePath(); ctx.fill();}
     function arrow(ux1,uy1,ux2,uy2,color,w){var a=PX(ux1,uy1),b=PX(ux2,uy2); ctx.strokeStyle=color; ctx.lineWidth=w||3; ctx.lineCap='round'; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); head(a[0],a[1],b[0],b[1],color);}
     function vec(x,y,color,opt){opt=opt||{}; arrow(0,0,x,y,color,opt.w||3.2);
@@ -956,7 +956,7 @@
     var ctx=pl.ctx;
     pl.vec(R,0,cssv('--thr'),{w:3.4});
     if(XL>0.01) pl.arrow(R,0,R,XL,cssv('--ref'),3);
-    if(XC>0.01) pl.arrow(R,XL,R,XL-XC,cssv('--act'),3);
+    if(XC>0.01) pl.arrow(R+0.22,XL,R+0.22,XL-XC,cssv('--act'),3);
     arc(phi,34);
     pl.vec(vx,vy,cssv('--sin'),{w:4,label:'V'});
     pl.dot(R,0,cssv('--thr'),3); pl.dot(R,XL,cssv('--ref'),3);
