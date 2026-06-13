@@ -359,14 +359,30 @@
       </div>
     </div></section>
 
-<section class="slide" id="sl-ex89" data-title="例題8.9 4cosωt+3sinωtを合成"><div class="inner">
+<section class="slide" id="sl-ex89-pre" data-title="例題8.9 各成分をフェーザに（手順1・2）"><div class="inner">
   <span class="tag2 tag-ex">解説</span>
   <p class="kicker">8.7 正弦波の複素数表示</p>
-  <h1 class="tt">例題8.9　4 cos <i>ωt</i> + 3 sin <i>ωt</i> を合成</h1>
+  <h1 class="tt">例題8.9　各成分をフェーザに</h1>
+  <p class="desc">4 cos <i>ωt</i> + 3 sin <i>ωt</i> を合成する。まず各項を複素ベクトル（フェーザ）に直す。</p>
   <div class="twocol">
     <div>
       <p class="steps"><span class="lead2">① 全て cos に統一（sin α = cos(α − π/2)）</span><br>3 sin <i>ωt</i> = 3 cos(<i>ωt</i> − <span style="white-space:nowrap;">π/2</span>)</p>
-      <div class="eq">4 cos <i>ωt</i> + 3 sin <i>ωt</i><br>&nbsp;&nbsp;= 4 <i>e</i><sup><i>j</i>0</sup> + 3 <i>e</i><sup>−<i>j</i>π/2</sup> = <span class="re">4</span> − <span class="im">3<i>j</i></span></div>
+      <div class="eq"><span class="lead2">② それぞれをフェーザに</span><br>4 cos <i>ωt</i> → 振幅4・位相0 → <span class="re">4</span><br>3 cos(<i>ωt</i> − π/2) → 振幅3・位相 −90° → 3 <i>e</i><sup>−<i>j</i>π/2</sup> = − <span class="im">3<i>j</i></span></div>
+    </div>
+    <div>
+      <div class="eq big">4 <i>e</i><sup><i>j</i>0</sup> = <span class="re">4</span>　,　3 <i>e</i><sup>−<i>j</i>π/2</sup> = − <span class="im">3<i>j</i></span></div>
+      <p class="note">cos 成分は実軸方向、sin 成分は虚軸の負方向（真下）を向く。次のページでこの2本を足す。</p>
+    </div>
+  </div>
+</div></section>
+
+<section class="slide" id="sl-ex89" data-title="例題8.9 4cosωt+3sinωtを合成"><div class="inner">
+  <span class="tag2 tag-ex">解説</span>
+  <p class="kicker">8.7 正弦波の複素数表示</p>
+  <h1 class="tt">例題8.9　合成 ＝ ベクトルの足し算</h1>
+  <div class="twocol">
+    <div>
+      <p class="steps"><span class="lead2">③ 複素数のまま足す</span><br>4 <i>e</i><sup><i>j</i>0</sup> + 3 <i>e</i><sup>−<i>j</i>π/2</sup> = <span class="re">4</span> − <span class="im">3<i>j</i></span></p>
       <div class="eq"><i>r</i> = √(4² + 3²) = <strong>5</strong><br><i>θ</i> = tan⁻¹(−3/4) = − tan⁻¹(3/4)</div>
       <div class="eq big">∴ 5 cos(<i>ωt</i> − tan⁻¹(3/4))<span class="note" style="display:inline;margin-left:.4em;">(8.36)</span></div>
     </div>

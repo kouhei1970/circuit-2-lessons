@@ -419,16 +419,26 @@
 </div>
 </section>
 
-<section class="slide" id="sl-phasor-convert" data-title="練習10・11：正弦波とフェーザの変換">
+<section class="slide" id="sl-phasor-convert" data-title="練習10：正弦波→フェーザ（sin の扱い）">
   <div class="inner">
     <span class="tag2 tag-ex">解説</span>
-    <p class="kicker">練習問題10・11</p>
-    <h1 class="tt">正弦波 &#8644; 複素交流（フェーザ）の変換</h1>
+    <p class="kicker">練習問題10</p>
+    <h1 class="tt">正弦波 &#8594; 複素交流（フェーザ）への変換</h1>
     <p class="steps">この授業の約束: 正弦波 <span class="eq" style="display:inline-block;padding:.1em .4em;margin:0;"><i>A</i> cos(<i>&omega;t</i>+<i>&phi;</i>)</span> は フェーザ <span class="eq" style="display:inline-block;padding:.1em .4em;margin:0;"><i>A e</i><sup><i>j&phi;</i></sup></span> に対応する。サインは <span class="eq" style="display:inline-block;padding:.1em .4em;margin:0;">sin <i>x</i> = cos(<i>x</i> &minus; <i>&pi;</i>/2)</span> で位相を &minus;<i>&pi;</i>/2 ずらしてコサインに直す。</p>
     <div class="eq">練習10(1)&nbsp; cos(<i>&omega;t</i> + <i>&pi;</i>/6)&nbsp;&#8594;&nbsp; <i>e</i><sup><i>j&pi;</i>/6</sup></div>
     <div class="eq">練習10(2)&nbsp; sin(<i>&omega;t</i> + <i>&pi;</i>/6) = cos(<i>&omega;t</i> + <i>&pi;</i>/6 &minus; <i>&pi;</i>/2) = cos(<i>&omega;t</i> &minus; <i>&pi;</i>/3)&nbsp;&#8594;&nbsp; <i>e</i><sup>&minus;<i>j&pi;</i>/3</sup></div>
+    <p class="note">大きさ <i>A</i> は振幅、肩の角 <i>&phi;</i> は初期位相。サインが出たら必ずコサインに直してから変換するのがコツ。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-phasor-convert-b" data-title="練習11：フェーザ→正弦波">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">練習問題11</p>
+    <h1 class="tt">複素交流（フェーザ）&#8594; 正弦波への変換</h1>
+    <p class="steps">逆向きは、フェーザ <span class="eq" style="display:inline-block;padding:.1em .4em;margin:0;"><i>A e</i><sup><i>j&phi;</i></sup></span> を 正弦波 <span class="eq" style="display:inline-block;padding:.1em .4em;margin:0;"><i>A</i> cos(<i>&omega;t</i>+<i>&phi;</i>)</span> に戻すだけ。大きさが振幅、肩の角が初期位相になる。</p>
     <div class="eq">練習11&nbsp; 5<i>e</i><sup><i>j&pi;</i>/2</sup>&nbsp;&#8594;&nbsp; 5 cos(<i>&omega;t</i> + <i>&pi;</i>/2)</div>
-    <p class="note">大きさ <i>A</i> は振幅、肩の角 <i>&phi;</i> は初期位相。フェーザは振幅と位相だけを取り出した複素数で、共通の <i>e</i><sup><i>j&omega;t</i></sup> は省く。</p>
+    <p class="note">フェーザは振幅と位相だけを取り出した複素数で、共通の <i>e</i><sup><i>j&omega;t</i></sup> は省く。これで正弦波とフェーザの往復が自由にできる。</p>
   </div>
 </section>
 

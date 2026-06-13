@@ -62,7 +62,12 @@
   {
     "id": "sl-phasor-convert",
     "file": "audio/sl-phasor-convert.mp3",
-    "duration": 66.98
+    "duration": 55.37
+  },
+  {
+    "id": "sl-phasor-convert-b",
+    "file": "audio/sl-phasor-convert-b.mp3",
+    "duration": 38.98
   },
   {
     "id": "sl-ac-impedance",

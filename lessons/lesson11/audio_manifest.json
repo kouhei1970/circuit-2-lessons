@@ -32,7 +32,12 @@
   {
     "id": "sl-vi-phasor",
     "file": "audio/sl-vi-phasor.mp3",
-    "duration": 65.21
+    "duration": 49.63
+  },
+  {
+    "id": "sl-vi-phasor-b",
+    "file": "audio/sl-vi-phasor-b.mp3",
+    "duration": 38.3
   },
   {
     "id": "sl-deriv-rule",
@@ -42,7 +47,12 @@
   {
     "id": "sl-rlc-relations",
     "file": "audio/sl-rlc-relations.mp3",
-    "duration": 83.33
+    "duration": 64.34
+  },
+  {
+    "id": "sl-rlc-relations-b",
+    "file": "audio/sl-rlc-relations-b.mp3",
+    "duration": 40.15
   },
   {
     "id": "sl-jw-deriv-play",

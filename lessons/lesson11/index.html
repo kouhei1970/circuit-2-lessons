@@ -230,6 +230,21 @@
   </div>
 </section>
 
+<section class="slide" id="sl-vi-phasor-b" data-title="フェーザ表記の具体例">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">正弦波交流回路</p>
+    <h1 class="tt">フェーザ表記の具体例</h1>
+    <p class="desc">振幅と位相を、そのまま書き写すだけ。</p>
+    <div class="eq big" style="text-align:center;"><i>v</i>(<i>t</i>) = 100 cos(<i>ωt</i> + π/6) &nbsp;⟷&nbsp; <i>V̇</i> = 100 e<sup> j π/6</sup></div>
+    <ul class="lead">
+      <li>振幅 <strong>100</strong> は、そのままフェーザの大きさになる</li>
+      <li>位相 <strong>π/6</strong> は、そのままフェーザの偏角（e の肩の角度）になる</li>
+    </ul>
+    <p class="note">難しい計算は何もない。<i>V</i> cos(<i>ωt</i> + <i>θ</i>) の <strong>振幅 <i>V</i></strong> と <strong>位相 <i>θ</i></strong> を読み取って、<i>V</i> e<sup> j<i>θ</i></sup> と書き写すだけ。これがフェーザ化の手順。</p>
+  </div>
+</section>
+
 <section class="slide" id="sl-deriv-rule" data-title="微分は jω 倍に置き換わる">
   <div class="inner">
     <span class="tag2 tag-ex">解説</span>
@@ -282,6 +297,22 @@
       <div class="eq" style="margin:0;"><i>i</i> = <i>C</i>(d<i>v</i>/d<i>t</i>)　⟶　<strong style="color:var(--act);"><i>İ</i> = jω<i>CV̇</i></strong>　すなわち　<strong style="color:var(--act);"><i>V̇</i> = <i>İ</i>/(jω<i>C</i>)</strong></div>
     </div>
     <p class="note">3つとも「<i>V̇</i> = ○ × <i>İ</i>」というオームの法則と同じ形。○は R／jωL／1/(jωC)。この○が次回学ぶインピーダンス（交流での「抵抗」にあたる量）の正体。</p>
+  </div>
+</section>
+
+<section class="slide" id="sl-rlc-relations-b" data-title="直流の極限（ω→0）で覚える">
+  <div class="inner">
+    <span class="tag2 tag-ex">解説</span>
+    <p class="kicker">基本受動素子で練習</p>
+    <h1 class="tt">直流の極限（ω→0）で覚える</h1>
+    <p class="desc">ω を 0 に近づけると直流回路になる。このとき jωL と 1/(jωC) がどうなるかで、コイル・コンデンサの直流での振る舞いを思い出せる。</p>
+    <div style="display:grid; grid-template-columns:8em 1fr; gap:.5em .9em; align-items:center; margin:.5em 0;">
+      <div class="eq" style="margin:0; text-align:center;">コイル<br>jω<i>L</i></div>
+      <div class="eq" style="margin:0;">ω→0 で　<strong style="color:var(--act);">jω<i>L</i> → 0</strong>　＝ ただの導線（電流をそのまま通す）</div>
+      <div class="eq" style="margin:0; text-align:center;">コンデンサ<br>1/(jω<i>C</i>)</div>
+      <div class="eq" style="margin:0;">ω→0 で　<strong style="color:var(--act);">1/(jω<i>C</i>) → ∞</strong>　＝ 断線（電流を通さない）</div>
+    </div>
+    <p class="note">直流回路での経験と一致する。コイルは直流では「ただの線」、コンデンサは直流では「つながっていないのと同じ」だった。複素関係式は、その直流での感覚をそのまま含んでいる。</p>
   </div>
 </section>
 
