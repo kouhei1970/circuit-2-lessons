@@ -37,7 +37,7 @@
   {
     "id": "sl-vi-phasor-b",
     "file": "audio/sl-vi-phasor-b.mp3",
-    "duration": 38.3
+    "duration": 49.61
   },
   {
     "id": "sl-deriv-rule",
@@ -122,7 +122,7 @@
   {
     "id": "sl-z-combine",
     "file": "audio/sl-z-combine.mp3",
-    "duration": 58.99
+    "duration": 73.68
   },
   {
     "id": "sl-practice-z",
@@ -157,6 +157,6 @@
   {
     "id": "sl-summary",
     "file": "audio/sl-summary.mp3",
-    "duration": 80.33
+    "duration": 67.9
   }
 ]
