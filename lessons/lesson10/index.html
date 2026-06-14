@@ -148,7 +148,7 @@
   <div class="twocol">
     <div><canvas id="cv-rv" class="plane"></canvas></div>
     <div>
-      <div class="eq big">角度 = <i>&omega; t</i> + <i>&theta;</i></div>
+      <div class="eq big">角度 = <i>&omega; t</i> + <i>&theta;</i></div>
       <table class="deftbl">
         <tr><th>角周波数（角速度） <i>&omega;</i></th><td>[rad/s]</td></tr>
         <tr><th>位相 <i>&theta;</i></th><td>[rad]</td></tr>
@@ -183,7 +183,7 @@
     位相 <i>&theta;</i> は 1周（2&pi;）のうち <b><i>&theta;</i>/2&pi;</b> の割合。<br>
     だから時間に直すと（1周の時間）&times;（割合）。
   </p>
-  <div class="eq big"><i>t<sub>&theta;</sub></i> = (2&pi;/<i>&omega;</i>) &middot; (<i>&theta;</i>/2&pi;) = <i>&theta;</i>/<i>&omega;</i> &nbsp;[s]</div>
+  <div class="eq big"><i>t<sub>&theta;</sub></i> = (2&pi;/<i>&omega;</i>) &middot; (<i>&theta;</i>/2&pi;) = <i>&theta;</i>/<i>&omega;</i> &nbsp;[s]</div>
   <div class="ex">50 Hz の交流（<i>&omega;</i> = 2&pi;<i>f</i> = 100&pi; rad/s）で、位相 &pi;/3 rad は<br><i>t</i> = (&pi;/3) / (100&pi;) = 1/300 &approx; 3.33 ms に相当する。</div>
 </div></section>
 
@@ -191,7 +191,7 @@
   <span class="tag2 tag-ex">解説</span>
   <p class="kicker">8.7 正弦波の複素数表示</p>
   <h1 class="tt">正弦波と複素ベクトルの対応式</h1>
-  <div class="eq big"><i>z</i> = |<i>z</i>| cos(<i>&omega;t</i>+<i>&theta;</i>) + |<i>z</i>| <i>j</i> sin(<i>&omega;t</i>+<i>&theta;</i>) = |<i>z</i>| e<sup><i>j</i>(<i>&omega;t</i>+<i>&theta;</i>)</sup></div>
+  <div class="eq big"><i>z</i> = |<i>z</i>| cos(<i>&omega;t</i>+<i>&theta;</i>) + |<i>z</i>| <i>j</i> sin(<i>&omega;t</i>+<i>&theta;</i>) = |<i>z</i>| e<sup><i>j</i>(<i>&omega;t</i>+<i>&theta;</i>)</sup></div>
   <table class="deftbl">
     <tr><th>|<i>z</i>|</th><td>振幅</td></tr>
     <tr><th><i>&omega;</i></th><td>角周波数 [rad/s]</td></tr>
@@ -206,8 +206,8 @@
   <span class="tag2 tag-fig">図</span><span class="tag2 tag-ex">解説</span>
   <p class="kicker">8.7 正弦波の複素数表示</p>
   <h1 class="tt">実部は正弦波を表す</h1>
-  <div class="eq"><i>z</i> = |<i>z</i>| cos(<i>ωt</i>+<i>θ</i>) + |<i>z</i>| <i>j</i> sin(<i>ωt</i>+<i>θ</i>) = |<i>z</i>| <i>e</i><sup><i>j</i>(<i>ωt</i>+<i>θ</i>)</sup></div>
-  <div class="eq big">Re <i>z</i> = <span class="re">|<i>z</i>| cos(<i>ωt</i>+<i>θ</i>)</span></div>
+  <div class="eq"><i>z</i> = |<i>z</i>| cos(<i>ωt</i>+<i>θ</i>) + |<i>z</i>| <i>j</i> sin(<i>ωt</i>+<i>θ</i>) = |<i>z</i>| <i>e</i><sup><i>j</i>(<i>ωt</i>+<i>θ</i>)</sup></div>
+  <div class="eq big">Re <i>z</i> = <span class="re">|<i>z</i>| cos(<i>ωt</i>+<i>θ</i>)</span></div>
   <div class="twocol">
     <div><canvas id="cv-rp1" class="plane"></canvas></div>
     <div>
@@ -265,9 +265,9 @@
   <span class="tag2 tag-ex">解説</span>
   <p class="kicker">複素数で表した正弦波</p>
   <h1 class="tt"><i>ωt</i> を省略して <i>θ</i> だけで表す</h1>
-  <div class="eq big">|<i>z</i>| cos(<i>ωt</i>+<i>θ</i>) = |<i>z</i>| <i>e</i><sup><i>j</i>(<i>ωt</i>+<i>θ</i>)</sup></div>
+  <div class="eq big">|<i>z</i>| cos(<i>ωt</i>+<i>θ</i>) = |<i>z</i>| <i>e</i><sup><i>j</i>(<i>ωt</i>+<i>θ</i>)</sup></div>
   <p class="steps" style="text-align:center;color:var(--act);font-weight:700;">↕ <i>ωt</i> を省略（周波数共通）</p>
-  <div class="eq big">|<i>z</i>| cos <i>θ</i> = |<i>z</i>| <i>e</i><sup><i>jθ</i></sup></div>
+  <div class="eq big">|<i>z</i>| cos <i>θ</i> = |<i>z</i>| <i>e</i><sup><i>jθ</i></sup></div>
   <p class="steps">周波数が混ざらない交流回路の解析では、共通の <i>ωt</i> を省いて、振幅 |<i>z</i>| と位相 <i>θ</i> だけで表してよい。これが<strong>フェーザ（複素振幅）表示</strong>。以降はすべて cos に統一して、|<i>z</i>|<i>e</i><sup><i>jθ</i></sup> と書く。</p>
 </div></section>
 
@@ -276,7 +276,7 @@
       <p class="kicker">8.7 正弦波の複素数表示</p>
       <h1 class="tt">cos は sin に対して −90 度ずれている</h1>
       <canvas id="cv-sc" class="plot"></canvas>
-      <div class="eq big">sin <i>α</i> = cos( <i>α</i> − π/2 )</div>
+      <div class="eq big">sin <i>α</i> = cos( <i>α</i> − π/2 )</div>
       <p class="note">この講義では波を <strong>すべて cos で表す</strong>のがルールです。だから sin が出てきたら cos に直す。やり方は簡単で、<strong>位相を −90度（−π/2）ずらす</strong>だけ。グラフでも cos の山は sin の山より 90度ぶん左にあります。</p>
       <div class="legend"><span><span class="sw" style="background:var(--sin);"></span>sin <i>x</i></span><span><span class="sw" style="background:var(--cos);"></span>cos <i>x</i></span></div>
     </div></section>
@@ -288,7 +288,7 @@
       <div class="grid2">
         <div>
           <p class="desc"><strong>極 → 直交</strong>（オイラーの公式で展開）</p>
-          <div class="eq">|<i>z</i>| <i>e</i><sup>jθ</sup> = |<i>z</i>| cos<i>θ</i> + <i>j</i> |<i>z</i>| sin<i>θ</i><br><span class="re"><i>a</i> = |<i>z</i>| cos<i>θ</i></span>,　<span class="im"><i>b</i> = |<i>z</i>| sin<i>θ</i></span></div>
+          <div class="eq">|<i>z</i>| <i>e</i><sup>jθ</sup> = |<i>z</i>| cos<i>θ</i> + <i>j</i> |<i>z</i>| sin<i>θ</i><br><span class="re"><i>a</i> = |<i>z</i>| cos<i>θ</i></span>,　<span class="im"><i>b</i> = |<i>z</i>| sin<i>θ</i></span></div>
         </div>
         <div>
           <p class="desc"><strong>直交 → 極</strong>（大きさと偏角を求める）</p>
@@ -338,7 +338,7 @@
             <div>③ = 5 cos( <i>ωt</i> − π/6 − π/2 )</div>
             <div>&nbsp;&nbsp;&nbsp;= 5 cos( <i>ωt</i> − 2π/3 )</div>
           </div>
-          <div class="eq big">∴ <i>z</i> = 5 <i>e</i><sup>−j(2/3)π</sup> = 5 <i>e</i><sup>−j120°</sup></div>
+          <div class="eq big">∴ <i>z</i> = 5 <i>e</i><sup>−j(2/3)π</sup> = 5 <i>e</i><sup>−j120°</sup></div>
           <p class="note">（式 8.33）　大きさ 5、偏角 −120° の複素数。実部 <span class="re">−2.5</span>、虚部 <span class="im">−4.33</span> で第3象限。</p>
         </div>
         <div><canvas id="cv-ex88" class="plane"></canvas></div>
@@ -367,10 +367,10 @@
   <div class="twocol">
     <div>
       <p class="steps"><span class="lead2">① 全て cos に統一（sin α = cos(α − π/2)）</span><br>3 sin <i>ωt</i> = 3 cos(<i>ωt</i> − <span style="white-space:nowrap;">π/2</span>)</p>
-      <div class="eq"><span class="lead2">② それぞれをフェーザに</span><br>4 cos <i>ωt</i> → 振幅4・位相0 → <span class="re">4</span><br>3 cos(<i>ωt</i> − π/2) → 振幅3・位相 −90° → 3 <i>e</i><sup>−<i>j</i>π/2</sup> = − <span class="im">3<i>j</i></span></div>
+      <div class="eq"><span class="lead2">② それぞれをフェーザに</span><br>4 cos <i>ωt</i> → 振幅4・位相0 → <span class="re">4</span><br>3 cos(<i>ωt</i> − π/2) → 振幅3・位相 −90° → 3 <i>e</i><sup>−<i>j</i>π/2</sup> = − <span class="im">3<i>j</i></span></div>
     </div>
     <div>
-      <div class="eq big">4 <i>e</i><sup><i>j</i>0</sup> = <span class="re">4</span>　,　3 <i>e</i><sup>−<i>j</i>π/2</sup> = − <span class="im">3<i>j</i></span></div>
+      <div class="eq big">4 <i>e</i><sup><i>j</i>0</sup> = <span class="re">4</span>　,　3 <i>e</i><sup>−<i>j</i>π/2</sup> = − <span class="im">3<i>j</i></span></div>
       <p class="note">cos 成分は実軸方向、sin 成分は虚軸の負方向（真下）を向く。次のページでこの2本を足す。</p>
     </div>
   </div>
@@ -383,8 +383,8 @@
   <div class="twocol">
     <div>
       <p class="steps"><span class="lead2">③ 複素数のまま足す</span><br>4 <i>e</i><sup><i>j</i>0</sup> + 3 <i>e</i><sup>−<i>j</i>π/2</sup> = <span class="re">4</span> − <span class="im">3<i>j</i></span></p>
-      <div class="eq"><i>r</i> = √(4² + 3²) = <strong>5</strong><br><i>θ</i> = tan⁻¹(−3/4) = − tan⁻¹(3/4)</div>
-      <div class="eq big">∴ 5 cos(<i>ωt</i> − tan⁻¹(3/4))<span class="note" style="display:inline;margin-left:.4em;">(8.36)</span></div>
+      <div class="eq"><i>r</i> = √(4² + 3²) = <strong>5</strong><br><i>θ</i> = tan⁻¹(−3/4) = − tan⁻¹(3/4)</div>
+      <div class="eq big">∴ 5 cos(<i>ωt</i> − tan⁻¹(3/4))<span class="note" style="display:inline;margin-left:.4em;">(8.36)</span></div>
     </div>
     <div><canvas id="cv-ex89" class="plane"></canvas><p class="note" style="text-align:center;margin-top:.3em;">第4象限の合成ベクトル <span class="re"><i>z</i></span> = 4 − 3<i>j</i></p></div>
   </div>
@@ -405,7 +405,7 @@
   </div>
 </div></section>
 
-<section class="slide" id="sl-practice" data-title="練習問題（課題1〜4・採点つき）"><div class="inner"><span class="tag2 tag-do">操作</span><p class="kicker">8.7 正弦波の複素数表示</p><h1 class="tt">練習問題</h1><p class="desc">課題1〜4を順に解こう。数値を入力して<strong>採点</strong>を押すと、各欄に ○／✕ が付く。困ったら<strong>答えを見る</strong>。</p><div class="seg" id="pr-seg"><button type="button" class="on" data-p="pr-p1">課題1</button><button type="button" data-p="pr-p2">課題2</button><button type="button" data-p="pr-p3">課題3</button><button type="button" data-p="pr-p4">課題4</button></div><div class="pr-panel" id="pr-p1"><p class="steps"><strong>課題1</strong>　50Hz の交流について以下に答えなさい。<br>（1）周波数 50Hz の交流の角周波数は何 rad/s か。<br>（2）位相 <i>π</i>/3 (rad) は何 (s) に相当するか。</p><div class="prfields"><div class="prf"><span>(1) <i>ω</i> = ［　］ × <i>π</i>　[rad/s]</span><input type="number" id="pr-q1a" step="any" inputmode="decimal"><span class="prmark" id="pr-q1a-m"></span></div><div class="prf"><span>(2) <i>t</i> = ［　］　ms（小数第2位まで）</span><input type="number" id="pr-q1b" step="any" inputmode="decimal"><span class="prmark" id="pr-q1b-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g1">採点</button><button type="button" class="btn" id="pr-r1">答えを見る</button><button type="button" class="btn" id="pr-t1">やり直す</button></div><div class="prresult" id="pr-res1"></div><div class="reveal" id="pr-rev1"><i>ω</i> = 2<i>πf</i> = 2<i>π</i>·50 = 100<i>π</i> ≈ 314.2 rad/s。位相の時間換算 <i>t</i> = <i>θ</i>/<i>ω</i> = (<i>π</i>/3)/(100<i>π</i>) = 1/300 s ≈ 3.33×10⁻³ s ＝ 3.33 ms。</div></div><div class="pr-panel" id="pr-p2" style="display:none;"><p class="steps"><strong>課題2（復習）</strong>　次の複素数を有理化（複素数の除算）し、<span class="re">実部</span>・<span class="im">虚部</span>を答えなさい。</p><div class="prfields"><div class="prf"><span>(1) 1/<i>j</i>　実部</span><input type="number" id="pr-q2-1r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-1r-m"></span></div><div class="prf"><span>(1) 1/<i>j</i>　虚部</span><input type="number" id="pr-q2-1i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-1i-m"></span></div><div class="prf"><span>(2) 1/(2+3<i>j</i>)　実部</span><input type="number" id="pr-q2-2r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-2r-m"></span></div><div class="prf"><span>(2) 1/(2+3<i>j</i>)　虚部</span><input type="number" id="pr-q2-2i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-2i-m"></span></div><div class="prf"><span>(3) 1/(3−<i>j</i>)　実部</span><input type="number" id="pr-q2-3r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-3r-m"></span></div><div class="prf"><span>(3) 1/(3−<i>j</i>)　虚部</span><input type="number" id="pr-q2-3i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-3i-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g2">採点</button><button type="button" class="btn" id="pr-r2">答えを見る</button><button type="button" class="btn" id="pr-t2">やり直す</button></div><div class="prresult" id="pr-res2"></div><div class="reveal" id="pr-rev2">分母の共役を分母・分子に掛けて実数化する。<br>(1) 1/<i>j</i> = (1·(−<i>j</i>))/(<i>j</i>·(−<i>j</i>)) = −<i>j</i>　→ 実部 0、虚部 −1。<br>(2) 1/(2+3<i>j</i>) = (2−3<i>j</i>)/(2²+3²) = (2−3<i>j</i>)/13　→ 実部 2/13 ≈ 0.15、虚部 −3/13 ≈ −0.23。<br>(3) 1/(3−<i>j</i>) = (3+<i>j</i>)/(3²+1²) = (3+<i>j</i>)/10　→ 実部 3/10 = 0.30、虚部 1/10 = 0.10。</div></div><div class="pr-panel" id="pr-p3" style="display:none;"><p class="steps"><strong>課題3</strong>　次の正弦波を複素交流（極形式 <i>A</i> e<sup><i>jθ</i></sup>）にしなさい。振幅 <i>A</i> と位相 <i>θ</i>（度）を答えよ。</p><div class="prfields"><div class="prf"><span>(1) cos(<i>ωt</i>+<i>π</i>/3)　振幅 <i>A</i></span><input type="number" id="pr-q3-1a" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-1a-m"></span></div><div class="prf"><span>(1) 位相 <i>θ</i>　[度]</span><input type="number" id="pr-q3-1t" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-1t-m"></span></div><div class="prf"><span>(2) sin(<i>ωt</i>+<i>π</i>/3)　振幅 <i>A</i></span><input type="number" id="pr-q3-2a" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-2a-m"></span></div><div class="prf"><span>(2) 位相 <i>θ</i>　[度]</span><input type="number" id="pr-q3-2t" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-2t-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g3">採点</button><button type="button" class="btn" id="pr-r3">答えを見る</button><button type="button" class="btn" id="pr-t3">やり直す</button></div><div class="prresult" id="pr-res3"></div><div class="reveal" id="pr-rev3">複素交流の基準は cos。すべて cos に統一して位相を読み取る。<br>(1) cos(<i>ωt</i>+<i>π</i>/3) はそのまま 1·e<sup><i>j</i>60°</sup>（= e<sup><i>jπ</i>/3</sup>）。よって <i>A</i>=1、<i>θ</i>=60°。<br>(2) sin → cos へは −90度：sin(<i>ωt</i>+<i>π</i>/3) = cos(<i>ωt</i>+<i>π</i>/3−<i>π</i>/2) = cos(<i>ωt</i>−<i>π</i>/6) = 1·e<sup>−<i>j</i>30°</sup>（= e<sup>−<i>jπ</i>/6</sup>）。よって <i>A</i>=1、<i>θ</i>=−30°。</div></div><div class="pr-panel" id="pr-p4" style="display:none;"><p class="steps"><strong>課題4</strong>　次の複素交流（極形式 <i>A</i> e<sup><i>jθ</i></sup>）を正弦波にしなさい（角周波数は <i>ω</i> とする）。<br><span class="eq big" style="display:inline-block;margin:.3em 0;">4 e<sup><i>j</i>(<i>π</i>/3)</sup></span><br>振幅と位相（度）を答えよ。</p><div class="prfields"><div class="prf"><span>振幅 <i>A</i></span><input type="number" id="pr-q4a" step="any" inputmode="decimal"><span class="prmark" id="pr-q4a-m"></span></div><div class="prf"><span>位相 <i>θ</i>　[度]</span><input type="number" id="pr-q4t" step="any" inputmode="decimal"><span class="prmark" id="pr-q4t-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g4">採点</button><button type="button" class="btn" id="pr-r4">答えを見る</button><button type="button" class="btn" id="pr-t4">やり直す</button></div><div class="prresult" id="pr-res4"></div><div class="reveal" id="pr-rev4">複素交流の実部をとって正弦波（cos）に戻す。4 e<sup><i>j</i>(<i>π</i>/3)</sup> → 4 cos(<i>ωt</i> + <i>π</i>/3)。よって振幅 4、位相 +<i>π</i>/3（= 60°）。</div></div></div></section>
+<section class="slide" id="sl-practice" data-title="練習問題（課題1〜4・採点つき）"><div class="inner"><span class="tag2 tag-do">操作</span><p class="kicker">8.7 正弦波の複素数表示</p><h1 class="tt">練習問題</h1><p class="desc">課題1〜4を順に解こう。数値を入力して<strong>採点</strong>を押すと、各欄に ○／✕ が付く。困ったら<strong>答えを見る</strong>。</p><div class="seg" id="pr-seg"><button type="button" class="on" data-p="pr-p1">課題1</button><button type="button" data-p="pr-p2">課題2</button><button type="button" data-p="pr-p3">課題3</button><button type="button" data-p="pr-p4">課題4</button></div><div class="pr-panel" id="pr-p1"><p class="steps"><strong>課題1</strong>　50Hz の交流について以下に答えなさい。<br>（1）周波数 50Hz の交流の角周波数は何 rad/s か。<br>（2）位相 <i>π</i>/3 (rad) は何 (s) に相当するか。</p><div class="prfields"><div class="prf"><span>(1) <i>ω</i> = ［　］ × <i>π</i>　[rad/s]</span><input type="number" id="pr-q1a" step="any" inputmode="decimal"><span class="prmark" id="pr-q1a-m"></span></div><div class="prf"><span>(2) <i>t</i> = ［　］　ms（小数第2位まで）</span><input type="number" id="pr-q1b" step="any" inputmode="decimal"><span class="prmark" id="pr-q1b-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g1">採点</button><button type="button" class="btn" id="pr-r1">答えを見る</button><button type="button" class="btn" id="pr-t1">やり直す</button></div><div class="prresult" id="pr-res1"></div><div class="reveal" id="pr-rev1"><i>ω</i> = 2<i>πf</i> = 2<i>π</i>·50 = 100<i>π</i> ≈ 314.2 rad/s。位相の時間換算 <i>t</i> = <i>θ</i>/<i>ω</i> = (<i>π</i>/3)/(100<i>π</i>) = 1/300 s ≈ 3.33×10⁻³ s ＝ 3.33 ms。</div></div><div class="pr-panel" id="pr-p2" style="display:none;"><p class="steps"><strong>課題2（復習）</strong>　次の複素数を有理化（複素数の除算）し、<span class="re">実部</span>・<span class="im">虚部</span>を答えなさい。</p><div class="prfields"><div class="prf"><span>(1) 1/<i>j</i>　実部</span><input type="number" id="pr-q2-1r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-1r-m"></span></div><div class="prf"><span>(1) 1/<i>j</i>　虚部</span><input type="number" id="pr-q2-1i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-1i-m"></span></div><div class="prf"><span>(2) 1/(2+3<i>j</i>)　実部</span><input type="number" id="pr-q2-2r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-2r-m"></span></div><div class="prf"><span>(2) 1/(2+3<i>j</i>)　虚部</span><input type="number" id="pr-q2-2i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-2i-m"></span></div><div class="prf"><span>(3) 1/(3−<i>j</i>)　実部</span><input type="number" id="pr-q2-3r" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-3r-m"></span></div><div class="prf"><span>(3) 1/(3−<i>j</i>)　虚部</span><input type="number" id="pr-q2-3i" step="any" inputmode="decimal"><span class="prmark" id="pr-q2-3i-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g2">採点</button><button type="button" class="btn" id="pr-r2">答えを見る</button><button type="button" class="btn" id="pr-t2">やり直す</button></div><div class="prresult" id="pr-res2"></div><div class="reveal" id="pr-rev2">分母の共役を分母・分子に掛けて実数化する。<br>(1) 1/<i>j</i> = (1·(−<i>j</i>))/(<i>j</i>·(−<i>j</i>)) = −<i>j</i>　→ 実部 0、虚部 −1。<br>(2) 1/(2+3<i>j</i>) = (2−3<i>j</i>)/(2²+3²) = (2−3<i>j</i>)/13　→ 実部 2/13 ≈ 0.15、虚部 −3/13 ≈ −0.23。<br>(3) 1/(3−<i>j</i>) = (3+<i>j</i>)/(3²+1²) = (3+<i>j</i>)/10　→ 実部 3/10 = 0.30、虚部 1/10 = 0.10。</div></div><div class="pr-panel" id="pr-p3" style="display:none;"><p class="steps"><strong>課題3</strong>　次の正弦波を複素交流（極形式 <i>A</i> e<sup><i>jθ</i></sup>）にしなさい。振幅 <i>A</i> と位相 <i>θ</i>（度）を答えよ。</p><div class="prfields"><div class="prf"><span>(1) cos(<i>ωt</i>+<i>π</i>/3)　振幅 <i>A</i></span><input type="number" id="pr-q3-1a" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-1a-m"></span></div><div class="prf"><span>(1) 位相 <i>θ</i>　[度]</span><input type="number" id="pr-q3-1t" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-1t-m"></span></div><div class="prf"><span>(2) sin(<i>ωt</i>+<i>π</i>/3)　振幅 <i>A</i></span><input type="number" id="pr-q3-2a" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-2a-m"></span></div><div class="prf"><span>(2) 位相 <i>θ</i>　[度]</span><input type="number" id="pr-q3-2t" step="any" inputmode="decimal"><span class="prmark" id="pr-q3-2t-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g3">採点</button><button type="button" class="btn" id="pr-r3">答えを見る</button><button type="button" class="btn" id="pr-t3">やり直す</button></div><div class="prresult" id="pr-res3"></div><div class="reveal" id="pr-rev3">複素交流の基準は cos。すべて cos に統一して位相を読み取る。<br>(1) cos(<i>ωt</i>+<i>π</i>/3) はそのまま 1·e<sup><i>j</i>60°</sup>（= e<sup><i>jπ</i>/3</sup>）。よって <i>A</i>=1、<i>θ</i>=60°。<br>(2) sin → cos へは −90度：sin(<i>ωt</i>+<i>π</i>/3) = cos(<i>ωt</i>+<i>π</i>/3−<i>π</i>/2) = cos(<i>ωt</i>−<i>π</i>/6) = 1·e<sup>−<i>j</i>30°</sup>（= e<sup>−<i>jπ</i>/6</sup>）。よって <i>A</i>=1、<i>θ</i>=−30°。</div></div><div class="pr-panel" id="pr-p4" style="display:none;"><p class="steps"><strong>課題4</strong>　次の複素交流（極形式 <i>A</i> e<sup><i>jθ</i></sup>）を正弦波にしなさい（角周波数は <i>ω</i> とする）。<br><span class="eq big" style="display:inline-block;margin:.3em 0;">4 e<sup><i>j</i>(<i>π</i>/3)</sup></span><br>振幅と位相（度）を答えよ。</p><div class="prfields"><div class="prf"><span>振幅 <i>A</i></span><input type="number" id="pr-q4a" step="any" inputmode="decimal"><span class="prmark" id="pr-q4a-m"></span></div><div class="prf"><span>位相 <i>θ</i>　[度]</span><input type="number" id="pr-q4t" step="any" inputmode="decimal"><span class="prmark" id="pr-q4t-m"></span></div></div><div class="prbtns"><button type="button" class="btn pr-primary" id="pr-g4">採点</button><button type="button" class="btn" id="pr-r4">答えを見る</button><button type="button" class="btn" id="pr-t4">やり直す</button></div><div class="prresult" id="pr-res4"></div><div class="reveal" id="pr-rev4">複素交流の実部をとって正弦波（cos）に戻す。4 e<sup><i>j</i>(<i>π</i>/3)</sup> → 4 cos(<i>ωt</i> + <i>π</i>/3)。よって振幅 4、位相 +<i>π</i>/3（= 60°）。</div></div></div></section>
 
 <section class="slide" id="sl-add-ex36" data-title="例題:3cosωt−4sinωtの合成"><div class="inner">
       <span class="tag2 tag-ex">解説</span>
@@ -415,9 +415,9 @@
       <div class="twocol">
         <div>
           <p class="steps"><span class="lead2">① まず全て cos に統一（sin α = cos(α − π/2)）</span><br>− 4 sin <i>ωt</i> = − 4 cos(<i>ωt</i> − π/2)<br>＝ 4 cos(<i>ωt</i> − π/2 + π) ＝ 4 cos(<i>ωt</i> + π/2)<br><span class="lead2">マイナス1倍は位相を π（180°）ずらすのと同じ。</span></p>
-          <div class="eq"><span class="lead2">② それぞれフェーザに：</span><br>3 cos <i>ωt</i> = 3<i>e</i><sup><i>j</i>0</sup> = <span class="re">3</span><br>4 cos(<i>ωt</i>+π/2) = 4<i>e</i><sup><i>j</i>π/2</sup> = <span class="im">4<i>j</i></span></div>
-          <div class="eq"><span class="lead2">③ 複素数のまま足す：</span> <i>z</i> = <span class="re">3</span> + <span class="im">4<i>j</i></span><br><i>r</i> = √(3² + 4²) = <strong>5</strong>、　<i>θ</i> = tan⁻¹(4/3) ≈ <strong>+53°</strong></div>
-          <div class="eq big">∴ 5 cos(<i>ωt</i> + tan⁻¹(4/3))</div>
+          <div class="eq"><span class="lead2">② それぞれフェーザに：</span><br>3 cos <i>ωt</i> = 3<i>e</i><sup><i>j</i>0</sup> = <span class="re">3</span><br>4 cos(<i>ωt</i>+π/2) = 4<i>e</i><sup><i>j</i>π/2</sup> = <span class="im">4<i>j</i></span></div>
+          <div class="eq"><span class="lead2">③ 複素数のまま足す：</span> <i>z</i> = <span class="re">3</span> + <span class="im">4<i>j</i></span><br><i>r</i> = √(3² + 4²) = <strong>5</strong>、　<i>θ</i> = tan⁻¹(4/3) ≈ <strong>+53°</strong></div>
+          <div class="eq big">∴ 5 cos(<i>ωt</i> + tan⁻¹(4/3))</div>
         </div>
         <div>
           <div class="figbox">
