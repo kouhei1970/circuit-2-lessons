@@ -29,6 +29,10 @@
     font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Hiragino Sans","Yu Gothic UI",sans-serif;
     line-height:1.6; -webkit-font-smoothing:antialiased;}
   i{font-family:Georgia,"Times New Roman",serif;}
+  /* フェーザ（複素量）のドット上付き。結合文字に頼らず擬似要素で真上に丸ドットを描く（フォント依存の右ずれを回避） */
+  /* Phasor overdot via pseudo-element — font-independent, avoids combining-char right-shift */
+  .ph{position:relative; display:inline-block; font-style:italic; line-height:1;}
+  .ph::after{content:""; position:absolute; left:.06em; right:0; top:-.12em; margin:auto; width:.12em; height:.12em; border-radius:50%; background:currentColor; pointer-events:none;}
   .deck{position:fixed; inset:0; bottom:52px;}
   .slide{position:absolute; inset:0; display:flex; flex-direction:column; justify-content:safe center;
     overflow-y:auto; padding:2vh clamp(16px,4vw,70px); opacity:0; visibility:hidden; transition:opacity .2s;}
@@ -204,8 +208,8 @@
         <div>
           <canvas id="cv-l12vd-pl" class="plane"></canvas>
           <div class="legend">
-            <span><span class="sw" style="background:var(--ref);"></span>電圧フェーザ V̇</span>
-            <span><span class="sw" style="background:var(--act);"></span>電流フェーザ İ</span>
+            <span><span class="sw" style="background:var(--ref);"></span>電圧フェーザ <i class="ph">V</i></span>
+            <span><span class="sw" style="background:var(--act);"></span>電流フェーザ <i class="ph">I</i></span>
           </div>
         </div>
         <div>
@@ -266,9 +270,9 @@
         <div>
           <canvas id="cv-l12vs-pl" class="plane"></canvas>
           <div class="legend">
-            <span><span class="sw" style="background:var(--ref);"></span>V̇₁</span>
-            <span><span class="sw" style="background:var(--thr);"></span>V̇₂</span>
-            <span><span class="sw" style="background:var(--act);"></span>合成 V̇₁+V̇₂</span>
+            <span><span class="sw" style="background:var(--ref);"></span><i class="ph">V</i>₁</span>
+            <span><span class="sw" style="background:var(--thr);"></span><i class="ph">V</i>₂</span>
+            <span><span class="sw" style="background:var(--act);"></span>合成 <i class="ph">V</i>₁+<i class="ph">V</i>₂</span>
           </div>
         </div>
         <div>
@@ -609,12 +613,12 @@
     <span class="tag2 tag-ex">解説</span>
     <p class="kicker">交流の電力</p>
     <h1 class="tt">複素電力 <i>P</i><sub>c</sub> — 1本の複素数に P と Q をまとめる</h1>
-    <p class="desc"><i>V̇</i> = <i>V</i>e<sup> j<i>θ</i></sup>, <i>İ</i> = <i>I</i>e<sup> j(<i>θ</i>+<i>φ</i>)</sup> のとき、電圧の<strong>共役複素数</strong> <i>V̄</i>（虚部の符号を反転したもの）を使って定義する。</p>
-    <div class="eq big" style="text-align:center;"><i>P</i><sub>c</sub> = (1/2) <i>V̄</i> <i>İ</i></div>
-    <div class="eq">(1/2)<i>V̄İ</i> = (1/2)·<i>V</i>e<sup>−j<i>θ</i></sup>·<i>I</i>e<sup> j(<i>θ</i>+<i>φ</i>)</sup> = (1/2)<i>VI</i> e<sup> j<i>φ</i></sup> = <span class="re">(1/2)<i>VI</i> cos <i>φ</i></span> + j <span class="im">(1/2)<i>VI</i> sin <i>φ</i></span><br><span style="color:var(--mut); font-size:.85em;"><span class="re">実部 = 有効電力 P（W）</span>　<span class="im">虚部 = 無効電力 Q（var）</span>　絶対値 |<i>P</i><sub>c</sub>| = 皮相電力 S（VA）</span></div>
+    <p class="desc"><i class="ph">V</i> = <i>V</i>e<sup> j<i>θ</i></sup>, <i class="ph">I</i> = <i>I</i>e<sup> j(<i>θ</i>+<i>φ</i>)</sup> のとき、電圧の<strong>共役複素数</strong> <i>V̄</i>（虚部の符号を反転したもの）を使って定義する。</p>
+    <div class="eq big" style="text-align:center;"><i>P</i><sub>c</sub> = (1/2) <i>V̄</i> <i class="ph">I</i></div>
+    <div class="eq">(1/2)<i>V̄<i class="ph">I</i></i> = (1/2)·<i>V</i>e<sup>−j<i>θ</i></sup>·<i>I</i>e<sup> j(<i>θ</i>+<i>φ</i>)</sup> = (1/2)<i>VI</i> e<sup> j<i>φ</i></sup> = <span class="re">(1/2)<i>VI</i> cos <i>φ</i></span> + j <span class="im">(1/2)<i>VI</i> sin <i>φ</i></span><br><span style="color:var(--mut); font-size:.85em;"><span class="re">実部 = 有効電力 P（W）</span>　<span class="im">虚部 = 無効電力 Q（var）</span>　絶対値 |<i>P</i><sub>c</sub>| = 皮相電力 S（VA）</span></div>
     <ul class="lead">
       <li><strong>なぜ共役を取るのか</strong> — e<sup>−j<i>θ</i></sup>·e<sup> j(<i>θ</i>+<i>φ</i>)</sup> で基準位相 <i>θ</i> が打ち消され、<strong>位相差 <i>φ</i> だけ</strong>が残るから</li>
-      <li>実効値フェーザ <i>V̇</i><sub>e</sub>, <i>İ</i><sub>e</sub> を使えば <i>P</i><sub>c</sub> = <i>V̄</i><sub>e</sub><i>İ</i><sub>e</sub> となり、1/2 が消える</li>
+      <li>実効値フェーザ <i class="ph">V</i><sub>e</sub>, <i class="ph">I</i><sub>e</sub> を使えば <i>P</i><sub>c</sub> = <i>V̄</i><sub>e</sub><i class="ph">I</i><sub>e</sub> となり、1/2 が消える</li>
     </ul>
     <p class="note">掛け算ひとつで P・Q・S が全部手に入る。前に見た電力三角形は、複素平面に描いた <i>P</i><sub>c</sub> の図そのもの。</p>
   </div>
@@ -702,7 +706,7 @@
       <li><strong>瞬時電力</strong> <i>p</i>(<i>t</i>) は<strong>2倍の周波数</strong>で振動し、平均は (1/2)<i>VI</i> cos <i>φ</i></li>
       <li><strong>実効値</strong> <i>V</i><sub>e</sub> = <i>V</i>/√2。商用100 V は実効値。平均電力は <i>P</i> = <i>V</i><sub>e</sub><i>I</i><sub>e</sub> cos <i>φ</i></li>
       <li><strong>電力の3兄弟</strong>：皮相電力 <i>S</i> = <i>V</i><sub>e</sub><i>I</i><sub>e</sub> [VA]、力率 cos <i>φ</i>、無効電力 <i>Q</i> = <i>V</i><sub>e</sub><i>I</i><sub>e</sub> sin <i>φ</i> [var]</li>
-      <li><strong>複素電力</strong> <i>P</i><sub>c</sub> = (1/2)V̄İ：実部が <i>P</i>、虚部が <i>Q</i>。一度の掛け算で両方が出る</li>
+      <li><strong>複素電力</strong> <i>P</i><sub>c</sub> = (1/2)V̄<i class="ph">I</i>：実部が <i>P</i>、虚部が <i>Q</i>。一度の掛け算で両方が出る</li>
     </ul>
     <div class="ex" style="border-left:4px solid var(--act);">
       <strong style="color:var(--act);">今後の予定</strong><br>
