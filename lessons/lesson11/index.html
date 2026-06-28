@@ -255,7 +255,7 @@
     <p class="kicker">複素交流の計算規則</p>
     <h1 class="tt">微分は jω 倍に置き換わる</h1>
     <p class="desc">電圧・電流をフェーザ（大きさと位相をひとまとめにした複素数）で表すと、時間微分 d/dt はただの「jω を掛ける」操作になる。</p>
-    <div class="eq"><i>v</i>(<i>t</i>) = <i class="ph">V</i>e<sup>jω<i>t</i></sup> を時間 <i>t</i> で微分 → d<i>v</i>/d<i>t</i> = jω・<i class="ph">V</i>e<sup>jω<i>t</i></sup><br><span style="color:var(--mut); font-size:.85em;">指数関数は微分しても形が変わらない。肩の係数 jω が前に出るだけ</span></div>
+    <div class="eq">複素表現 <i class="ph">V</i>e<sup>jω<i>t</i></sup>（その実部が <i>v</i>(<i>t</i>)）を時間 <i>t</i> で微分 → jω・<i class="ph">V</i>e<sup>jω<i>t</i></sup><br><span style="color:var(--mut); font-size:.85em;">指数関数は微分しても形が変わらない。肩の係数 jω が前に出るだけ（実部を取る操作とは順序を入れ替えられる）</span></div>
     <div class="eq big" style="text-align:center;">d<i>v</i>(<i>t</i>)/d<i>t</i> ⟶ <strong style="color:var(--act);">jω<i class="ph">V</i></strong>　　　d<i>i</i>(<i>t</i>)/d<i>t</i> ⟶ <strong style="color:var(--act);">jω<i class="ph">I</i></strong></div>
     <ul class="lead">
       <li><i class="ph">V</i>・<i class="ph">I</i> は時間 <i>t</i> を含まない複素数。だから微分では「jω 倍」しか起きない</li>
@@ -465,7 +465,7 @@
         <p class="note" style="margin-top:.2em; text-align:center;"><strong>容量性リアクタンス</strong>：ω が大きいほど小さい</p>
       </div>
     </div>
-    <p class="note">同じ「リアクタンス」でも、周波数に対する性質は正反対。コイルは高い周波数を通しにくく、コンデンサは高い周波数ほどよく通す。</p>
+    <p class="note">どちらの式も<strong>大きさ（正の値）</strong>を表す。<i>Z</i> の虚部としては、コイルは <strong>＋<i>ωL</i></strong>、コンデンサは <strong>−1/<i>ωC</i></strong> と符号が逆に入る。周波数に対する性質も正反対で、コイルは高い周波数を通しにくく、コンデンサは高い周波数ほどよく通す。</p>
   </div>
 </section>
 
@@ -533,7 +533,7 @@
       <div>
         <p class="steps">電圧則で式を立て、<i class="ph">I</i> でくくる：<br>
         <i class="ph">V</i> = <i class="ph">V</i><sub>R</sub> + <i class="ph">V</i><sub>L</sub> = <i>R</i><i class="ph">I</i> + j<i>&#969;L</i><i class="ph">I</i> = (<i>R</i> + j<i>&#969;L</i>)<i class="ph">I</i></p>
-        <div class="eq big"><i>Z</i> = <i>R</i> + j<i>&#969;L</i>　<span style="font-size:.55em;color:var(--mut);">← 虚部が＋：<strong>誘導性</strong>インピーダンス（コイルが効く回路）</span></div>
+        <div class="eq big"><i>Z</i> = <i>R</i> + j<i>&#969;L</i>　<span style="font-size:.55em;color:var(--mut);">← 虚部が＋：<strong>誘導性</strong><span style="white-space:nowrap;">（コイルが効く）</span></span></div>
         <div class="eq">|<i>Z</i>| = &#8730;(<i>R</i>&#178; + (<i>&#969;L</i>)&#178;)，　<i>&#952;</i> = tan<sup>&#8722;1</sup>(<i>&#969;L</i>/<i>R</i>) &gt; 0</div>
         <p class="note"><i class="ph">I</i> = (<i>V</i>/|<i>Z</i>|)e<sup>&#8722;j&#952;</sup> となるので、電流は電圧より位相が <strong>&#952; だけ遅れる</strong>。</p>
       </div>
@@ -573,14 +573,14 @@
           <path d="M112 100 A42 42 0 0 0 105.6 77.7" style="fill:none;stroke:var(--act);stroke-width:1.6"/>
           <text x="230" y="95" style="fill:var(--ref)">V&#775;</text>
           <text x="192" y="24" style="fill:var(--act)">I&#775;</text>
-          <text x="116" y="80" style="fill:var(--act);font-size:12px;font-style:normal">+&#952;（進み）</text>
+          <text x="116" y="80" style="fill:var(--act);font-size:12px;font-style:normal">&#8722;&#952;（進み）</text>
         </svg>
         <div class="figcap">RC回路とそのベクトル図（<i class="ph">V</i> を基準に <i class="ph">I</i> は &#952; 進む）</div>
       </div>
       <div>
         <p class="steps">コンデンサ分は 1/(j<i>&#969;C</i>)。1/j = &#8722;j を使って整理する：<br>
         <i class="ph">V</i> = <i>R</i><i class="ph">I</i> + (1/j<i>&#969;C</i>)<i class="ph">I</i> = (<i>R</i> &#8722; j·1/(<i>&#969;C</i>))<i class="ph">I</i></p>
-        <div class="eq big"><i>Z</i> = <i>R</i> &#8722; j/(<i>&#969;C</i>)　<span style="font-size:.55em;color:var(--mut);">← 虚部が−：<strong>容量性</strong>インピーダンス（コンデンサが効く回路）</span></div>
+        <div class="eq big"><i>Z</i> = <i>R</i> &#8722; j/(<i>&#969;C</i>)　<span style="font-size:.55em;color:var(--mut);">← 虚部が−：<strong>容量性</strong><span style="white-space:nowrap;">（コンデンサが効く）</span></span></div>
         <div class="eq">|<i>Z</i>| = &#8730;(<i>R</i>&#178; + (1/<i>&#969;C</i>)&#178;)，　<i>&#952;</i> = &#8722;tan<sup>&#8722;1</sup>(1/(<i>&#969;CR</i>)) &lt; 0</div>
         <p class="note">&#952; &lt; 0 なので電流は電圧より位相が <strong>|&#952;| だけ進む</strong>。RLと虚部の符号がちょうど逆 → 遅れ・進みも逆になる。</p>
       </div>
@@ -1163,7 +1163,7 @@
     ctx.fillStyle=cssv('--act'); ctx.fillText('\u03c6', o[0]+38*Math.cos(a/2), o[1]-38*Math.sin(a/2)+5);
     var pr=pl.PX(R/2,0); ctx.fillStyle=cssv('--re'); ctx.fillText('R', pr[0]-4, pr[1]+20);
     var px=pl.PX(R,X/2); ctx.fillStyle=cssv('--im'); ctx.fillText('j\u03c9L', px[0]+10, px[1]+4);
-    var pb=pl.PX(R/2,X/2); ctx.fillStyle=cssv('--z2'); ctx.fillText('R+j\u03c9L = B e^j\u03c6', pb[0]-30, pb[1]-14);
+    var pb=pl.PX(R/2,X/2); ctx.fillStyle=cssv('--z2'); ctx.fillText('R+j\u03c9L', pb[0]-34, pb[1]-12);
   }
   reg('sl-polar-current',{show:draw,redraw:draw});})();
 
