@@ -184,7 +184,7 @@
     <h1 class="tt">正弦波を複素数で表す（復習）</h1>
     <p class="desc">正弦波は複素指数関数に対応させて扱える。これが前回までの土台。</p>
     <div class="eq big" style="text-align:center;">|<i>z</i>| cos(<i>ωt</i> + <i>θ</i>) &nbsp;⟷&nbsp; |<i>z</i>| e<sup> j(<i>ωt</i>+<i>θ</i>)</sup></div>
-    <p class="steps" style="text-align:center;">↓ 周波数がひとつだけの交流回路では、全員に共通の回転 e<sup> j<i>ωt</i></sup> を省略できる</p>
+    <p class="steps" style="text-align:center;">↓ 周波数がひとつだけの交流回路では、すべての電圧・電流に共通する回転 e<sup> j<i>ωt</i></sup> を省略できる</p>
     <div class="eq big" style="text-align:center;">|<i>z</i>| cos <i>θ</i> &nbsp;⟷&nbsp; |<i>z</i>| e<sup> j<i>θ</i></sup></div>
     <p class="note">大きさ |<i>z</i>| と位相 <i>θ</i> だけを持つ複素数 |<i>z</i>|e<sup> j<i>θ</i></sup> を<strong>フェーザ</strong>（正弦波を 1 本の複素数の矢印で表したもの）と呼ぶ。周波数の違う波が混ざる回路では、この省略は使えない点に注意。</p>
   </div>
@@ -300,7 +300,8 @@
       </div>
       <div class="eq" style="margin:0;"><i>i</i> = <i>C</i>(d<i>v</i>/d<i>t</i>)　⟶　<strong style="color:var(--act);"><i class="ph">I</i> = jω<i>C<i class="ph">V</i></i></strong>　すなわち　<strong style="color:var(--act);"><i class="ph">V</i> = <i class="ph">I</i>/(jω<i>C</i>)</strong></div>
     </div>
-    <p class="note">3つとも「<i class="ph">V</i> = ○ × <i class="ph">I</i>」というオームの法則と同じ形。○は R／jωL／1/(jωC)。この○が次回学ぶインピーダンス（交流での「抵抗」にあたる量）の正体。</p>
+    <div class="ex"><strong style="color:var(--act);">コイルもコンデンサも、複素数で見れば「抵抗」と同じように扱える。</strong> どれも <i class="ph">V</i> =（抵抗にあたる量）× <i class="ph">I</i> というオームの法則と同じ形で、その量が R・jωL・1/(jωC)。</div>
+    <p class="note">この「抵抗にあたる量」が次回学ぶ<strong>インピーダンス</strong>。<strong>次ページ</strong>では ω→0（直流）の極限をとり、jω<i>L</i>→0＝導線・1/(jω<i>C</i>)→∞＝断線、とコイル・コンデンサの直流での姿を確かめる。</p>
   </div>
 </section>
 
@@ -508,8 +509,8 @@
           <path class="w" d="M240 101 a7 7 0 0 1 0 14 a7 7 0 0 1 0 14 a7 7 0 0 1 0 14"/>
           <line x1="128" y1="35" x2="164" y2="35" style="stroke:var(--act);stroke-width:2.4"/>
           <polygon points="164,30 164,40 173,35" style="fill:var(--act)"/>
-          <text x="14" y="105" style="fill:var(--ref)"><i class="ph">V</i></text>
-          <text x="140" y="26" style="fill:var(--act)"><i class="ph">I</i></text>
+          <text x="14" y="105" style="fill:var(--ref)">V&#775;</text>
+          <text x="140" y="26" style="fill:var(--act)">I&#775;</text>
           <text x="256" y="78">R</text>
           <text x="256" y="128">j&#969;L</text>
         </svg>
@@ -523,8 +524,8 @@
           <line x1="70" y1="55" x2="186" y2="128" style="stroke:var(--act);stroke-width:3.4"/>
           <polygon points="183.1,132.7 188.9,123.3 195.3,133.8" style="fill:var(--act)"/>
           <path d="M112 55 A42 42 0 0 1 105.6 77.3" style="fill:none;stroke:var(--act);stroke-width:1.6"/>
-          <text x="230" y="50" style="fill:var(--ref)"><i class="ph">V</i></text>
-          <text x="192" y="146" style="fill:var(--act)"><i class="ph">I</i></text>
+          <text x="230" y="50" style="fill:var(--ref)">V&#775;</text>
+          <text x="192" y="146" style="fill:var(--act)">I&#775;</text>
           <text x="116" y="82" style="fill:var(--act);font-size:12px;font-style:normal">&#8722;&#952;（遅れ）</text>
         </svg>
         <div class="figcap">RL回路とそのベクトル図（<i class="ph">V</i> を基準に <i class="ph">I</i> は &#952; 遅れる）</div>
@@ -555,8 +556,8 @@
           <path class="w" d="M226 115 H254 M226 127 H254"/>
           <line x1="128" y1="35" x2="164" y2="35" style="stroke:var(--act);stroke-width:2.4"/>
           <polygon points="164,30 164,40 173,35" style="fill:var(--act)"/>
-          <text x="14" y="105" style="fill:var(--ref)"><i class="ph">V</i></text>
-          <text x="140" y="26" style="fill:var(--act)"><i class="ph">I</i></text>
+          <text x="14" y="105" style="fill:var(--ref)">V&#775;</text>
+          <text x="140" y="26" style="fill:var(--act)">I&#775;</text>
           <text x="256" y="78">R</text>
           <text x="258" y="126">1/j&#969;C</text>
         </svg>
@@ -570,8 +571,8 @@
           <line x1="70" y1="100" x2="186" y2="27" style="stroke:var(--act);stroke-width:3.4"/>
           <polygon points="188.9,31.7 183.1,22.3 195.3,21.2" style="fill:var(--act)"/>
           <path d="M112 100 A42 42 0 0 0 105.6 77.7" style="fill:none;stroke:var(--act);stroke-width:1.6"/>
-          <text x="230" y="95" style="fill:var(--ref)"><i class="ph">V</i></text>
-          <text x="192" y="24" style="fill:var(--act)"><i class="ph">I</i></text>
+          <text x="230" y="95" style="fill:var(--ref)">V&#775;</text>
+          <text x="192" y="24" style="fill:var(--act)">I&#775;</text>
           <text x="116" y="80" style="fill:var(--act);font-size:12px;font-style:normal">+&#952;（進み）</text>
         </svg>
         <div class="figcap">RC回路とそのベクトル図（<i class="ph">V</i> を基準に <i class="ph">I</i> は &#952; 進む）</div>
