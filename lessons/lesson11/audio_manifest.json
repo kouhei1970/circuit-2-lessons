@@ -7,7 +7,7 @@
   {
     "id": "sl-ondemand",
     "file": "audio/sl-ondemand.mp3",
-    "duration": 60.26
+    "duration": 61.18
   },
   {
     "id": "sl-schedule",
@@ -157,6 +157,6 @@
   {
     "id": "sl-summary",
     "file": "audio/sl-summary.mp3",
-    "duration": 67.9
+    "duration": 69.91
   }
 ]
