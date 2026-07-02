@@ -27,7 +27,7 @@
   {
     "id": "sl-rc-transient",
     "file": "audio/sl-rc-transient.mp3",
-    "duration": 72.5
+    "duration": 75.46
   },
   {
     "id": "sl-complex-plot",
@@ -72,7 +72,7 @@
   {
     "id": "sl-ac-impedance",
     "file": "audio/sl-ac-impedance.mp3",
-    "duration": 92.09
+    "duration": 92.02
   },
   {
     "id": "sl-rms-amp",

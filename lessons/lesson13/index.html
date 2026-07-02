@@ -183,31 +183,38 @@
         <div class="figbox">
           <svg class="fig" viewBox="0 0 320 180" role="img" aria-label="RL回路：9V電源、6Ω抵抗と2Hコイルの並列、3Ωが直列">
             <!-- outer wires -->
-            <path class="w" d="M40 50 H80 M40 130 V155 H300 V120 M40 50 V90"/>
-            <!-- source -->
+            <path class="w" d="M40 50 H80 M40 120 V155 H300 M40 50 V90"/>
+            <!-- DC source: circle + vertical bar, + above / − below -->
             <circle class="w" cx="40" cy="105" r="15"/>
-            <path class="w" d="M33 105 q3.5 -6 7 0 q3.5 6 7 0"/>
+            <path class="w" d="M40 90 V120"/>
             <text x="8" y="92">9V</text>
-            <!-- top branch: 6 ohm -->
+            <text x="48" y="85">+</text>
+            <text x="48" y="135">−</text>
+            <!-- top branch: 6 ohm (i1) -->
             <path class="w" d="M80 50 H110"/>
             <rect class="w" x="110" y="40" width="46" height="20"/>
             <text x="118" y="34">6Ω</text>
-            <path class="w" d="M156 50 H205 V72"/>
-            <!-- coil branch (parallel) -->
+            <path class="w" d="M156 50 H205"/>
+            <line class="cur" x1="162" y1="40" x2="184" y2="40"/>
+            <polygon class="curf" points="184,35 194,40 184,45"/>
+            <text x="164" y="32">i₁</text>
+            <!-- coil branch (parallel with 6 ohm, joins node B) -->
             <path class="w" d="M80 50 V92 H100"/>
             <path class="w" d="M100 92 q6 -12 12 0 q6 12 12 0 q6 -12 12 0 q6 12 12 0 q6 -12 12 0"/>
-            <path class="w" d="M160 92 H205 V108"/>
+            <path class="w" d="M160 92 H205 V50"/>
             <text x="124" y="80">2H</text>
-            <!-- current arrow on coil -->
-            <line class="cur" x1="110" y1="118" x2="150" y2="118"/>
-            <polygon class="curf" points="150,113 160,118 150,123"/>
-            <text x="118" y="140">i(t)</text>
+            <!-- current arrow on coil branch -->
+            <line class="cur" x1="110" y1="112" x2="150" y2="112"/>
+            <polygon class="curf" points="150,107 160,112 150,117"/>
+            <text x="118" y="132">i(t)</text>
             <!-- node dots -->
             <circle class="curf" cx="80" cy="50" r="3"/>
             <circle class="curf" cx="205" cy="50" r="3"/>
-            <!-- 3 ohm series -->
-            <rect class="w" x="205" y="72" width="20" height="36"/>
-            <text x="232" y="95">3Ω</text>
+            <!-- 3 ohm series (right side, vertical) -->
+            <path class="w" d="M205 50 H300 V72"/>
+            <rect class="w" x="290" y="72" width="20" height="36"/>
+            <text x="256" y="95">3Ω</text>
+            <path class="w" d="M300 108 V155"/>
           </svg>
           <div class="figcap">9V電源・6Ωと2Hの並列・3Ω直列</div>
         </div>
@@ -215,6 +222,7 @@
           <p class="steps">
             <span class="lead2">キルヒホッフより</span><br>
             9 − 6<i>i</i><sub>1</sub> − 3(<i>i</i><sub>1</sub>+<i>i</i>) = 0<br>
+            9 − 2 d<i>i</i>/d<i>t</i> − 3(<i>i</i><sub>1</sub>+<i>i</i>) = 0（コイルを含むループ）<br>
             <span class="lead2">整理して微分方程式に</span>
           </p>
           <div class="eq big">d<i>i</i>/d<i>t</i> + <i>i</i> = 3</div>
@@ -240,7 +248,7 @@
             <polygon class="curf" points="40,92 50,92 45,82"/>
             <text x="20" y="135">3A</text>
             <!-- left rail -->
-            <path class="w" d="M45 85 V45 H80 M45 115 V155 H300 V115"/>
+            <path class="w" d="M45 85 V45 H80 M45 115 V155 H300 V100"/>
             <!-- node left -->
             <circle class="curf" cx="80" cy="45" r="3"/>
             <!-- top branch: 1 ohm + 2F cap -->
@@ -250,6 +258,7 @@
             <!-- capacitor 2F -->
             <path class="w" d="M170 32 V58 M182 32 V58"/>
             <text x="186" y="40">2F</text>
+            <text x="186" y="62">v<tspan dy="4" font-size="10">C</tspan></text>
             <path class="w" d="M182 45 H300 V90"/>
             <!-- node right -->
             <circle class="curf" cx="300" cy="45" r="3"/>
@@ -266,11 +275,12 @@
           <p class="steps">
             <span class="lead2">キルヒホッフより</span><br>
             <i>i</i><sub>1</sub>+<i>i</i><sub>2</sub> = 3、&nbsp; <i>v</i> = 2<i>i</i><sub>2</sub><br>
+            <i>v</i> = 1·<i>i</i><sub>1</sub> + <i>v</i><sub>C</sub>（上枝の電圧）<br>
             <i>i</i><sub>1</sub> = 2 d<i>v</i><sub>C</sub>/d<i>t</i>（2Fより）<br>
             <span class="lead2">整理して微分方程式に</span>
           </p>
           <div class="eq big">6 d<i>v</i>/d<i>t</i> + <i>v</i> = 6</div>
-          <p class="steps"><span class="lead2">初期条件</span> <i>i</i>(0) = 1A より</p>
+          <p class="steps"><span class="lead2">初期条件</span> <i>i</i><sub>1</sub>(0) = 1A（1Ω・コンデンサ枝の電流）より</p>
           <div class="eq big" style="border:2px solid var(--act);"><i>v</i>(<i>t</i>) = −2<i>e</i><sup>−<i>t</i>/6</sup> + 6 &nbsp;[V]</div>
           <p class="note">定常値は6V、時定数は6秒。</p>
         </div>
@@ -308,7 +318,7 @@
   <span class="tag2 tag-do">操作</span><span class="tag2 tag-ex">解説</span>
   <p class="kicker">練習問題5</p>
   <h1 class="tt">練習5：偏角と大きさを求める</h1>
-  <p class="steps">大きさは <span class="eq" style="display:inline-block;margin:0 .2em;">|<i>z</i>| = √(実部² + 虚部²)</span>、偏角は <span class="eq" style="display:inline-block;margin:0 .2em;">arg <i>z</i> = arctan(虚部 / 実部)</span>（答えはラジアン）。</p>
+  <p class="steps">大きさは <span class="eq" style="display:inline-block;margin:0 .2em;">|<i>z</i>| = √(実部² + 虚部²)</span>、偏角は <span class="eq" style="display:inline-block;margin:0 .2em;">arg <i>z</i> = arctan(虚部 / 実部)</span>（答えはラジアン）。実部＝0 のときは ±π/2（複素平面で向きを確認）。</p>
   <div class="prfields">
     <div class="prf"><span style="min-width:13em;"><i>z</i><sub>1</sub>=2+j&nbsp;&nbsp;|z|</span><input type="number" id="l13am-m1" step="any"><span class="prmark" id="l13am-m1-m"></span><span style="min-width:3em;color:var(--mut);">arg</span><input type="number" id="l13am-a1" step="any"><span class="prmark" id="l13am-a1-m"></span></div>
     <div class="prf"><span style="min-width:13em;"><i>z</i><sub>2</sub>=j3&nbsp;&nbsp;|z|</span><input type="number" id="l13am-m2" step="any"><span class="prmark" id="l13am-m2-m"></span><span style="min-width:3em;color:var(--mut);">arg</span><input type="number" id="l13am-a2" step="any"><span class="prmark" id="l13am-a2-m"></span></div>
@@ -707,7 +717,7 @@
             <!-- source -->
             <circle class="w" cx="40" cy="110" r="15"/>
             <path class="w" d="M40 95 V125"/>
-            <text x="6" y="114">11V</text>
+            <text x="6" y="88">11V</text>
             <text x="48" y="90">+</text>
             <text x="48" y="140">−</text>
             <!-- rails -->
@@ -767,7 +777,7 @@
             <svg class="fig" style="max-width:15em;" viewBox="0 0 240 170" role="img" aria-label="図4 オン：6V、2Hコイル、2Ωと3Ωの並列、スイッチ閉">
               <circle class="w" cx="30" cy="95" r="14"/>
               <path class="w" d="M30 81 V109"/>
-              <text x="4" y="99">6V</text>
+              <text x="4" y="78">6V</text>
               <text x="38" y="78">+</text>
               <text x="38" y="122">−</text>
               <path class="w" d="M30 81 V40 H60"/>
@@ -779,7 +789,7 @@
               <path class="w" d="M114 40 H190"/>
               <circle class="curf" cx="130" cy="40" r="2.5"/>
               <rect class="w" x="120" y="60" width="20" height="36"/>
-              <text x="100" y="82">2Ω</text>
+              <text x="144" y="82">2Ω</text>
               <path class="w" d="M130 40 V60 M130 96 V130"/>
               <rect class="w" x="180" y="60" width="20" height="36"/>
               <text x="202" y="82">3Ω</text>
@@ -798,7 +808,7 @@
             <svg class="fig" style="max-width:15em;" viewBox="0 0 240 170" role="img" aria-label="図5 オフ：スイッチ開、3Ω切り離し">
               <circle class="w" cx="30" cy="95" r="14"/>
               <path class="w" d="M30 81 V109"/>
-              <text x="4" y="99">6V</text>
+              <text x="4" y="78">6V</text>
               <text x="38" y="78">+</text>
               <text x="38" y="122">−</text>
               <path class="w" d="M30 81 V40 H60"/>
@@ -810,7 +820,7 @@
               <path class="w" d="M114 40 H190"/>
               <circle class="curf" cx="130" cy="40" r="2.5"/>
               <rect class="w" x="120" y="60" width="20" height="36"/>
-              <text x="100" y="82">2Ω</text>
+              <text x="144" y="82">2Ω</text>
               <path class="w" d="M130 40 V60 M130 96 V130"/>
               <rect class="w" x="180" y="60" width="20" height="36"/>
               <text x="202" y="82">3Ω</text>
@@ -1180,10 +1190,13 @@
 (function(){
   var Q=[{id:'l13rms-1',ans:200*Math.SQRT2},{id:'l13rms-2',ans:10*Math.SQRT2}];
   function el(s){return $('#'+s);} if(!el('l13rms-grade'))return;
-  function grade(){var n=0;Q.forEach(function(q){var inp=el(q.id),mk=el(q.id+'-m');var v=parseFloat(inp.value);var ok=false;
-    if(!isNaN(v)){var tol=Math.abs(q.ans)<1e-9?0.02:Math.abs(q.ans)*0.01; ok=Math.abs(v-q.ans)<=tol;}
-    mk.textContent=ok?'\u25CB':'\u2715'; mk.className='prmark '+(ok?'good':'bad'); if(ok)n++;});
-    var r=el('l13rms-res'); r.textContent=n+' / '+Q.length+' 正解'; r.className='prresult '+(n===Q.length?'good':'bad');}
+  function ok(v,a){return Math.abs(a)<1e-9?(Math.abs(v-a)<=0.02):(Math.abs(v-a)/Math.abs(a)<=0.01);}
+  function grade(){var n=0,m=0;
+    for(var i=0;i<Q.length;i++){var inp=el(Q[i].id),mk=el(Q[i].id+'-m'); var s=inp.value.trim();
+      if(s===''){mk.textContent='';mk.className='prmark';continue;}
+      m++; var good=ok(parseFloat(s),Q[i].ans); if(good)n++;
+      mk.textContent=good?'\u25cb':'\u2715'; mk.className='prmark '+(good?'good':'bad');}
+    var r=el('l13rms-res'); r.textContent=n+' / '+m+' \u554f\u6b63\u89e3'; r.className='prresult '+(n===m&&m>0?'good':'bad');}
   el('l13rms-grade').onclick=grade;
   el('l13rms-show').onclick=function(){el('l13rms-rev').classList.add('show');};
   el('l13rms-reset').onclick=function(){Q.forEach(function(q){el(q.id).value='';var mk=el(q.id+'-m');mk.textContent='';mk.className='prmark';});var r=el('l13rms-res');r.textContent='';r.className='prresult';el('l13rms-rev').classList.remove('show');};
@@ -1193,10 +1206,13 @@
 (function(){
   var Q=[{id:'l13pw-1',ans:2},{id:'l13pw-2',ans:Math.PI/4},{id:'l13pw-3',ans:10000/Math.SQRT2},{id:'l13pw-4',ans:10000}];
   function el(s){return $('#'+s);} if(!el('l13pw-grade'))return;
-  function grade(){var n=0;Q.forEach(function(q){var inp=el(q.id),mk=el(q.id+'-m');var v=parseFloat(inp.value);var ok=false;
-    if(!isNaN(v)){var tol=Math.abs(q.ans)<1e-9?0.02:Math.abs(q.ans)*0.01; ok=Math.abs(v-q.ans)<=tol;}
-    mk.textContent=ok?'\u25CB':'\u2715'; mk.className='prmark '+(ok?'good':'bad'); if(ok)n++;});
-    var r=el('l13pw-res'); r.textContent=n+' / '+Q.length+' 正解'; r.className='prresult '+(n===Q.length?'good':'bad');}
+  function ok(v,a){return Math.abs(a)<1e-9?(Math.abs(v-a)<=0.02):(Math.abs(v-a)/Math.abs(a)<=0.01);}
+  function grade(){var n=0,m=0;
+    for(var i=0;i<Q.length;i++){var inp=el(Q[i].id),mk=el(Q[i].id+'-m'); var s=inp.value.trim();
+      if(s===''){mk.textContent='';mk.className='prmark';continue;}
+      m++; var good=ok(parseFloat(s),Q[i].ans); if(good)n++;
+      mk.textContent=good?'\u25cb':'\u2715'; mk.className='prmark '+(good?'good':'bad');}
+    var r=el('l13pw-res'); r.textContent=n+' / '+m+' \u554f\u6b63\u89e3'; r.className='prresult '+(n===m&&m>0?'good':'bad');}
   el('l13pw-grade').onclick=grade;
   el('l13pw-show').onclick=function(){el('l13pw-rev').classList.add('show');};
   el('l13pw-reset').onclick=function(){Q.forEach(function(q){el(q.id).value='';var mk=el(q.id+'-m');mk.textContent='';mk.className='prmark';});var r=el('l13pw-res');r.textContent='';r.className='prresult';el('l13pw-rev').classList.remove('show');};
@@ -1208,7 +1224,7 @@
   var pl=makePlane(cv,16,22); var phi=0.7854; var S=10;
   var sl=$('#l13s-phi'),vo=$('#l13v-phi');
   if(sl)sl.addEventListener('input',function(){phi=parseFloat(sl.value); vo.textContent=fmt(phi,2); draw();});
-  function draw(){pl.fit(); pl.clear(); pl.axes({reLabel:'P [kVA]',imLabel:'Q [kVA]'});
+  function draw(){pl.fit(); pl.clear(); pl.axes({reLabel:'P [kW]',imLabel:'Q [kvar]'});
     var P=S*Math.cos(phi), Qv=S*Math.sin(phi);
     pl.arrow(0,0,P,0,cssv('--thr'),3.2);
     pl.arrow(P,0,P,Qv,cssv('--ref'),3.2);
@@ -1224,11 +1240,13 @@
     function el(s){return $('#'+s);}
     if(!el('l13cap-grade'))return;
     function clearMarks(){Q.forEach(function(q){var m=el(q.id+'-m'); m.textContent=''; m.className='prmark';}); var r=el('l13cap-res'); r.textContent=''; r.className='prresult';}
-    el('l13cap-grade').onclick=function(){var ok=0;
-      Q.forEach(function(q){var v=parseFloat(el(q.id).value); var m=el(q.id+'-m'); var good=false;
-        if(!isNaN(v)){var tol=Math.abs(q.ans)<1e-9?0.02:Math.abs(q.ans)*0.01; good=Math.abs(v-q.ans)<=tol;}
-        m.textContent=good?'○':'✕'; m.className='prmark '+(good?'good':'bad'); if(good)ok++;});
-      var r=el('l13cap-res'); r.textContent=ok+' / '+Q.length+' 正解'; r.className='prresult '+(ok===Q.length?'good':'bad');};
+    function ok(v,a){return Math.abs(a)<1e-9?(Math.abs(v-a)<=0.02):(Math.abs(v-a)/Math.abs(a)<=0.01);}
+    el('l13cap-grade').onclick=function(){var n=0,m=0;
+      for(var i=0;i<Q.length;i++){var inp=el(Q[i].id),mk=el(Q[i].id+'-m'); var s=inp.value.trim();
+        if(s===''){mk.textContent='';mk.className='prmark';continue;}
+        m++; var good=ok(parseFloat(s),Q[i].ans); if(good)n++;
+        mk.textContent=good?'\u25cb':'\u2715'; mk.className='prmark '+(good?'good':'bad');}
+      var r=el('l13cap-res'); r.textContent=n+' / '+m+' \u554f\u6b63\u89e3'; r.className='prresult '+(n===m&&m>0?'good':'bad');};
     el('l13cap-show').onclick=function(){el('l13cap-rev').classList.add('show');};
     el('l13cap-reset').onclick=function(){Q.forEach(function(q){el(q.id).value='';}); clearMarks(); el('l13cap-rev').classList.remove('show');};
     reg('sl-exam-capacitance',{});})();
